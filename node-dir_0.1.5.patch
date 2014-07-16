@@ -1,19 +1,6 @@
 --- old/node_modules/node-dir/lib/readfiles.js	2014-07-15 22:08:05.000000000 +0530
-+++ new/node_modules/node-dir/lib/readfiles.js	2014-07-15 22:10:07.000000000 +0530
-@@ -52,7 +52,11 @@
-     };
- 
-     fs.readdir(dir, function(err, list) {
--        if (err) return done(err);
-+        if (err) {
-+            next();
-+            return;
-+        }
-+        //if (err) return done(err);
-         var i = 0;
- 
-         if (options.reverse === true ||
-@@ -66,13 +70,21 @@
++++ new/node_modules/node-dir/lib/readfiles.js	2014-07-16 13:49:06.000000000 +0530
+@@ -66,13 +66,21 @@
              if (!filename) return done(null, files);
              var file = path.join(dir, filename);
              fs.stat(file, function(err, stat) {
@@ -37,7 +24,7 @@
                              files = files.concat(sfiles);
                              next();
                          });
-@@ -84,7 +96,11 @@
+@@ -84,7 +92,11 @@
                      if (options.shortName) files.push(filename);
                      else files.push(file);
                      fs.readFile(file, options.encoding, function(err, data) {
@@ -50,7 +37,7 @@
                          if (callback.length > 3)
                              if (options.shortName) callback(null, data, filename, next);
                              else callback(null, data, file, next);
-@@ -96,4 +112,4 @@
+@@ -96,4 +108,4 @@
  
      });
  }
