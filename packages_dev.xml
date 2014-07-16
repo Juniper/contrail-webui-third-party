@@ -1,0 +1,155 @@
+<packages>
+  <!--
+    Tags:
+        name    : Specify name of the package.
+        url     : URL to download the package.
+        format  : Format of the downloaded file.
+                  If format is set as 'file', then after downloading the 
+                  file, same file gets renamed (if rename tag is specfied) and
+                  copied to currect directory, else based on the format, the
+                  zipped file gets extracted and gets copied in current directory
+        md5     : md5 checksum to compare, against the md5 checksum of the 
+                  downloaded file
+        rename  : Rename the directory/downloaded file to this.
+        patches : Specify the patch files which will be applied on the files once 
+                  download and copy to currect directory is complete.
+    -->
+  <package>
+    <name>grunt</name>
+    <url>http://registry.npmjs.org/grunt/-/grunt-0.4.2.tgz</url>
+    <format>npm</format>
+    <md5>498002cc37b36c3fa43ad7fc10a503d8</md5>
+  </package>
+  <package>
+    <name>grunt-contrib-qunit</name>
+    <url>http://registry.npmjs.org/grunt-contrib-qunit/-/grunt-contrib-qunit-0.3.0.tgz</url>
+    <format>npm</format>
+    <md5>3406304f99d7f2cf42ae8b7904b5e802</md5>
+  </package>
+  <!--<package>
+    <name>grunt-contrib-jshint</name>
+    <url>http://registry.npmjs.org/grunt-contrib-jshint/-/grunt-contrib-jshint-0.7.2.tgz</url>
+    <format>npm</format>
+    <md5>011b9ec7911905965df11ef7ffbbb683</md5>
+  </package>-->
+  <package>
+    <name>grunt-contrib-concat</name>
+    <url>http://registry.npmjs.org/grunt-contrib-concat/-/grunt-contrib-concat-0.3.0.tgz</url>
+    <format>npm</format>
+    <md5>338794409163f2bb5f08087de6dbc072</md5>
+  </package>
+  <package>
+    <name>grunt-qunit-junit</name>
+    <url>http://registry.npmjs.org/grunt-qunit-junit/-/grunt-qunit-junit-0.1.0.tgz</url>
+    <format>npm</format>
+    <md5>a10c6eb26a8cd1695e63de4bf3c61061</md5>
+  </package>
+  <package>
+    <name>grunt-node-qunit</name>
+    <url>http://registry.npmjs.org/grunt-node-qunit/-/grunt-node-qunit-2.0.2.tgz</url>
+    <format>npm</format>
+    <md5>9e427217249d06b16094c857bcf692e5</md5>
+  </package>
+  <package>
+    <name>grunt-blanket-qunit</name>
+    <url>http://registry.npmjs.org/grunt-blanket-qunit/-/grunt-blanket-qunit-0.2.0.tgz</url>
+    <format>npm</format>
+    <md5>800b2e19240847bebd10eb4c1593188d</md5>
+  </package>
+  <package>
+    <name>qunit</name>
+    <url>http://registry.npmjs.org/qunit/-/qunit-0.5.18.tgz</url>
+    <format>npm</format>
+    <md5>97de423babfbe83e6fb9007467094493</md5>
+  </package>
+  <package>
+    <name>grunt-karma</name>
+    <url>http://registry.npmjs.org/grunt-karma/-/grunt-karma-0.6.2.tgz</url>
+    <format>npm</format>
+    <md5>07f79245d51ac976e42b1d494a631164</md5>
+  </package>
+  <package>
+    <name>karma</name>
+    <url>http://registry.npmjs.org/karma/-/karma-0.10.2.tgz</url>
+    <format>npm</format>
+    <md5>8e82df2d372a3bd33489942a524da698</md5>
+  </package>
+  <package>
+    <name>karma-qunit</name>
+    <url>http://registry.npmjs.org/karma-qunit/-/karma-qunit-0.1.1.tgz</url>
+    <format>npm</format>
+    <md5>4a672970b3bb75ce79d34d766b9b86e2</md5>
+  </package>
+  <package>
+    <name>karma-coverage</name>
+    <url>http://registry.npmjs.org/karma-coverage/-/karma-coverage-0.1.5.tgz</url>
+    <format>npm</format>
+    <md5>03d6e269adac4346eca7bc491ca5e9a6</md5>
+  </package>
+  <package>
+    <name>karma-htmlfile-reporter</name>
+    <url>http://registry.npmjs.org/karma-htmlfile-reporter/-/karma-htmlfile-reporter-0.1.0.tgz</url>
+    <format>npm</format>
+    <md5>cea7791c1cbfadf5d8a4b5a8cea32384</md5>
+  </package>
+  <package>
+    <name>karma-firefox-launcher</name>
+    <url>http://registry.npmjs.org/karma-firefox-launcher/-/karma-firefox-launcher-0.1.3.tgz</url>
+    <format>npm</format>
+    <md5>164e14127c8f6d8922f7c05da058d39e</md5>
+  </package>
+  <package>
+    <name>karma-phantomjs-launcher</name>
+    <url>http://registry.npmjs.org/karma-phantomjs-launcher/-/karma-phantomjs-launcher-0.1.2.tgz</url>
+    <format>npm</format>
+    <md5>d26f88d963b81edb1d397074d8212ca4</md5>
+  </package>
+  <package>
+    <name>qunitjs</name>
+    <url>http://registry.npmjs.org/qunitjs/-/qunitjs-1.14.0.tgz</url>
+    <format>npm</format>
+    <md5>1ffabcb4354231572b59b641c7e2a6c6</md5>
+  </package>
+  <package>
+    <name>karma-chrome-launcher</name>
+    <url>http://registry.npmjs.org/karma-chrome-launcher/-/karma-chrome-launcher-0.1.2.tgz</url>
+    <format>npm</format>
+    <md5>c3207f3addd51fbca97149bdb9d97a3e</md5>
+  </package>
+  <package>
+    <name>karma-html2js-preprocessor</name>
+    <url>http://registry.npmjs.org/karma-html2js-preprocessor/-/karma-html2js-preprocessor-0.1.0.tgz</url>
+    <format>npm</format>
+    <md5>0cc316d69f65d60533843120fb83ef72</md5>
+  </package>
+  <package>
+    <name>karma-junit-reporter</name>
+    <url>http://registry.npmjs.org/karma-junit-reporter/-/karma-junit-reporter-0.2.1.tgz</url>
+    <format>npm</format>
+    <md5>e14bed0f5653784ae94ccea90f02acab</md5>
+  </package>
+  <package>
+    <name>karma-safari-launcher</name>
+    <url>http://registry.npmjs.org/karma-safari-launcher/-/karma-safari-launcher-0.1.1.tgz</url>
+    <format>npm</format>
+    <md5>d016de43f191dbcbe71d18688ba2fdb9</md5>
+  </package>
+  <package>
+    <name>sinon</name>
+    <url>http://registry.npmjs.org/sinon/-/sinon-1.9.1.tgz</url>
+    <format>npm</format>
+    <md5>2f069514a4dee25913203c1498e9c38c</md5>
+  </package>
+  <package>
+    <name>karma-sinon</name>
+    <url>http://registry.npmjs.org/karma-sinon/-/karma-sinon-1.0.3.tgz</url>
+    <format>npm</format>
+    <md5>78bcd9e7561437e002beb69309b12e76</md5>
+  </package>
+  <package>
+    <name>grunt-cli</name>
+    <url>http://registry.npmjs.org/grunt-cli/-/grunt-cli-0.1.13.tgz</url>
+    <format>npm</format>
+    <md5>fe47325c8b6f48d752c33c9ea57d9217</md5>
+  </package>
+</packages>
