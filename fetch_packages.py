@@ -7,7 +7,7 @@ import errno
 import re
 import shutil
 import subprocess
-import sys
+import sys, getopt
 from time import sleep
 
 _RETRIES = 5
@@ -220,10 +220,21 @@ def main(filename):
             ProcessPackage(object)
 
 if __name__ == '__main__':
+    try:
+        opts,args = getopt.getopt(sys.argv[1:],"f:",["file="])
+    except getopt.GetoptError:
+        raise RuntimeError("Error in parsing the options/arguments")
+    xmlfile = None
+    for opt,arg in opts:
+        if opt in ("-f","--file"):
+            xmlfile = arg
     os.chdir(os.path.dirname(os.path.realpath(__file__)))
     try:
         os.makedirs(_PACKAGE_CACHE)
     except OSError:
         pass
 
-    main('packages.xml')
+    if xmlfile == None:
+        main('packages.xml')
+    else:
+        main(xmlfile)
