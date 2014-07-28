@@ -254,6 +254,9 @@
     <format>tgz</format>
     <md5>4531162f749af545f2d19c370a94e07f</md5>
     <rename>select2-v3.4.6</rename>
+    <patches>
+      <patch strip="0">select2_v3.4.6.patch</patch>
+    </patches>
   </package>
   <package>
     <name>SlickGrid</name>
