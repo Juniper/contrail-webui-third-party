@@ -15,7 +15,6 @@ _OPT_VERBOSE = None
 _OPT_DRY_RUN = None
 _PACKAGE_CACHE='/tmp/cache/' + os.environ['USER'] + '/webui_third_party'
 _NODE_MODULES='./node_modules'
-_TMP_NODE_MODULES=_PACKAGE_CACHE + '/' + _NODE_MODULES
 
 from lxml import objectify
 
@@ -77,13 +76,15 @@ def ApplyPatches(pkg):
 
 def DownloadPackage(url, pkg, md5):
     #Check if the package already exists
+    pkgExists = True
     if os.path.isfile(pkg):
         md5sum = FindMd5sum(pkg)
         if md5sum == md5:
-            return
+            return pkgExists
         else:
             os.remove(pkg)
     
+    pkgExists = False
     retry_count = 0
     while True:
         subprocess.call(['wget', '--no-check-certificate', '-O', pkg, url])
@@ -92,7 +93,7 @@ def DownloadPackage(url, pkg, md5):
             print "Calculated md5sum: %s" % md5sum
             print "Expected md5sum: %s" % md5
         if md5sum == md5:
-            return
+            return pkgExists
         elif retry_count <= _RETRIES:
             os.remove(pkg)
             retry_count += 1
@@ -107,7 +108,7 @@ def ProcessPackage(pkg):
     url = str(pkg['url'])
     filename = getFilename(pkg, url)
     ccfile = _PACKAGE_CACHE + '/' + filename
-    DownloadPackage(url, ccfile, pkg.md5)
+    pkgExists = DownloadPackage(url, ccfile, pkg.md5)
 
     #
     # Determine the name of the directory created by the package.
@@ -158,7 +159,7 @@ def ProcessPackage(pkg):
     elif pkg.format == 'zip':
         cmd = ['unzip', '-o', ccfile]
     elif pkg.format == 'npm':
-        cmd = ['npm', 'install', ccfile, '--prefix', _PACKAGE_CACHE]
+        cmd = ['npm', 'install', ccfile, '--prefix', '.']
     elif pkg.format == 'file':
         cmd = ['cp', '-af', ccfile, dest]
     else:
@@ -172,26 +173,26 @@ def ProcessPackage(pkg):
         if pkg.format == 'npm':
             try:
                 os.makedirs(_NODE_MODULES)
-                os.makedirs(_TMP_NODE_MODULES)
             except OSError as exc:
                 if exc.errno == errno.EEXIST:
                     pass
                 else:
-                    print 'mkdirs of ' + _NODE_MODULES + ' ' + _TMP_NODE_MODULES + ' failed.. Exiting..'
+                    print 'mkdirs of ' + _NODE_MODULES + ' failed.. Exiting..'
                     return
 
-            npmCmd = ['cp', '-af', _TMP_NODE_MODULES + '/' + pkg['name'],
-                      './node_modules/']
-            if os.path.exists(_TMP_NODE_MODULES + '/' + pkg['name']):
-                cmd = npmCmd
+            if os.path.exists(_NODE_MODULES + '/' + pkg['name']):
+                if True == pkgExists:
+                    return
+                else:
+                    shutil.rmtree(_NODE_MODULES + '/' + pkg['name']);
             else:
-		try:
+                try:
                    p = subprocess.Popen(cmd, cwd = cd)
                    p.wait()
-                   cmd = npmCmd
-		except OSError:
-		   print ' '.join(cmd) + ' could not be executed, bailing out!'
-		   return
+                except OSError:
+                    print ' '.join(cmd) + ' could not be executed, bailing out!'
+                    return
+                return
         p = subprocess.Popen(cmd, cwd = cd)
         p.wait()
 
