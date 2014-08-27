@@ -461,4 +461,10 @@
     <format>npm</format>
     <md5>666e31932bbc0f49374e2e11c253cd10</md5>
   </package>
+  <package>
+    <name>ipv6</name>
+    <url>http://registry.npmjs.org/ipv6/-/ipv6-3.1.1.tgz</url>
+    <format>npm</format>
+    <md5>0153d58d82392210fb4ca01cf60d2aab</md5>
+  </package>
 </packages>
