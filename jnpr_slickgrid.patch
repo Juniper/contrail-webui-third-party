@@ -1,6 +1,41 @@
-diff -Naur old/contrail-webui-third-party/jnpr_slickgrid/slick.grid.css new/contrail-webui-third-party/jnpr_slickgrid/slick.grid.css
---- old/contrail-webui-third-party/jnpr_slickgrid/slick.grid.css	2014-05-06 15:46:55.000000000 -0700
-+++ new/contrail-webui-third-party/jnpr_slickgrid/slick.grid.css	2014-05-06 14:47:22.000000000 -0700
+diff -Naur old/SlickGrid-master/slick.dataview.js new/SlickGrid-master/slick.dataview.js
+--- old/SlickGrid-master/slick.dataview.js	2014-05-05 13:33:22.000000000 +0530
++++ new/SlickGrid-master/slick.dataview.js	2014-09-02 20:07:31.000000000 +0530
+@@ -76,6 +76,7 @@
+     var onRowCountChanged = new Slick.Event();
+     var onRowsChanged = new Slick.Event();
+     var onPagingInfoChanged = new Slick.Event();
++    var onDataUpdate = new Slick.Event();
+ 
+     options = $.extend(true, {}, defaults, options);
+ 
+@@ -842,7 +843,12 @@
+         pagenum = Math.max(0, Math.ceil(totalRows / pagesize) - 1);
+         diff = recalc(items, filter);
+       }
+-
++      /*onDataUpdate is the new event added so that it will be triggered in all following cases
++      /*    1)RowsChanges
++      /*    2)RowCount changes
++      /*    3)PagingInfoChanges
++      */ 
++      onDataUpdate.notify({previous: countBefore, current: rows.length,rows: diff})
+       updated = null;
+       prevRefreshHints = refreshHints;
+       refreshHints = {};
+@@ -1018,7 +1024,8 @@
+       // events
+       "onRowCountChanged": onRowCountChanged,
+       "onRowsChanged": onRowsChanged,
+-      "onPagingInfoChanged": onPagingInfoChanged
++      "onPagingInfoChanged": onPagingInfoChanged,
++      "onDataUpdate": onDataUpdate
+     });
+   }
+ 
+diff -Naur old/SlickGrid-master/slick.grid.css new/SlickGrid-master/slick.grid.css
+--- old/SlickGrid-master/slick.grid.css	2014-05-05 13:33:22.000000000 +0530
++++ new/SlickGrid-master/slick.grid.css	2014-09-02 11:19:26.000000000 +0530
 @@ -81,7 +81,7 @@
  }
  
@@ -10,9 +45,9 @@ diff -Naur old/contrail-webui-third-party/jnpr_slickgrid/slick.grid.css new/cont
    border: 0px;
    width: 100%;
  }
-diff -Naur old/contrail-webui-third-party/jnpr_slickgrid/slick.grid.js new/contrail-webui-third-party/jnpr_slickgrid/slick.grid.js
---- old/contrail-webui-third-party/jnpr_slickgrid/slick.grid.js	2014-05-06 15:46:55.000000000 -0700
-+++ new/contrail-webui-third-party/jnpr_slickgrid/slick.grid.js	2014-05-06 14:58:37.000000000 -0700
+diff -Naur old/SlickGrid-master/slick.grid.js new/SlickGrid-master/slick.grid.js
+--- old/SlickGrid-master/slick.grid.js	2014-05-05 13:33:22.000000000 +0530
++++ new/SlickGrid-master/slick.grid.js	2014-09-02 11:19:26.000000000 +0530
 @@ -924,7 +924,7 @@
          "." + uid + " .slick-header-column { left: 1000px; }",
          "." + uid + " .slick-top-panel { height:" + options.topPanelHeight + "px; }",
