@@ -284,17 +284,6 @@
     <md5>d7a58c286b230beb275041d8718e6d64</md5>
   </package>
   <package>
-    <name>multiselect</name>
-    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/multiselect-master.zip</url>
-    <local-filename>multiselect-master.zip</local-filename>
-    <format>zip</format>
-    <md5>1ae9f6d849bea19abd12030f501cab1d</md5>
-    <rename>multiselect-v1.0</rename>
-    <patches>
-      <patch strip="2">multiselect_v1.0.patch</patch>
-    </patches>
-  </package>
-  <package>
     <name>SlickGridEnhancementPager</name>
     <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/SlickGridEnhancementPager-master.zip</url>
     <local-filename>SlickGridEnhancementPager-master.zip</local-filename>
@@ -460,6 +449,83 @@
     <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/pretty-data-0.40.0.tgz</url>
     <format>npm</format>
     <md5>666e31932bbc0f49374e2e11c253cd10</md5>
+  </package>
+  <package>
+    <name>backbone-v1.1.2</name>
+    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/server-manager/backbone-min.js</url>
+    <local-filename>backbone-min.js</local-filename>
+    <format>file</format>
+    <md5>9c3e3189b75efd56066402f80c3e781b</md5>
+  </package>
+  <package>
+    <name>backbone-map-v1.1.2</name>
+    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/server-manager/backbone-min.map</url>
+    <local-filename>backbone-min.map</local-filename>
+    <format>file</format>
+    <md5>d6b42423bafb425248aa6277ca16d8c2</md5>
+  </package>
+  <package>
+    <name>requirejs</name>
+    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/server-manager/requirejs-1.0.2.tar.gz</url>
+    <local-filename>requirejs-1.0.2.tar.gz</local-filename>
+    <format>tgz</format>
+    <md5>0b04da4a6ee3c01f268bd8b99953eace</md5>
+    <rename>requirejs-v1.0.2</rename>
+  </package>
+  <package>
+    <name>underscore-v1.6.0</name>
+    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/server-manager/underscore-min.js</url>
+    <local-filename>underscore-min.js</local-filename>
+    <format>file</format>
+    <md5>dd9663be9a71f3570bc35f0edba28712</md5>
+  </package>
+  <package>
+    <name>underscore-map-v1.6.0</name>
+    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/server-manager/underscore-min.map</url>
+    <local-filename>underscore-min.map</local-filename>
+    <format>file</format>
+    <md5>ba0d413ebe08a9248aaa1588aca34267</md5>
+  </package>
+  <package>
+    <name>textjs-v2.0.12</name>
+    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/server-manager/text.js</url>
+    <local-filename>text.js</local-filename>
+    <format>file</format>
+    <md5>23c1dcd2102700c6b515348af814e44a</md5>
+  </package>
+  <package>
+    <name>jquery.multiselect-v1.13</name>
+    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/jquery-ui-multiselect-widget-1.13.tar.gz</url>
+    <local-filename>jquery-ui-multiselect-widget-1.13.tar.gz</local-filename>
+    <format>tgz</format>
+    <md5>dc3d1734769f64df4abd98e922a5891a</md5>
+    <patches>
+      <patch strip="2">jquery-ui-multiselect-widget.patch</patch>
+    </patches>
+  </package>
+  <package>
+    <name>knockback-v0.19.2</name>
+    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/server-manager/knockback.min.js</url>
+    <local-filename>knockback.min.js</local-filename>
+    <format>file</format>
+    <md5>f7f2fad534fc7ff0c7ea8992bd602ff5</md5>
+  </package>
+  <package>
+    <name>jquery-steps-v1.1.0</name>
+    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/jquery-steps-1.1.0.tar.gz</url>
+    <local-filename>jquery-steps-1.1.0.tar.gz</local-filename>
+    <format>tgz</format>
+    <md5>5a22042a84cac07200e2049044c2b5a8</md5>
+  </package>
+  <package>
+    <name>backbone-validation-v0.9.1</name>
+    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/server-manager/backbone-validation-amd.js</url>
+    <local-filename>backbone-validation-amd.js</local-filename>
+    <format>file</format>
+    <md5>7415cf8feda8c96f8922418fa7b58430</md5>
+    <patches>
+      <patch strip="1">backbone-validation-amd.patch</patch>
+    </patches>
   </package>
   <package>
     <name>ipv6</name>
