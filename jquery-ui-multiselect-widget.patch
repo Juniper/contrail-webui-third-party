@@ -1,0 +1,12 @@
+diff -Naur old/contrail-webui-third-party/jquery-ui-multiselect-widget-1.13/src/jquery.multiselect.filter.js new/contrail-webui-third-party/jquery-ui-multiselect-widget-1.13/src/jquery.multiselect.filter.js
+--- old/contrail-webui-third-party/jquery-ui-multiselect-widget-1.13/src/jquery.multiselect.filter.js	2012-08-19 08:18:25.000000000 -0700
++++ new/contrail-webui-third-party/jquery-ui-multiselect-widget-1.13/src/jquery.multiselect.filter.js	2014-09-09 10:43:03.000000000 -0700
+@@ -28,7 +28,7 @@
+ 		_create: function(){
+ 			var self = this,
+ 				opts = this.options,
+-				instance = (this.instance = $(this.element).data("multiselect")),
++				instance = (this.instance = $(this.element).data("echMultiselect")),
+ 				
+ 				// store header; add filter class so the close/check all/uncheck all links can be positioned correctly
+ 				header = (this.header = instance.menu.find(".ui-multiselect-header").addClass("ui-multiselect-hasfilter")),

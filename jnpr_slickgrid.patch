@@ -1,6 +1,18 @@
+diff -Naur old/contrail-webui-third-party/jnpr_slickgrid/slick.dataview.js new/contrail-webui-third-party/jnpr_slickgrid/slick.dataview.js
+--- old/contrail-webui-third-party/jnpr_slickgrid/slick.dataview.js	2014-09-03 11:57:31.000000000 -0700
++++ new/contrail-webui-third-party/jnpr_slickgrid/slick.dataview.js	2014-09-03 11:58:42.000000000 -0700
+@@ -30,7 +30,7 @@
+ 
+ 
+     // private
+-    var idProperty = "id";  // property holding a unique row id
++    var idProperty = "cgrid";  // property holding a unique row id
+     var items = [];         // data by index
+     var rows = [];          // data by row
+     var idxById = {};       // indexes by id
 diff -Naur old/contrail-webui-third-party/jnpr_slickgrid/slick.grid.css new/contrail-webui-third-party/jnpr_slickgrid/slick.grid.css
---- old/contrail-webui-third-party/jnpr_slickgrid/slick.grid.css	2014-05-06 15:46:55.000000000 -0700
-+++ new/contrail-webui-third-party/jnpr_slickgrid/slick.grid.css	2014-05-06 14:47:22.000000000 -0700
+--- old/contrail-webui-third-party/jnpr_slickgrid/slick.grid.css	2014-09-03 11:57:31.000000000 -0700
++++ new/contrail-webui-third-party/jnpr_slickgrid/slick.grid.css	2014-09-03 12:08:05.000000000 -0700
 @@ -81,7 +81,7 @@
  }
  
@@ -11,8 +23,8 @@ diff -Naur old/contrail-webui-third-party/jnpr_slickgrid/slick.grid.css new/cont
    width: 100%;
  }
 diff -Naur old/contrail-webui-third-party/jnpr_slickgrid/slick.grid.js new/contrail-webui-third-party/jnpr_slickgrid/slick.grid.js
---- old/contrail-webui-third-party/jnpr_slickgrid/slick.grid.js	2014-05-06 15:46:55.000000000 -0700
-+++ new/contrail-webui-third-party/jnpr_slickgrid/slick.grid.js	2014-05-06 14:58:37.000000000 -0700
+--- old/contrail-webui-third-party/jnpr_slickgrid/slick.grid.js	2014-09-03 11:57:31.000000000 -0700
++++ new/contrail-webui-third-party/jnpr_slickgrid/slick.grid.js	2014-09-03 12:06:27.000000000 -0700
 @@ -924,7 +924,7 @@
          "." + uid + " .slick-header-column { left: 1000px; }",
          "." + uid + " .slick-top-panel { height:" + options.topPanelHeight + "px; }",
@@ -27,7 +39,7 @@ diff -Naur old/contrail-webui-third-party/jnpr_slickgrid/slick.grid.js new/contr
        }
  
 -      stringArray.push("<div class='ui-widget-content " + rowCss + "' style='top:" + getRowTop(row) + "px'>");
-+      stringArray.push("<div class='ui-widget-content " + rowCss + " slick-row-master slick_row_" + d.id + "' data-id='" + d.id + "'>");
++      stringArray.push("<div class='ui-widget-content " + rowCss + " slick-row-master slick_row_" + d.cgrid + "' data-cgrid='" + d.cgrid + "'>");
  
        var colspan, m;
        for (var i = 0, ii = columns.length; i < ii; i++) {
