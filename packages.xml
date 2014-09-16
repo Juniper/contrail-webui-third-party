@@ -463,8 +463,15 @@
   </package>
   <package>
     <name>ipv6</name>
-    <url>http://registry.npmjs.org/ipv6/-/ipv6-3.1.1.tgz</url>
+    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/ipv6-3.1.1.tgz</url>
     <format>npm</format>
     <md5>0153d58d82392210fb4ca01cf60d2aab</md5>
+  </package>
+  <package>
+    <name>require</name>
+    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/require.js</url>
+    <local-filename>require.js</local-filename>
+    <format>file</format>
+    <md5>a0fb07562ceae36e8342f297e427f28e</md5>
   </package>
 </packages>
