@@ -4,14 +4,14 @@
         name    : Specify name of the package.
         url     : URL to download the package.
         format  : Format of the downloaded file.
-                  If format is set as 'file', then after downloading the 
+                  If format is set as 'file', then after downloading the
                   file, same file gets renamed (if rename tag is specfied) and
                   copied to currect directory, else based on the format, the
                   zipped file gets extracted and gets copied in current directory
-        md5     : md5 checksum to compare, against the md5 checksum of the 
+        md5     : md5 checksum to compare, against the md5 checksum of the
                   downloaded file
         rename  : Rename the directory/downloaded file to this.
-        patches : Specify the patch files which will be applied on the files once 
+        patches : Specify the patch files which will be applied on the files once
                   download and copy to currect directory is complete.
   -->
   <package>
@@ -526,6 +526,30 @@
     <patches>
       <patch strip="1">backbone-validation-amd.patch</patch>
     </patches>
+  </package>
+  <package>
+    <name>JointJS</name>
+    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/joint-0.9.0.tar.gz</url>
+    <local-filename>joint-v0.9.0.tar.gz</local-filename>
+    <format>tgz</format>
+    <md5>4f8b60a5a40783ceecf9e47b1c1349c8</md5>
+    <rename>joint-v0.9.0</rename>
+  </package>
+  <package>
+    <name>PanZoom</name>
+    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/jquery.panzoom-2.0.5.tar.gz</url>
+    <local-filename>jquery.panzoom-v2.0.5.tar.gz</local-filename>
+    <format>tgz</format>
+    <md5>f68f04f3df4cdd0b65c17d489f20e6ac</md5>
+    <rename>jquery.panzoom-v2.0.5</rename>
+  </package>
+  <package>
+    <name>jQuery-contextMenu</name>
+    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/jQuery-contextMenu-1.6.5.tar.gz</url>
+    <local-filename>jquery-contextMenu-v1.6.5.tar.gz</local-filename>
+    <format>tgz</format>
+    <md5>040ce8ff6ef45b78dcdca80d3de7f1d6</md5>
+    <rename>jquery-contextMenu-v1.6.5</rename>
   </package>
   <package>
     <name>ipv6</name>
