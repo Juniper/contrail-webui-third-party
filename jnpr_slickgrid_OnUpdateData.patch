@@ -1,0 +1,37 @@
+diff -Naur old/jnpr_slickgrid/slick.dataview.js new/jnpr_slickgrid/slick.dataview.js
+--- old/jnpr_slickgrid/slick.dataview.js	2014-09-18 14:48:13.000000000 +0530
++++ new/jnpr_slickgrid/slick.dataview.js	2014-09-18 14:59:50.000000000 +0530
+@@ -76,6 +76,7 @@
+     var onRowCountChanged = new Slick.Event();
+     var onRowsChanged = new Slick.Event();
+     var onPagingInfoChanged = new Slick.Event();
++    var onDataUpdate = new Slick.Event();
+ 
+     options = $.extend(true, {}, defaults, options);
+ 
+@@ -842,7 +843,14 @@
+         pagenum = Math.max(0, Math.ceil(totalRows / pagesize) - 1);
+         diff = recalc(items, filter);
+       }
+-
++      
++      /***
++       *onDataUpdate is the new event added so that it will be triggered in all following cases
++       *    1)RowsChanges
++       *    2)RowCount changes
++       *    3)PagingInfoChanges
++      */ 
++      onDataUpdate.notify({previous: countBefore, current: rows.length,rows: diff})
+       updated = null;
+       prevRefreshHints = refreshHints;
+       refreshHints = {};
+@@ -1018,7 +1026,8 @@
+       // events
+       "onRowCountChanged": onRowCountChanged,
+       "onRowsChanged": onRowsChanged,
+-      "onPagingInfoChanged": onPagingInfoChanged
++      "onPagingInfoChanged": onPagingInfoChanged,
++      "onDataUpdate": onDataUpdate
+     });
+   }
+ 
