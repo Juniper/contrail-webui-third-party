@@ -8,6 +8,8 @@
                   file, same file gets renamed (if rename tag is specfied) and
                   copied to currect directory, else based on the format, the
                   zipped file gets extracted and gets copied in current directory
+                  If format as npm-cached, then the cache is not built in
+                  /tmp/cache, but in node_modules in current directory directly
         md5     : md5 checksum to compare, against the md5 checksum of the
                   downloaded file
         rename  : Rename the directory/downloaded file to this.
@@ -297,159 +299,159 @@
    </package>
    <package>
     <name>express</name>
-    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/express-3.0.3.tgz</url>
-    <format>npm</format>
-    <md5>79d614fefed24df49b0efad4111f6cf4</md5>
+    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/npm-sources/express-3.0.3.tar.gz</url>
+    <format>npm-cached</format>
+    <md5>3b5cb61a9f2b9bbd0728ab0b411bb105</md5>
   </package>
   <package>
     <name>winston</name>
-    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/winston-0.6.2.tgz</url>
-    <format>npm</format>
-    <md5>8e9e33f1a8ac48e36c4d41fd17794a4b</md5>
+    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/npm-sources/winston-0.6.2.tar.gz</url>
+    <format>npm-cached</format>
+    <md5>51a86c9b958c9114226974df462f0fe4</md5>
   </package>
   <package>
     <name>underscore</name>
-    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/underscore-1.4.3.tgz</url>
-    <format>npm</format>
-    <md5>49b1b1ef4da4fd3f32b9a83e8ff5630a</md5>
+    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/npm-sources/underscore-1.4.3.tar.gz</url>
+    <format>npm-cached</format>
+    <md5>e6f1b25e5e8a8fbbbebc4e069ca7a760</md5>
   </package>
   <package>
     <name>cluster</name>
-    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/cluster-0.7.7.tgz</url>
-    <format>npm</format>
-    <md5>86c1c7585ed7203fa3a3595a6574b423</md5>
+    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/npm-sources/cluster-0.7.7.tar.gz</url>
+    <format>npm-cached</format>
+    <md5>3df919d0c51f8d8f28b28a191014c3da</md5>
   </package>
   <package>
     <name>async</name>
-    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/async-0.1.22.tgz</url>
-    <format>npm</format>
-    <md5>5189fe6248a510d600c25e7d4b49ddba</md5>
+    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/npm-sources/async-0.1.22.tar.gz</url>
+    <format>npm-cached</format>
+    <md5>99f09b23e932ebda90c6ed215d0affdc</md5>
   </package>
   <package>
     <name>mime</name>
-    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/mime-1.2.9.tgz</url>
-    <format>npm</format>
-    <md5>40801e98c1107519eb8e234019f6444a</md5>
+    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/npm-sources/mime-1.2.9.tar.gz</url>
+    <format>npm-cached</format>
+    <md5>530bf9ef8379c9610170071f33555dbd</md5>
   </package>
   <package>
     <name>debug</name>
-    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/debug-0.7.0.tgz</url>
-    <format>npm</format>
-    <md5>42b6022998d5306446645c5289ec24c5</md5>
+    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/npm-sources/debug-0.7.0.tar.gz</url>
+    <format>npm-cached</format>
+    <md5>fb325bf02d5a64eeccd9addb4d75a97a</md5>
   </package>
   <package>
     <name>kue</name>
-    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/kue-0.5.0.tgz</url>
-    <format>npm</format>
-    <md5>6a1ad10276b80d7087d69f63120c3b83</md5>
+    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/npm-sources/kue-0.5.0.tar.gz</url>
+    <format>npm-cached</format>
+    <md5>6c477fc7937376eda70ffe3740f28def</md5>
   </package>
   <package>
     <name>axon</name>
-    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/axon-0.5.0.tgz</url>
-    <format>npm</format>
-    <md5>e0dabc0d4728e094c6e2792480787e17</md5>
+    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/npm-sources/axon-0.5.0.tar.gz</url>
+    <format>npm-cached</format>
+    <md5>6a0fe412a60c6f404383204d7460a492</md5>
   </package>
   <package>
     <name>redis</name>
-    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/redis-0.8.3.tgz</url>
-    <format>npm</format>
-    <md5>6b12d28e9ffcec8e027294e3d066c199</md5>
+    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/npm-sources/redis-0.8.3.tar.gz</url>
+    <format>npm-cached</format>
+    <md5>18245e4b52467384d44a6c7faf6a12b5</md5>
   </package>
   <package>
     <name>request</name>
-    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/request-2.12.0.tgz</url>
-    <format>npm</format>
-    <md5>e3ed48005e0d11bc4385be9c96f7cee9</md5>
+    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/npm-sources/request-2.12.0.tar.gz</url>
+    <format>npm-cached</format>
+    <md5>a98c4430afb1d6d0bfa648c729bed0e5</md5>
   </package>
   <package>
     <name>restler</name>
-    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/restler-2.0.1.tgz</url>
-    <format>npm</format>
-    <md5>e9ea18d49431ec4d3e0831bfc8e455a1</md5>
+    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/npm-sources/restler-2.0.1.tar.gz</url>
+    <format>npm-cached</format>
+    <md5>eef5d9420defd397d8b30da958a37245</md5>
     <patches>
       <patch strip="2">restler_2.0.1.patch</patch>
     </patches>
   </package>
   <package>
     <name>JSONPath</name>
-    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/JSONPath-0.9.1.tgz</url>
-    <format>npm</format>
-    <md5>ddde227f039fca0af0d6fb161a1f9b7a</md5>
+    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/npm-sources/JSONPath-0.9.1.tar.gz</url>
+    <format>npm-cached</format>
+    <md5>3ce6e49fe0d9b7eb321ce77a3cb41362</md5>
   </package>
   <package>
     <name>crypto</name>
-    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/crypto-0.0.3.tgz</url>
-    <format>npm</format>
-    <md5>c41d642a53ca991e750863f103cd85b5</md5>
+    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/npm-sources/crypto-0.0.3.tar.gz</url>
+    <format>npm-cached</format>
+    <md5>a4ee9c8f51a40383f84d56d021b02680</md5>
   </package>
   <package>
     <name>helenus</name>
-    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/helenus-0.6.2.tgz</url>
-    <format>npm</format>
-    <md5>aab099afa36b09dfde8b4d71f60f666d</md5>
+    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/npm-sources/helenus-0.6.2.tar.gz</url>
+    <format>npm-cached</format>
+    <md5>256eac982a5317c3534f295c5e51be7b</md5>
   </package>
   <package>
     <name>ssh2</name>
-    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/ssh2-0.2.12.tgz</url>
-    <format>npm</format>
-    <md5>2b5393f54cb5f163a5ee53ba85243681</md5>
+    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/npm-sources/ssh2-0.2.12.tar.gz</url>
+    <format>npm-cached</format>
+    <md5>a27105c1953a1cf976c7f96c8870ea25</md5>
   </package>
   <package>
     <name>uuid-js</name>
-    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/uuid-js-0.7.4.tgz</url>
-    <format>npm</format>
-    <md5>4d1920d2bc9d8ab279baad3f0226ff41</md5>
+    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/npm-sources/uuid-js-0.7.4.tar.gz</url>
+    <format>npm-cached</format>
+    <md5>a335321d78a4943801baeba9dabb76dd</md5>
   </package>
   <package>
     <name>xml2js</name>
-    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/xml2js-0.2.3.tgz</url>
-    <format>npm</format>
-    <md5>49af3a50d17c76d846d8adecd42ded41</md5>
+    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/npm-sources/xml2js-0.2.3.tar.gz</url>
+    <format>npm-cached</format>
+    <md5>11325420340683e5018a519f6e873bea</md5>
     <patches>
       <patch strip="2">xml2js_0.2.3.patch</patch>
     </patches>
   </package>
   <package>
     <name>redis-rstream</name>
-    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/redis-rstream-0.1.2.tgz</url>
-    <format>npm</format>
-    <md5>5f2325013aaa4709a13ab7d608d3935d</md5>
+    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/npm-sources/redis-rstream-0.1.2.tar.gz</url>
+    <format>npm-cached</format>
+    <md5>800a74ec6799b0cbbf571eb56c9c7b2b</md5>
   </package>
   <package>
     <name>connect-redis</name>
-    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/connect-redis-1.4.5.tgz</url>
-    <format>npm</format>
-    <md5>1c298617219e8d622b9bfff937055c2f</md5>
+    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/npm-sources/connect-redis-1.4.5.tar.gz</url>
+    <format>npm-cached</format>
+    <md5>e4cd015259bf49433dc031e662deb08c</md5>
     <patches>
       <patch strip="2">connect-redis_1.4.5.patch</patch>
     </patches>
   </package>
   <package>
     <name>request-timeout</name>
-    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/request-timeout-0.0.2.tgz</url>
-    <format>npm</format>
-    <md5>6d459246c1c9a614f6503e3a892e4a53</md5>
+    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/npm-sources/request-timeout-0.0.2.tar.gz</url>
+    <format>npm-cached</format>
+    <md5>9828434eca46ed65c8ca25ba38f9596f</md5>
   </package>
   <package>
     <name>node-dir</name>
-    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/node-dir-0.1.5.tgz</url>
-    <format>npm</format>
-    <md5>c56d5282783a6d5e6fe99a5cacc1010a</md5>
+    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/npm-sources/node-dir-0.1.5.tar.gz</url>
+    <format>npm-cached</format>
+    <md5>819631da387c9995d57809610e09d904</md5>
     <patches>
       <patch strip="1">node-dir_0.1.5.patch</patch>
     </patches>
   </package>
   <package>
     <name>data2xml</name>
-    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/data2xml-0.9.0.tgz</url>
-    <format>npm</format>
-    <md5>63fd96b3130c8d425e0ebe2a2436c4d4</md5>
+    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/npm-sources/data2xml-0.9.0.tar.gz</url>
+    <format>npm-cached</format>
+    <md5>302df43eb789e5386a804dd0a5c97ca1</md5>
   </package>
   <package>
     <name>pretty-data</name>
-    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/pretty-data-0.40.0.tgz</url>
-    <format>npm</format>
-    <md5>666e31932bbc0f49374e2e11c253cd10</md5>
+    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/npm-sources/pretty-data-0.40.0.tar.gz</url>
+    <format>npm-cached</format>
+    <md5>ab61d74658789f1b39030e300c1fe997</md5>
   </package>
   <package>
     <name>backbone-v1.1.2</name>
@@ -554,9 +556,9 @@
   </package>
   <package>
     <name>ipv6</name>
-    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/ipv6-3.1.1.tgz</url>
-    <format>npm</format>
-    <md5>0153d58d82392210fb4ca01cf60d2aab</md5>
+    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/npm-sources/ipv6-3.1.1.tar.gz</url>
+    <format>npm-cached</format>
+    <md5>84fab87d6290e4a310ddc12c042d855f</md5>
   </package>
   <package>
     <name>require</name>
