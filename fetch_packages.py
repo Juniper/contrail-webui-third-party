@@ -107,6 +107,20 @@ def ProcessPackage(pkg):
     url = str(pkg['url'])
     filename = getFilename(pkg, url)
     ccfile = _PACKAGE_CACHE + '/' + filename
+    if pkg.format == 'npm-cached':
+        try:
+            shutil.rmtree(str(_PACKAGE_CACHE + '/' + pkg['name']))
+        except OSError as exc:
+            pass
+        try:
+            os.makedirs(_NODE_MODULES)
+        except OSError as exc:
+            if exc.errno == errno.EEXIST:
+                pass
+            else:
+                print 'mkdirs of ' + _NODE_MODULES + ' failed.. Exiting..'
+                return
+        ccfile = _NODE_MODULES + '/' + filename
     DownloadPackage(url, ccfile, pkg.md5)
 
     #
@@ -119,7 +133,7 @@ def ProcessPackage(pkg):
     if unpackdir:
         dest = str(unpackdir)
     else:
-        if pkg.format == 'tgz':
+        if pkg.format == 'tgz' or pkg.format == 'npm-cached':
             dest = getTarDestination(ccfile, 'z')
         elif pkg.format == 'tbz':
             dest = getTarDestination(ccfile, 'j')
@@ -151,6 +165,7 @@ def ProcessPackage(pkg):
             pass
         
 
+    cmd = None
     if pkg.format == 'tgz':
         cmd = ['tar', 'zxvf', ccfile]
     elif pkg.format == 'tbz':
@@ -161,6 +176,8 @@ def ProcessPackage(pkg):
         cmd = ['npm', 'install', ccfile, '--prefix', _PACKAGE_CACHE]
     elif pkg.format == 'file':
         cmd = ['cp', '-af', ccfile, dest]
+    elif pkg.format == 'npm-cached':
+        cmd = ['tar', 'zxvf', ccfile, '-C', _NODE_MODULES]
     else:
         print 'Unexpected format: %s' % (pkg.format)
         return
@@ -187,13 +204,27 @@ def ProcessPackage(pkg):
             else:
 		try:
                    p = subprocess.Popen(cmd, cwd = cd)
-                   p.wait()
+                   ret = p.wait()
+                   if ret is not 0:
+                       sys.exit('Terminating: ProcessPackage with return code: %d', ret);
                    cmd = npmCmd
 		except OSError:
 		   print ' '.join(cmd) + ' could not be executed, bailing out!'
 		   return
+
         p = subprocess.Popen(cmd, cwd = cd)
-        p.wait()
+        ret = p.wait()
+        if ret is not 0:
+            sys.exit('Terminating: ProcessPackage with return code: %d', ret);
+
+        if pkg.format == 'npm-cached':
+            try:
+                os.remove(ccfile);
+            except OSError as exc:
+                if exc.errno == errno.ENOENT:
+                    pass
+                else:
+                    print 'rmtree of ' + ccfile + ' failed with errno ' + str(exc.errno)
 
     if rename and dest:
         os.rename(dest, str(rename))
