@@ -567,4 +567,15 @@
     <format>file</format>
     <md5>a0fb07562ceae36e8342f297e427f28e</md5>
   </package>
+  <package>
+    <name>Tristate</name>
+    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/tristate-master.zip</url>
+    <local-filename>tristate-master.zip</local-filename>
+    <format>zip</format>
+    <md5>37e1be0a5b803b5cb7bf6862efe1d9cf</md5>
+    <rename>tristate</rename>
+    <patches>
+        <patch strip="1">tristate.patch</patch>
+    </patches>
+  </package>
 </packages>

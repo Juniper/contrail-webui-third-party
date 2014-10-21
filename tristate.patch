@@ -1,0 +1,17 @@
+diff -Naur old/tristate/jquery.tristate.js new/tristate/jquery.tristate.js
+--- old/tristate/jquery.tristate.js	2014-02-10 10:14:40.000000000 -0800
++++ new/tristate/jquery.tristate.js	2014-10-20 11:07:57.000000000 -0700
+@@ -43,9 +43,10 @@
+ 				}
+ 				
+ 				switch (that.options.state) {
+-					case true:  that.options.state = null; break;
+-					case false: that.options.state = true; break;
+-					default:    that.options.state = false; break;
++					case true:  that.options.state = false; break;
++					case false: that.options.state = null; break;
++					case null: that.options.state = true; break;
++					default:    that.options.state = true; break;
+ 				}
+ 
+ 				that._refresh(that.options.change);
