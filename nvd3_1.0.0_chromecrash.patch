@@ -1,0 +1,21 @@
+diff -Naur old/nvd3/nv.d3.js new/nvd3/nv.d3.js
+--- old/nvd3/nv.d3.js	2014-10-31 17:31:14.000000000 +0530
++++ new/nvd3/nv.d3.js	2014-10-31 17:48:55.000000000 +0530
+@@ -10594,7 +10594,7 @@
+ 
+                 dispatch.elementMouseover({
+                   point: point,
+-                  series: series,
++                  series: data, //info: modified for getting the all the elements in series
+                   pos: [x(getX(point, i)) + margin.left, y(getY(point, i)) + margin.top],
+                   seriesIndex: d.series,
+                   pointIndex: i
+@@ -10607,7 +10607,7 @@
+ 
+                 dispatch.elementMouseout({
+                   point: point,
+-                  series: series,
++                  series: data, //info: modified for getting the all the elements in series
+                   seriesIndex: d.series,
+                   pointIndex: i
+                 });
