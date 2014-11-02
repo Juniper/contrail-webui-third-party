@@ -288,7 +288,7 @@
     <url>https://github.com/crlcu/multiselect/archive/master.zip</url>
     <local-filename>multiselect-master.zip</local-filename>
     <format>zip</format>
-    <md5>1ae9f6d849bea19abd12030f501cab1d</md5>
+    <md5>c910b04fbac7a41393af7913e3d4b88b</md5>
     <rename>multiselect-v1.0</rename>
     <patches>
       <patch strip="2">multiselect_v1.0.patch</patch>
