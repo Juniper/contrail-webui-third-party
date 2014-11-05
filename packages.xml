@@ -562,6 +562,27 @@
     <md5>84fab87d6290e4a310ddc12c042d855f</md5>
   </package>
   <package>
+    <name>easysoap</name>
+    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/npm-sources/easysoap-0.6.13.tar.gz</url>
+    <format>npm-cached</format>
+    <md5>d55131806c04583b088cf3e9e81e30f1</md5>
+    <patches>
+      <patch strip="2">easysoap_0.6.13.patch</patch>
+    </patches>
+  </package>
+  <package>
+    <name>promise</name>
+    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/npm-sources/promise-6.0.1.tar.gz</url>
+    <format>npm-cached</format>
+    <md5>03254e4322826f469666a9dded2990db</md5>
+  </package>
+  <package>
+    <name>deferred</name>
+    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/npm-sources/deferred-0.7.1.tar.gz</url>
+    <format>npm-cached</format>
+    <md5>3a49d25a5ba8faa00f521c28f7be7961</md5>
+  </package>
+  <package>
     <name>require</name>
     <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/require.js</url>
     <local-filename>require.js</local-filename>
