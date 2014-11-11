@@ -565,7 +565,7 @@
     <name>easysoap</name>
     <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/npm-sources/easysoap-0.6.13.tar.gz</url>
     <format>npm-cached</format>
-    <md5>16db299240a2d9e6e8e662bfb6588de7</md5>
+    <md5>8f11bc4224671d0c06d5b67031f7035e</md5>
     <patches>
       <patch strip="2">easysoap_0.6.13.patch</patch>
     </patches>
