@@ -285,11 +285,11 @@
   </package>
   <package>
     <name>multiselect</name>
-    <url>https://github.com/crlcu/multiselect/archive/master.zip</url>
-    <local-filename>multiselect-master.zip</local-filename>
-    <format>zip</format>
-    <md5>c910b04fbac7a41393af7913e3d4b88b</md5>
-    <rename>multiselect-v1.0</rename>
+    <url>https://github.com/crlcu/multiselect/archive/1.0.1.tar.gz</url>
+    <local-filename>multiselect-1.0.1.tar.gz</local-filename>
+    <format>tgz</format>
+    <md5>0f190372ecdbaeffa7730fa60b601a85</md5>
+    <rename>multiselect-v1.0.1</rename>
     <patches>
       <patch strip="2">multiselect_v1.0.patch</patch>
     </patches>
