@@ -345,6 +345,9 @@
     <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/npm-sources/kue-0.5.0.tar.gz</url>
     <format>npm-cached</format>
     <md5>6c477fc7937376eda70ffe3740f28def</md5>
+    <patches>
+      <patch strip="0">kue_0.5.0_1.patch</patch>
+    </patches>
   </package>
   <package>
     <name>axon</name>
@@ -357,6 +360,9 @@
     <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/npm-sources/redis-0.8.3.tar.gz</url>
     <format>npm-cached</format>
     <md5>18245e4b52467384d44a6c7faf6a12b5</md5>
+    <patches>
+      <patch strip="0">redis_0.8.3_1.patch</patch>
+    </patches>
   </package>
   <package>
     <name>request</name>
@@ -425,6 +431,7 @@
     <md5>e4cd015259bf49433dc031e662deb08c</md5>
     <patches>
       <patch strip="2">connect-redis_1.4.5.patch</patch>
+      <patch strip="0">connect-redis_1.4.5_2.patch</patch>
     </patches>
   </package>
   <package>
