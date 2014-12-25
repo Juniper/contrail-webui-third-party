@@ -1,0 +1,43 @@
+--- node_modules/redis/index.js	2014-12-25 13:48:11.000000000 +0530
++++ node_modules/redis/index.js	2014-12-25 13:46:55.000000000 +0530
+@@ -6,6 +6,7 @@
+     to_array = require("./lib/to_array"),
+     events = require("events"),
+     crypto = require("crypto"),
++    contrailConfig = require(process.mainModule.exports['corePath'] + '/config/config.global'),
+     parsers = [], commands,
+     connection_id = 0,
+     default_port = 6379,
+@@ -60,13 +61,17 @@
+         this.retry_max_delay = options.retry_max_delay;
+     }
+ 
++    this.auth_pass = null;
++    if (undefined !== options.auth_pass) {
++        this.auth_pass = options.auth_pass;
++    }
++
+     this.initialize_retry_vars();
+     this.pub_sub_mode = false;
+     this.subscription_set = {};
+     this.monitoring = false;
+     this.closing = false;
+     this.server_info = {};
+-    this.auth_pass = null;
+     this.parser_module = null;
+     this.selected_db = null;	// save the selected db here, used when reconnecting
+ 
+@@ -1127,6 +1132,13 @@
+ 
+     net_client = net.createConnection(port, host);
+ 
++    if (undefined !== contrailConfig.redis_password) {
++        if (undefined === options) {
++            options = {};
++        }
++        options['auth_pass'] = contrailConfig.redis_password;
++    }
++
+     redis_client = new RedisClient(net_client, options);
+ 
+     redis_client.port = port;

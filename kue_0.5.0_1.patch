@@ -1,0 +1,43 @@
+--- node_modules/kue/node_modules/redis/index.js	2014-12-25 13:50:13.000000000 +0530
++++ node_modules/kue/node_modules/redis/index.js	2014-12-25 13:51:48.000000000 +0530
+@@ -5,6 +5,7 @@
+     Queue = require("./lib/queue"),
+     to_array = require("./lib/to_array"),
+     events = require("events"),
++    contrailConfig = require(process.mainModule.exports['corePath'] + '/config/config.global'),
+     parsers = [], commands,
+     connection_id = 0,
+     default_port = 6379,
+@@ -50,13 +51,17 @@
+     if (options.connect_timeout && !isNaN(options.connect_timeout) && options.connect_timeout > 0) {
+         this.connect_timeout = +options.connect_timeout;
+     }
++    this.auth_pass = null;
++    if (undefined !== options.auth_pass) {
++        this.auth_pass = options.auth_pass;
++    }
++
+     this.initialize_retry_vars();
+     this.pub_sub_mode = false;
+     this.subscription_set = {};
+     this.monitoring = false;
+     this.closing = false;
+     this.server_info = {};
+-    this.auth_pass = null;
+     this.parser_module = null;
+     this.selected_db = null;	// save the selected db here, used when reconnecting
+ 	
+@@ -1013,6 +1018,13 @@
+ 
+     net_client = net.createConnection(port, host);
+ 
++    if (undefined !== contrailConfig.redis_password) {
++        if (undefined === options) {
++            options = {};
++        }
++        options['auth_pass'] = contrailConfig.redis_password;
++    }
++
+     redis_client = new RedisClient(net_client, options);
+ 
+     redis_client.port = port;
