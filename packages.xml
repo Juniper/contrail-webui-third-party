@@ -261,7 +261,6 @@
     <rename>jnpr_slickgrid</rename>
     <patches>
       <patch strip="2">jnpr_slickgrid.patch</patch>
-      <patch strip="1">jnpr_slickgrid_OnUpdateData.patch</patch>
     </patches>
   </package>
   <package>
