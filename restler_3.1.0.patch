@@ -1,0 +1,30 @@
+--- node_modules/restler/lib/restler.js	2015-01-06 12:30:06.000000000 +0530
++++ node_modules/restler/lib/restler.js	2015-01-06 12:32:16.000000000 +0530
+@@ -71,6 +71,7 @@
+   }
+ 
+   var proto = (this.url.protocol == 'https:') ? https : http;
++  proto.globalAgent.maxSockets = Infinity;
+ 
+   this.request = proto.request({
+     host: this.url.hostname,
+@@ -197,6 +198,7 @@
+     }
+   },
+   _fireError: function(err, response) {
++    console.log(err.stack);
+     this._fireCancelTimeout();
+     this.emit('error', err, response);
+     this.emit('complete', err, response);
+@@ -428,9 +430,9 @@
+ try {
+   var xml2js = require('xml2js');
+ 
+-  parsers.xml = function(data, callback) {
++  parsers.xml = function(data, callback, options) {
+     if (data) {
+-      var parser = new xml2js.Parser();
++      var parser = new xml2js.Parser(options);
+       parser.parseString(data, function(err, data) {
+         if (err) {
+           err.message = 'Failed to parse XML body: ' + err.message;
