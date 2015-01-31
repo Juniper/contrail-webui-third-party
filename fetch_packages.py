@@ -206,7 +206,7 @@ def ProcessPackage(pkg):
                    p = subprocess.Popen(cmd, cwd = cd)
                    ret = p.wait()
                    if ret is not 0:
-                       sys.exit('Terminating: ProcessPackage with return code: %d', ret);
+                       sys.exit('Terminating: ProcessPackage with return code: %d' % ret);
                    cmd = npmCmd
 		except OSError:
 		   print ' '.join(cmd) + ' could not be executed, bailing out!'
@@ -215,7 +215,7 @@ def ProcessPackage(pkg):
         p = subprocess.Popen(cmd, cwd = cd)
         ret = p.wait()
         if ret is not 0:
-            sys.exit('Terminating: ProcessPackage with return code: %d', ret);
+            sys.exit('Terminating: ProcessPackage with return code: %d' % ret);
 
         if pkg.format == 'npm-cached':
             try:
