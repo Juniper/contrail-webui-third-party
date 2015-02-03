@@ -383,6 +383,9 @@
     <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/npm-sources/JSONPath-0.9.1.tar.gz</url>
     <format>npm-cached</format>
     <md5>3ce6e49fe0d9b7eb321ce77a3cb41362</md5>
+    <patches>
+      <patch strip="0">JSONPath_0.9.1.patch</patch>
+    </patches>
   </package>
   <package>
     <name>crypto</name>
