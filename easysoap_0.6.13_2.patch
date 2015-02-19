@@ -1,0 +1,54 @@
+--- old/contrail-webui-third-party/node_modules/easysoap/lib/wsdl.js	2015-02-12 18:58:54.000000000 +0530
++++ new/contrail-webui-third-party/node_modules/easysoap/lib/wsdl.js	2015-02-19 16:34:38.000000000 +0530
+@@ -1,3 +1,6 @@
++//Instead of converting wsdl into XMLDoc on every soap call,
++//Cache it in a hash map on first call and use the same for next calls
++wsdlXMLDocMap = {}; 
+ (function() {
+ 
+     "use strict";
+@@ -266,6 +269,23 @@
+     }
+ 
+ 
++    //Construct a key based on wsdl file path and hostname which will be used as a key in wsdlXMLDocMap 
++    //for maintaining cache of wsdl XMLDoc
++    function getWsdlCacheFileName(params) {
++        var cacheFileName = params.host + params.wsdl;
++            cacheFileName = cacheFileName.replace(/[^a-zA-Z 0-9]+/g, "");
++            cacheFileName = encodeURIComponent(cacheFileName);
++        return cacheFileName;
++    }
++
++    //Returns the wsdl as an XMlDoc
++    function getWsdlXMLDoc(params,wsdl) {
++        var wsdlObj;
++        var cacheFileName = getWsdlCacheFileName(params);
++        if(wsdlXMLDocMap[cacheFileName] == null)
++            wsdlXMLDocMap[cacheFileName] = new xmldoc.XmlDocument(wsdl);
++        return wsdlXMLDocMap[cacheFileName];
++    }
+ 
+     that.getMethodParams = function(params, opts) {
+ 
+@@ -279,7 +299,7 @@
+             getWsdl(params, opts)
+                 .done(function(wsdl) {
+ 
+-                    var wsdlObj     = new xmldoc.XmlDocument(wsdl);
++                    var wsdlObj = getWsdlXMLDoc(params,wsdl);
+ 
+                     var portTypes   = searchNode(wsdlObj,   'portType');
+                     var messages    = searchNode(wsdlObj,   'message');
+@@ -375,9 +395,10 @@
+ 
+             getWsdl(params, opts)
+                 .done(function(wsdl) {
++                    var wsdlObj = getWsdlXMLDoc(params,wsdl); 
+                     resolve({
+                         'short': ns,
+-                        'full' : getNamespaceByAttr(ns, new xmldoc.XmlDocument(wsdl))
++                        'full' : getNamespaceByAttr(ns, wsdlObj)
+                     });
+                 });
+         });
