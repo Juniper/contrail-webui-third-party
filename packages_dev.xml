@@ -69,6 +69,18 @@
     <md5>07f79245d51ac976e42b1d494a631164</md5>
   </package>
   <package>
+    <name>karma-requirejs</name>
+    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/karma-requirejs-0.2.2.tar.gz</url>
+    <format>npm</format>
+    <md5>fb2dd0669823877598f70f1558a51e87</md5>
+  </package>
+  <package>
+    <name>requirejs</name>
+    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/requirejs-2.1.15.tar.gz</url>
+    <format>npm</format>
+    <md5>385d336bf1c05758f33e317fb663dca0</md5>
+  </package>
+  <package>
     <name>karma</name>
     <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/karma-0.10.2.tgz</url>
     <format>npm</format>
