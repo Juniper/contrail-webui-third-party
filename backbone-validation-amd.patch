@@ -1,6 +1,6 @@
 diff -Naur old/backbone-validation-amd.js new/backbone-validation-amd.js
 --- old/backbone-validation-amd.js	2014-03-28 14:45:08.000000000 -0700
-+++ new/backbone-validation-amd.js	2014-09-05 14:04:36.000000000 -0700
++++ new/backbone-validation-amd.js	2014-12-19 12:44:12.000000000 -0800
 @@ -97,8 +97,8 @@
        // Returns an object with undefined properties for all
        // attributes on the model that has defined one or more
@@ -141,7 +141,23 @@ diff -Naur old/backbone-validation-amd.js new/backbone-validation-amd.js
                }
              });
    
-@@ -324,10 +327,10 @@
+@@ -299,13 +302,13 @@
+       // Mix in validation on a model whenever a model is
+       // added to a collection
+       var collectionAdd = function(model) {
+-        bindModel(this.view, model, this.options);
++        bindModel(this.view, model.attributes.model(), this.options);
+       };
+   
+       // Remove validation from a model whenever a model is
+       // removed from a collection
+       var collectionRemove = function(model) {
+-        unbindModel(model);
++        unbindModel(model.attributes.model());
+       };
+   
+       // Returns the public methods on Backbone.Validation
+@@ -324,20 +327,20 @@
          bind: function(view, options) {
            options = _.extend({}, defaultOptions, defaultCallbacks, options);
    
@@ -155,3 +171,34 @@ diff -Naur old/backbone-validation-amd.js new/backbone-validation-amd.js
              throw 'Before you execute the binding your view must have a model or a collection.\n' +
                    'See http://thedersen.com/projects/backbone-validation/#using-form-model-validation for more information.';
            }
+   
+-          if(model) {
++          if(view.model !== 'undefined' && model) {
+             bindModel(view, model, options);
+           }
+-          else if(collection) {
++          if(typeof collection !== 'undefined' && collection) {
+             collection.each(function(model){
+-              bindModel(view, model, options);
++              bindModel(view, model.attributes.model(), options);
+             });
+             collection.bind('add', collectionAdd, {view: view, options: options});
+             collection.bind('remove', collectionRemove);
+@@ -350,13 +353,13 @@
+           options = _.extend({}, options);
+           var model = options.model || view.model,
+               collection = options.collection || view.collection;
+-  
+-          if(model) {
++
++          if(view.model !== 'undefined' && model) {
+             unbindModel(model);
+           }
+-          else if(collection) {
++          if(typeof collection !== 'undefined' && collection) {
+             collection.each(function(model){
+-              unbindModel(model);
++              unbindModel(model.attributes.model());
+             });
+             collection.unbind('add', collectionAdd);
+             collection.unbind('remove', collectionRemove);
