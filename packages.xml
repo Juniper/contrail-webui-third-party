@@ -600,6 +600,12 @@
     <md5>3a49d25a5ba8faa00f521c28f7be7961</md5>
   </package>
   <package>
+    <name>jsondiffpatch</name>
+    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/npm-sources/jsondiffpatch-0.1.27.tar.gz</url>
+    <format>npm-cached</format>
+    <md5>e51886196545e955091da5449f1374b5</md5>
+  </package>
+  <package>
     <name>require</name>
     <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/require.js</url>
     <local-filename>require.js</local-filename>
