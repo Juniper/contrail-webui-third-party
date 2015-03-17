@@ -323,9 +323,9 @@
   </package>
   <package>
     <name>async</name>
-    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/npm-sources/async-0.1.22.tar.gz</url>
+    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/npm-sources/async-0.9.0.tar.gz</url>
     <format>npm-cached</format>
-    <md5>99f09b23e932ebda90c6ed215d0affdc</md5>
+    <md5>7d2114c0a68a713a863733898362edd1</md5>
   </package>
   <package>
     <name>mime</name>
