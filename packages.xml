@@ -624,4 +624,14 @@
         <patch strip="1">tristate.patch</patch>
     </patches>
   </package>
+  <package>
+    <name>bezier-gh-pages</name>
+    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/bezierjs.tar.gz</url>
+    <local-filename>bezierjs.tar.gz</local-filename>
+    <format>tgz</format>
+    <md5>8fd9f52bf2b16a1aff7deb1d044af9d3</md5>
+    <patches>
+      <patch strip="0">bezierjs-1.patch</patch>
+    </patches>
+  </package>
 </packages>
