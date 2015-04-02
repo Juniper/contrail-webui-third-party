@@ -642,4 +642,11 @@
       <patch strip="0">bezierjs-1.patch</patch>
     </patches>
   </package>
+  <package>
+    <name>uuid.js</name>
+    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/uuid.js</url>
+    <local-filename>uuid.js</local-filename>
+    <format>file</format>
+    <md5>213d235cb2d2084ebb5aa40ca893ae45</md5>
+  </package>
 </packages>
