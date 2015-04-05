@@ -261,6 +261,7 @@
     <rename>jnpr_slickgrid</rename>
     <patches>
       <patch strip="2">jnpr_slickgrid.patch</patch>
+      <patch strip="2">jnpr_slickgrid_1.patch</patch>
     </patches>
   </package>
   <package>

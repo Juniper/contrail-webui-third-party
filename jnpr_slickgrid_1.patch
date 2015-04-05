@@ -1,0 +1,22 @@
+diff -Naur old/contrail-webui-third-party/jnpr_slickgrid/slick.dataview.js new/contrail-webui-third-party/jnpr_slickgrid/slick.dataview.js
+--- old/contrail-webui-third-party/jnpr_slickgrid/slick.dataview.js	2015-04-04 13:03:19.000000000 -0700
++++ new/contrail-webui-third-party/jnpr_slickgrid/slick.dataview.js	2015-04-04 13:53:45.000000000 -0700
+@@ -124,6 +124,10 @@
+       return items;
+     }
+ 
++    function getFilteredItems() {
++      return filteredItems;
++    }
++
+     function setItems(data, objectIdProperty) {
+       if (objectIdProperty !== undefined) {
+         idProperty = objectIdProperty;
+@@ -984,6 +988,7 @@
+       "setPagingOptions": setPagingOptions,
+       "getPagingInfo": getPagingInfo,
+       "getItems": getItems,
++      "getFilteredItems": getFilteredItems,
+       "setItems": setItems,
+       "setFilter": setFilter,
+       "sort": sort,
