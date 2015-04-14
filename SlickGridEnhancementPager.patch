@@ -1,6 +1,6 @@
-diff -Naur old/contrail-webui-third-party/SlickGridEnhancementPager/slick.enhancementpager.js new/contrail-webui-third-party/slickgrid.enhancement.pager/slick.enhancementpager.js
---- old/contrail-webui-third-party/SlickGridEnhancementPager/slick.enhancementpager.js	2014-05-15 15:12:37.000000000 -0700
-+++ new/contrail-webui-third-party/slickgrid.enhancement.pager/slick.enhancementpager.js	2014-05-23 12:06:41.000000000 -0700
+diff -Naur old/contrail-webui-third-party/slickgrid.enhancement.pager/slick.enhancementpager.js new/contrail-webui-third-party/slickgrid.enhancement.pager/slick.enhancementpager.js
+--- old/contrail-webui-third-party/slickgrid.enhancement.pager/slick.enhancementpager.js	2012-09-30 16:10:48.000000000 -0700
++++ new/contrail-webui-third-party/slickgrid.enhancement.pager/slick.enhancementpager.js	2015-04-13 17:56:52.000000000 -0700
 @@ -1,253 +1,250 @@
 -﻿/**
 -* SlickGrid Enhancement Pager
@@ -448,9 +448,9 @@ diff -Naur old/contrail-webui-third-party/SlickGridEnhancementPager/slick.enhanc
 +								var total = results.total;
 +								var rows = results.data;
 +								
-+								if (rows.length > 0 && rows[0].id == undefined) {
++								if (rows.length > 0 && rows[0].cgrid == undefined) {
 +					            	$.each(rows, function (key, val) {
-+										rows[key].id = 'id_' + key;
++										rows[key].cgrid = 'id_' + key;
 +						            });
 +						        }
 +								
