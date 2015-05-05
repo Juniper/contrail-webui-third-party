@@ -224,6 +224,7 @@
       <patch strip="2">nvd3_1.0.0-beta.patch</patch>
       <patch strip="2">nvd3_1.1.15b_bulletChart.patch</patch>
       <patch strip="1">nvd3_1.0.0_chromecrash.patch</patch>
+      <patch strip="2">nvd3_1.0.0_bucketization.patch</patch>
     </patches>
   </package>
   <package>

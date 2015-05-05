@@ -1,0 +1,189 @@
+diff -Naur old/contrail-webui-third-party/nvd3/nv.d3.js new/contrail-webui-third-party/nvd3/nv.d3.js
+--- old/contrail-webui-third-party/nvd3/nv.d3.js 12:25:38.000000000 +0530
++++ new/contrail-webui-third-party/nvd3/nv.d3.js 15:39:18.000000000 +0530
+@@ -8,6 +8,9 @@
+ window.nv = nv;
+ 
+ nv.tooltip = {}; // For the tooltip system
++//When we open tooltip with a dealy, and with in that dealy if we call nvtooltip.cleanup, 
++//we need to clear the timer and shouldn't open popup
++nv.tooltip.clearedTooltip = false;
+ nv.utils = {}; // Utility subsystem
+ nv.models = {}; //stores all the possible models/components
+ nv.charts = {}; //stores all the ready to use charts
+@@ -228,6 +231,7 @@
+   };
+ 
+   nvtooltip.cleanup = function() {
++        nv.tooltip.clearedTooltip = true;
+ 
+       // Find the tooltips, mark them for removal by this class (so others cleanups won't find it)
+       var tooltips = document.getElementsByClassName('nvtooltip');
+@@ -4015,6 +4019,7 @@
+           })
+           .on('dblclick', function(d,i) {
+             dispatch.legendDblclick(d,i);
++            // d3.event.stopPropagation();
+           });
+       seriesEnter.append('circle')
+           .style('stroke-width', 2)
+@@ -9899,6 +9904,9 @@
+                     //return d.color || '#08519C'
+                     return color(d,i)
+                 } // accessor to get the point color
++    , getStroke = function(d,i) {
++        return d.stroke || 'none';
++    }
+     , getShape     = function(d) { return d.shape || 'circle' } // accessor to get point shape
+     , onlyCircles  = true // Set to false to use shapes
+     , forceX       = [] // List of numbers to Force into the X scale (ie. 0, or a max / min, etc.)
+@@ -9921,6 +9929,7 @@
+     , singlePoint  = false
+     , dispatch     = d3.dispatch('elementClick', 'elementDblClick','elementMouseover', 'elementMouseout')
+     , useVoronoi   = true
++    , useSizeAsRadius = false
+     , addDomainBuffer = false
+     ;
+ 
+@@ -10008,6 +10017,7 @@
+         minYDomain = 0;
+     //Info:Adjust the domain such that bubbles are not aligned on the edges in case of more than one point
+     if(addDomainBuffer == true && singlePoint == false && !isNaN(y.domain()[0]) && !isNaN(x.domain()[0])) {
++        //Info:Mark the xDomain as narrow,if the diff is less than 5% of xMax 
+         if(x.domain()[0] == 0 || Math.abs(xDomainDiff/x.domain()[1]*100) < 5)
+             x.domain([minXDomain, x.domain()[1] + x.domain()[1] * 0.05])
+         else
+@@ -10046,10 +10056,11 @@
+       //Info: If x/y is non numeric,display those bubbles at bottom-left corner
+       data = $.each(data,function(idx,obj) {
+           data[idx]['values']  = $.map(data[idx]['values'],function(currObj,idx) {
+-                if($.isNumeric(currObj['x']) == false)
++                if(!$.isNumeric(currObj['x']) || !$.isNumeric(currObj['y'])) {
+                     currObj['x'] = x.domain()[0];
+-                if($.isNumeric(currObj['y']) == false)
+                     currObj['y'] = y.domain()[0];
++                }
++
+                 return currObj;
+           });
+       });
+@@ -10263,7 +10274,23 @@
+                 var series = data[d.series],
+                     point  = series.values[i];
+ 
+-                dispatch.elementClick({
++                //As we refresh the chart on single-click/drill-down, double-click event 
++                //is not getting triggered,So adding a dealy of 300ms
++                setTimeout(function() {
++                    dispatch.elementClick({
++                        point: point,
++                        series: series,
++                        pos: [x(getX(point, i)) + margin.left, y(getY(point, i)) + margin.top],
++                        seriesIndex: d.series,
++                        pointIndex: i
++                        });
++                },300);
++              })
++              .on('dblclick', function(d,i) {
++                var series = data[d.series],
++                    point  = series.values[i];
++
++                dispatch.elementDblClick({
+                   point: point,
+                   series: series,
+                   pos: [x(getX(point, i)) + margin.left, y(getY(point, i)) + margin.top],
+@@ -10276,25 +10303,37 @@
+                 var series = data[d.series],
+                     point  = series.values[i];
+ 
+-                dispatch.elementMouseover({
+-                  point: point,
+-                  series: data, //info: modified for getting the all the elements in series
+-                  pos: [x(getX(point, i)) + margin.left, y(getY(point, i)) + margin.top],
+-                  seriesIndex: d.series,
+-                  pointIndex: i
+-                });
++                clearTimeout($(this).data('closeTimeoutId'));
++                var targetNode = $(this);
++                nv.tooltip.clearedTooltip = false; 
++                $(this).data('openTimeoutId', setTimeout(function() {
++                    if(nv.tooltip.clearedTooltip == true) {
++                        nv.tooltip.clearedTooltip = false;
++                        return;
++                    }
++                    dispatch.elementMouseover({
++                    point: point,
++                    series: data, //info: modified for getting the all the elements in series
++                    pos: [x(getX(point, i)) + margin.left, y(getY(point, i)) + margin.top],
++                    seriesIndex: d.series,
++                    pointIndex: i
++                    });
++                },500));
+               })
+               .on('mouseout', function(d,i) {
+                 if (needsUpdate || !data[d.series]) return 0; //check if this is a dummy point
+                 var series = data[d.series],
+                     point  = series.values[i];
+ 
+-                dispatch.elementMouseout({
+-                  point: point,
+-                  series: data, //info: modified for getting the all the elements in series
+-                  seriesIndex: d.series,
+-                  pointIndex: i
+-                });
++                clearTimeout($(this).data('openTimeoutId'));
++                $(this).data('closeTimeoutId',setTimeout(function() {
++                    dispatch.elementMouseout({
++                    point: point,
++                    series: data, //info: modified for getting the all the elements in series
++                    seriesIndex: d.series,
++                    pointIndex: i
++                    });
++                },0));
+               });
+           }
+ 
+@@ -10329,8 +10368,10 @@
+         points.enter().append('circle')
+             .attr('cx', function(d,i) { return x0(getX(d,i)) })
+             .attr('cy', function(d,i) { return y0(getY(d,i)) })
+-            .attr('r', function(d,i) { return Math.sqrt(z(getSize(d,i))/Math.PI) })
+-            .attr('fill', function(d,i) { return getColor(d,i)});
++            .attr('r', function(d,i) { return useSizeAsRadius == true ? getSize(d,i) : Math.sqrt(z(getSize(d,i))/Math.PI) })
++            .attr('fill', function(d,i) { return getColor(d,i)})
++            .style('stroke-width',2)
++            .style('stroke', function(d,i) { return getStroke(d,i); });
+         points.exit().remove();
+         groups.exit().selectAll('path.nv-point').transition()
+             .attr('cx', function(d,i) { return x(getX(d,i)) })
+@@ -10344,7 +10385,9 @@
+         points.transition()
+             .attr('cx', function(d,i) { return x(getX(d,i)) })
+             .attr('cy', function(d,i) { return y(getY(d,i)) })
+-            .attr('r', function(d,i) { return Math.sqrt(z(getSize(d,i))/Math.PI) })
++            .attr('r', function(d,i) { return useSizeAsRadius == true ? getSize(d,i) : Math.sqrt(z(getSize(d,i))/Math.PI) })
++            .style('stroke-width',2)
++            .style('stroke', function(d,i) { return getStroke(d,i); })
+             .attr('fill',function(d,i) { return getColor(d,i)});
+ 
+       } else {
+@@ -10566,6 +10609,12 @@
+     return chart;
+   };
+ 
++  chart.useSizeAsRadius = function(_) {
++    if (!arguments.length) return useSizeAsRadius;
++    useSizeAsRadius = _;
++    return chart;
++  }
++
+   chart.useVoronoi= function(_) {
+     if (!arguments.length) return useVoronoi;
+     useVoronoi = _;
+@@ -13264,4 +13313,4 @@
+ 
+   return chart;
+ }
+-})();
+\ No newline at end of file
++})();
