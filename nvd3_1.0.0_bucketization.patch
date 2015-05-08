@@ -11,14 +11,6 @@ diff -Naur old/contrail-webui-third-party/nvd3/nv.d3.js new/contrail-webui-third
  nv.utils = {}; // Utility subsystem
  nv.models = {}; //stores all the possible models/components
  nv.charts = {}; //stores all the ready to use charts
-@@ -228,6 +231,7 @@
-   };
- 
-   nvtooltip.cleanup = function() {
-+        nv.tooltip.clearedTooltip = true;
- 
-       // Find the tooltips, mark them for removal by this class (so others cleanups won't find it)
-       var tooltips = document.getElementsByClassName('nvtooltip');
 @@ -4015,6 +4019,7 @@
            })
            .on('dblclick', function(d,i) {
