@@ -362,6 +362,7 @@
     <md5>18245e4b52467384d44a6c7faf6a12b5</md5>
     <patches>
       <patch strip="0">redis_0.8.3_1.patch</patch>
+      <patch strip="0">redis_0.8.3_2.patch</patch>
     </patches>
   </package>
   <package>
