@@ -1,0 +1,16 @@
+diff -Naur old/contrail-webui-third-party/joint-v0.9.2/dist/joint.clean.js new/contrail-webui-third-party/joint-v0.9.2/dist/joint.clean.js
+--- old/contrail-webui-third-party/joint-v0.9.2/dist/joint.clean.js	2015-06-17 15:35:12.000000000 -0700
++++ new/contrail-webui-third-party/joint-v0.9.2/dist/joint.clean.js	2015-06-17 15:43:59.000000000 -0700
+@@ -8,11 +8,7 @@
+ //      JointJS library.
+ //      (c) 2011-2013 client IO
+ 
+-if (typeof exports === 'object') {
+-
+-    var _ = require('lodash');
+-}
+-
++var _ = require('lodash');
+ 
+ // Global namespace.
+ 

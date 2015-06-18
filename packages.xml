@@ -557,6 +557,9 @@
     <format>tgz</format>
     <md5>76a2e67cf8f0840637abbfd2ae127e01</md5>
     <rename>joint-v0.9.2</rename>
+    <patches>
+     <patch strip="2">joint-v0.9.2.patch</patch>
+    </patches>
   </package>
   <package>
     <name>Dagre</name>
