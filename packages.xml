@@ -651,4 +651,10 @@
     <format>file</format>
     <md5>213d235cb2d2084ebb5aa40ca893ae45</md5>
   </package>
+  <package>
+    <name>moment-2.10.3</name>
+    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/npm-sources/moment-2.10.3.tar.gz</url>
+    <format>npm-cached</format>
+    <md5>465a2d6f2d5a692ddefcf258e18f1db1</md5>
+  </package>
 </packages>
