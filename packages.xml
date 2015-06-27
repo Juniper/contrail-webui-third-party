@@ -214,6 +214,14 @@
     <rename>font-awesome-v3.2.1</rename>
   </package>
   <package>
+    <name>font-awesome-v4.3.0</name>
+    <url>https://github.com/FortAwesome/Font-Awesome/archive/v4.3.0.tar.gz</url>
+    <local-filename>Font-Awesome-4.3.0.tar.gz</local-filename>
+    <format>tgz</format>
+    <md5>b61c254e706c12af0d0a9c5044ec6f0c</md5>
+    <rename>font-awesome-v4.3.0</rename>
+  </package>
+  <package>
     <name>nvd3-v1.0.0-beta</name>
     <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/nvd3-v1.0.0-beta.tar.gz</url>
     <local-filename>v1.0.0-beta.tar.gz</local-filename>
@@ -557,6 +565,14 @@
     <format>tgz</format>
     <md5>76a2e67cf8f0840637abbfd2ae127e01</md5>
     <rename>joint-v0.9.2</rename>
+  </package>
+  <package>
+    <name>JointJS</name>
+    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/joint-0.9.3.tar.gz</url>
+    <local-filename>joint-v0.9.3.tar.gz</local-filename>
+    <format>tgz</format>
+    <md5>db6b5ae4e70bf746232ca46017379810</md5>
+    <rename>joint-v0.9.3</rename>
   </package>
   <package>
     <name>Dagre</name>
