@@ -1,0 +1,11 @@
+--- node_modules/kue/node_modules/redis/index.js	2015-07-02 15:05:53.000000000 +0530
++++ node_modules/kue/node_modules/redis/index.js	2015-07-02 15:06:19.000000000 +0530
+@@ -5,7 +5,7 @@
+     Queue = require("./lib/queue"),
+     to_array = require("./lib/to_array"),
+     events = require("events"),
+-    contrailConfig = require(process.mainModule.exports['corePath'] + '/config/config.global'),
++    contrailConfig = process.mainModule.exports["config"],
+     parsers = [], commands,
+     connection_id = 0,
+     default_port = 6379,
