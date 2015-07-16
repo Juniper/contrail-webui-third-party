@@ -1,0 +1,12 @@
+diff -Naur old/contrail-webui-third-party/nvd3-v1.8.1/build/nv.d3.js new/contrail-webui-third-party/nvd3-v1.8.1/build/nv.d3.js
+--- old/contrail-webui-third-party/nvd3-v1.8.1/build/nv.d3.js	2015-06-15 12:20:08.000000000 -0700
++++ new/contrail-webui-third-party/nvd3-v1.8.1/build/nv.d3.js	2015-07-15 10:33:11.000000000 -0700
+@@ -147,7 +147,7 @@
+ }
+ 
+ if (typeof(window) !== 'undefined') {
+-  window.nv = nv;
++  window.nvd3v181 = nv;
+ }
+ /* Facade for queueing DOM write operations
+  * with Fastdom (https://github.com/wilsonpage/fastdom)

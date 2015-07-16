@@ -198,6 +198,14 @@
     <rename>d3</rename>
   </package>
   <package>
+    <name>d3-v3.5.6</name>
+    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/d3-3.5.6.tar.gz</url>
+    <local-filename>d3-3.5.6.tar.gz</local-filename>
+    <format>tgz</format>
+    <md5>9d582078fb9bcb5d62467147dd1fdaec</md5>
+    <rename>d3-v3.5.6</rename>
+  </package>
+  <package>¬
     <name>datetimepicker-2.1.9</name>
     <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/datetimepicker-2.1.9.tar.gz</url>
     <local-filename>datetimepicker-2.1.9.tar.gz</local-filename>
@@ -215,7 +223,7 @@
   </package>
   <package>
     <name>font-awesome-v4.3.0</name>
-    <url>https://github.com/FortAwesome/Font-Awesome/archive/v4.3.0.tar.gz</url>
+    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/Font-Awesome-4.3.0.tar.gz</url>
     <local-filename>Font-Awesome-4.3.0.tar.gz</local-filename>
     <format>tgz</format>
     <md5>b61c254e706c12af0d0a9c5044ec6f0c</md5>
@@ -233,6 +241,17 @@
       <patch strip="2">nvd3_1.1.15b_bulletChart.patch</patch>
       <patch strip="1">nvd3_1.0.0_chromecrash.patch</patch>
       <patch strip="2">nvd3_1.0.0_bucketization.patch</patch>
+    </patches>
+  </package>
+  <package>
+    <name>nvd3-v1.8.1</name>
+    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/nvd3-1.8.1.tar.gz</url>
+    <local-filename>nvd3-1.8.1.tar.gz</local-filename>
+    <format>tgz</format>
+    <md5>4f4880148fd1222f85f605bbbc4e4e57</md5>
+    <rename>nvd3-v1.8.1</rename>
+    <patches>
+      <patch strip="2">nvd3-v1.8.1.patch</patch>
     </patches>
   </package>
   <package>
