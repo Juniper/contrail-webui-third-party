@@ -1,0 +1,16 @@
+diff -Naur old/joint-v0.9.3/dist/joint.clean.js new/joint-v0.9.3/dist/joint.clean.js
+--- old/joint-v0.9.3/dist/joint.clean.js	2015-02-03 11:38:44.000000000 -0800
++++ new/joint-v0.9.3/dist/joint.clean.js	2015-08-21 11:46:28.000000000 -0700
+@@ -8,11 +8,7 @@
+ //      JointJS library.
+ //      (c) 2011-2013 client IO
+ 
+-if (typeof exports === 'object') {
+-
+-    var _ = require('lodash');
+-}
+-
++var _ = require('lodash').noConflict();
+ 
+ // Global namespace.
+ 
