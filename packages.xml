@@ -207,11 +207,11 @@
   </package>
   <package>¬
     <name>datetimepicker-2.1.9</name>
-    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/datetimepicker-2.1.9.tar.gz</url>
-    <local-filename>datetimepicker-2.1.9.tar.gz</local-filename>
+    <url>https://github.com/xdan/datetimepicker/archive/2.4.5.tar.gz</url>
+    <local-filename>datetimepicker-2.4.5.tar.gz</local-filename>
     <format>tgz</format>
-    <md5>bf165e538fde4c098db650205fa604bb</md5>
-    <rename>datetimepicker-v2.1.9</rename>
+    <md5>e20bc1a229ec0bb80a7e2fcf85cb6b9b</md5>
+    <rename>datetimepicker-v2.4.5</rename>
   </package>
   <package>
     <name>font-awesome</name>
