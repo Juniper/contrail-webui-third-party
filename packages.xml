@@ -376,6 +376,7 @@
     <patches>
       <patch strip="0">kue_0.5.0_1.patch</patch>
       <patch strip="0">kue_0.5.0_2.patch</patch>
+      <patch strip="0">kue_0.5.0_3.patch</patch>
     </patches>
   </package>
   <package>

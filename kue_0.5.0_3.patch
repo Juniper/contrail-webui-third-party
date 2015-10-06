@@ -1,0 +1,47 @@
+--- node_modules/kue/lib/http/index.js	2015-10-06 12:57:16.000000000 +0530
++++ node_modules/kue/lib/http/index.js	2015-10-06 13:10:48.000000000 +0530
+@@ -10,11 +10,41 @@
+  */
+ 
+ var express = require('express');
++var fs = require('fs');
++var corePath = process.mainModule.exports['corePath'];
++var contrailConfig = process.mainModule.exports.config;
++var userList = contrailConfig.staticAuth;
++
++var options = {
++    key:fs.readFileSync(corePath + '/keys/cs-key.pem'),
++    cert:fs.readFileSync(corePath + '/keys/cs-cert.pem')
++};
++
++var app = express.createServer(options);
++app.use(express.basicAuth(function(user, pass, callback) {
++    if ((null == userList) || (!userList.length)) {
++        callback(null, false);
++        return;
++    }
++    var userListCnt = userList.length;
++    for (var i = 0; i < userListCnt; i++) {
++        if (null == userList[i]) {
++            continue;
++        }
++        if ((user == userList[i]['username']) &&
++            (pass == userList[i]['password'])) {
++            break;
++        }
++    }
++    if (i == userListCnt) {
++        callback(null, false);
++        return;
++    }
++    callback(null, true);
++}));
+ 
+ // setup
+-
+-var app = express.createServer()
+-  , provides = require('./middleware/provides')
++var provides = require('./middleware/provides')
+   , stylus = require('stylus')
+   , routes = require('./routes')
+   , json = require('./routes/json')
