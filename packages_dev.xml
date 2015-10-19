@@ -91,6 +91,9 @@
     <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/karma-qunit-0.1.1.tgz</url>
     <format>npm</format>
     <md5>4a672970b3bb75ce79d34d766b9b86e2</md5>
+    <patches>
+      <patch strip="2">karma-qunit_0.1.1.patch</patch>
+    </patches>
   </package>
   <package>
     <name>karma-coverage</name>
