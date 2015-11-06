@@ -683,4 +683,11 @@
     <format>npm-cached</format>
     <md5>465a2d6f2d5a692ddefcf258e18f1db1</md5>
   </package>
+  <package>
+    <name>helmet</name>
+    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/npm-sources/helmet-0.14.0.tar.gz</url>
+    <format>npm-cached</format>
+    <md5>8809cf6fbf7fee2083ede37ec97ad36d</md5>
+  </package>
+
 </packages>
