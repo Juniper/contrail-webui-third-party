@@ -1,0 +1,34 @@
+--- node_modules/kue/lib/http/index.js	2015-11-10 14:48:18.000000000 +0530
++++ node_modules/kue/lib/http/index.js	2015-11-10 14:57:46.000000000 +0530
+@@ -11,13 +11,29 @@
+ 
+ var express = require('express');
+ var fs = require('fs');
++var path = require('path');
+ var corePath = process.mainModule.exports['corePath'];
+ var contrailConfig = process.mainModule.exports.config;
+ var userList = contrailConfig.staticAuth;
+ 
++var keyFile = './keys/cs-key.pem';
++var certFile = './keys/cs-cert.pem';
++if (contrailConfig.server_options) {
++    keyFile = contrailConfig.server_options.key_file;
++    keyFile = path.normalize(keyFile);
++    if (false == fs.existsSync(keyFile)) {
++        keyFile = './keys/cs-key.pem';
++    }
++    certFile = contrailConfig.server_options.cert_file;
++    certFile = path.normalize(certFile);
++    if (false == fs.existsSync(certFile)) {
++        certFile = './keys/cs-cert.pem';
++    }
++}
++
+ var options = {
+-    key:fs.readFileSync(corePath + '/keys/cs-key.pem'),
+-    cert:fs.readFileSync(corePath + '/keys/cs-cert.pem')
++    key:fs.readFileSync(keyFile),
++    cert:fs.readFileSync(certFile)
+ };
+ 
+ var app = express.createServer(options);
