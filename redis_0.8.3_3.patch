@@ -1,0 +1,11 @@
+--- node_modules/redis/index.js	2015-08-27 09:45:03.000000000 +0530
++++ node_modules/redis/index.js	2015-08-27 09:46:08.000000000 +0530
+@@ -7,7 +7,7 @@
+     events = require("events"),
+     crypto = require("crypto"),
+     assert = require('assert'),
+-    contrailConfig = require(process.mainModule.exports['corePath'] + '/config/config.global'),
++    contrailConfig = process.mainModule.exports["config"],
+     parsers = [], commands,
+     connection_id = 0,
+     default_port = 6379,
