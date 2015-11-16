@@ -1,5 +1,5 @@
---- old/kue/lib/http/index.js	2015-11-11 09:17:16.000000000 +0530
-+++ new/kue/lib/http/index.js	2015-11-11 09:20:49.000000000 +0530
+--- node_modules/kue/lib/http/index.js	2015-11-11 09:17:16.000000000 +0530
++++ node_modules/kue/lib/http/index.js	2015-11-11 09:20:49.000000000 +0530
 @@ -11,13 +11,37 @@
  
  var express = require('express');
