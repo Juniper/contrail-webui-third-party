@@ -16,155 +16,171 @@
     -->
   <package>
     <name>grunt</name>
-    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/grunt-0.4.2.tgz</url>
-    <format>npm</format>
-    <md5>498002cc37b36c3fa43ad7fc10a503d8</md5>
-  </package>
-  <package>
-    <name>grunt-contrib-qunit</name>
-    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/grunt-contrib-qunit-0.3.0.tgz</url>
-    <format>npm</format>
-    <md5>3406304f99d7f2cf42ae8b7904b5e802</md5>
-  </package>
-  <!--<package>
-    <name>grunt-contrib-jshint</name>
-    <url>http://registry.npmjs.org/grunt-contrib-jshint/-/grunt-contrib-jshint-0.7.2.tgz</url>
-    <format>npm</format>
-    <md5>011b9ec7911905965df11ef7ffbbb683</md5>
-  </package>-->
-  <package>
-    <name>grunt-contrib-concat</name>
-    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/grunt-contrib-concat-0.3.0.tgz</url>
-    <format>npm</format>
-    <md5>338794409163f2bb5f08087de6dbc072</md5>
-  </package>
-  <package>
-    <name>grunt-qunit-junit</name>
-    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/grunt-qunit-junit-0.1.0.tgz</url>
-    <format>npm</format>
-    <md5>a10c6eb26a8cd1695e63de4bf3c61061</md5>
-  </package>
-  <package>
-    <name>grunt-node-qunit</name>
-    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/grunt-node-qunit-2.0.2.tgz</url>
-    <format>npm</format>
-    <md5>9e427217249d06b16094c857bcf692e5</md5>
-  </package>
-  <package>
-    <name>grunt-blanket-qunit</name>
-    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/grunt-blanket-qunit-0.2.0.tgz</url>
-    <format>npm</format>
-    <md5>800b2e19240847bebd10eb4c1593188d</md5>
-  </package>
-  <package>
-    <name>qunit</name>
-    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/qunit-0.5.18.tgz</url>
-    <format>npm</format>
-    <md5>97de423babfbe83e6fb9007467094493</md5>
-  </package>
-  <package>
-    <name>grunt-karma</name>
-    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/grunt-karma-0.6.2.tgz</url>
-    <format>npm</format>
-    <md5>07f79245d51ac976e42b1d494a631164</md5>
-  </package>
-  <package>
-    <name>karma-requirejs</name>
-    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/karma-requirejs-0.2.2.tar.gz</url>
-    <format>npm</format>
-    <md5>fb2dd0669823877598f70f1558a51e87</md5>
-  </package>
-  <package>
-    <name>requirejs</name>
-    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/requirejs-2.1.15.tar.gz</url>
-    <format>npm</format>
-    <md5>385d336bf1c05758f33e317fb663dca0</md5>
+    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/common/npm-sources/grunt-0.4.5.tar.gz</url>
+    <format>npm-cached</format>
+    <md5>fa416971a26aa56d6768b7c3f9d9f69d</md5>
   </package>
   <package>
     <name>karma</name>
-    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/karma-0.10.2.tgz</url>
+    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/common/karma-0.12.37.tar.gz</url>
     <format>npm</format>
-    <md5>8e82df2d372a3bd33489942a524da698</md5>
+    <md5>a94ab0c71a10d9975ca4c2a671107138</md5>
+    <patches>
+      <patch strip="2">karma_0.12.37.patch</patch>
+    </patches>
+  </package>
+  <package>
+    <name>phantomjs</name>
+    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/common/phantomjs-1.9.18.tar.gz</url>
+    <format>npm</format>
+    <md5>898f5c9feb3797b78d555b433bacaa13</md5>
+  </package>
+  <package>
+    <name>karma-phantomjs-launcher</name>
+    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/common/karma-phantomjs-launcher-0.2.1.tar.gz</url>
+    <format>npm</format>
+    <md5>d3cfc5a01e156ddd855923b2d60046f2</md5>
+  </package>
+  <package>
+    <name>grunt-contrib-qunit</name>
+    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/common/npm-sources/grunt-contrib-qunit-0.7.0.tar.gz</url>
+    <format>npm-cached</format>
+    <md5>7c525727cb3c4f02c37c9486638400ca</md5>
+  </package>
+  <package>
+    <name>grunt-contrib-jshint</name>
+    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/common/npm-sources/grunt-contrib-jshint-0.11.3.tar.gz</url>
+    <format>npm-cached</format>
+    <md5>6e4d14133e19cbe4468fee88948c425b</md5>
+  </package>
+  <package>
+    <name>grunt-contrib-concat</name>
+    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/common/npm-sources/grunt-contrib-concat-0.5.1.tar.gz</url>
+    <format>npm-cached</format>
+    <md5>dad50bd95b4eb6915160fa367b430e06</md5>
+  </package>
+  <package>
+    <name>grunt-qunit-junit</name>
+    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/common/npm-sources/grunt-qunit-junit-0.3.1.tar.gz</url>
+    <format>npm-cached</format>
+    <md5>0ce37e33b8d63a7e744e61f3750dccb8</md5>
+  </package>
+  <package>
+    <name>grunt-node-qunit</name>
+    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/common/npm-sources/grunt-node-qunit-2.0.2.tar.gz</url>
+    <format>npm-cached</format>
+    <md5>1555b0fb79032c8578b7486affd740ee</md5>
+  </package>
+  <package>
+    <name>grunt-blanket-qunit</name>
+    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/common/npm-sources/grunt-blanket-qunit-0.2.0.tar.gz</url>
+    <format>npm-cached</format>
+    <md5>6d2f4679f413cb6c6c762edba373bffd</md5>
+  </package>
+  <package>
+    <name>qunit</name>
+    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/common/npm-sources/qunit-0.7.7.tar.gz</url>
+    <format>npm-cached</format>
+    <md5>2c86dcfe990b8aa0925d727940dde5e8</md5>
+  </package>
+  <package>
+    <name>grunt-karma</name>
+    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/common/grunt-karma-0.8.2.tar.gz</url>
+    <format>npm</format>
+    <md5>d6c1a9f42484e7d4e13b0d8b5b33c5a4</md5>
+  </package>
+  <package>
+    <name>requirejs</name>
+    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/common/npm-sources/requirejs-2.1.20.tar.gz</url>
+    <format>npm-cached</format>
+    <md5>5e2121931b2a5730fc5887535fdad1b6</md5>
+  </package>
+  <package>
+    <name>karma-requirejs</name>
+    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/common/npm-sources/karma-requirejs-0.2.2.tar.gz</url>
+    <format>npm-cached</format>
+    <md5>701ffa5c3a9949bb5eda3def6edfb090</md5>
   </package>
   <package>
     <name>karma-qunit</name>
-    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/karma-qunit-0.1.1.tgz</url>
-    <format>npm</format>
-    <md5>4a672970b3bb75ce79d34d766b9b86e2</md5>
+    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/common/npm-sources/karma-qunit-0.1.7.tar.gz</url>
+    <format>npm-cached</format>
+    <md5>b1ad01e5b2b12abe0d621ec8c0e87dd2</md5>
     <patches>
-      <patch strip="2">karma-qunit_0.1.1.patch</patch>
+      <patch strip="2">karma-qunit_0.1.7.patch</patch>
     </patches>
   </package>
   <package>
     <name>karma-coverage</name>
-    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/karma-coverage-0.1.5.tgz</url>
-    <format>npm</format>
-    <md5>03d6e269adac4346eca7bc491ca5e9a6</md5>
+    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/common/npm-sources/karma-coverage-0.5.3.tar.gz</url>
+    <format>npm-cached</format>
+    <md5>fd2d0b08c07044a410f7fa90e356c1b8</md5>
+  </package>
+  <package>
+    <name>karma-html-reporter</name>
+    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/common/npm-sources/karma-html-reporter-0.2.7.tar.gz</url>
+    <format>npm-cached</format>
+    <md5>30c83aa4d4c1740e39ddd53cb6eca508</md5>
   </package>
   <package>
     <name>karma-htmlfile-reporter</name>
-    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/karma-htmlfile-reporter-0.1.0.tgz</url>
-    <format>npm</format>
-    <md5>cea7791c1cbfadf5d8a4b5a8cea32384</md5>
+    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/common/npm-sources/karma-htmlfile-reporter-0.2.2.tar.gz</url>
+    <format>npm-cached</format>
+    <md5>1cea8be3f018523f7f8d461c596ac3c7</md5>
   </package>
   <package>
     <name>karma-firefox-launcher</name>
-    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/karma-firefox-launcher-0.1.3.tgz</url>
-    <format>npm</format>
-    <md5>164e14127c8f6d8922f7c05da058d39e</md5>
-  </package>
-  <package>
-    <name>karma-phantomjs-launcher</name>
-    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/karma-phantomjs-launcher-0.1.2.tgz</url>
-    <format>npm</format>
-    <md5>d26f88d963b81edb1d397074d8212ca4</md5>
+    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/common/npm-sources/karma-firefox-launcher-0.1.6.tar.gz</url>
+    <format>npm-cached</format>
+    <md5>f07dac141e6ba20fe0014f9616f389a3</md5>
   </package>
   <package>
     <name>qunitjs</name>
-    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/qunitjs-1.14.0.tgz</url>
-    <format>npm</format>
-    <md5>1ffabcb4354231572b59b641c7e2a6c6</md5>
+    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/common/npm-sources/qunitjs-1.20.0.tar.gz</url>
+    <format>npm-cached</format>
+    <md5>c2c3fd9ea6f2c326bae8866127b5d144</md5>
   </package>
   <package>
     <name>karma-chrome-launcher</name>
-    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/karma-chrome-launcher-0.1.2.tgz</url>
-    <format>npm</format>
-    <md5>c3207f3addd51fbca97149bdb9d97a3e</md5>
+    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/common/npm-sources/karma-chrome-launcher-0.2.1.tar.gz</url>
+    <format>npm-cached</format>
+    <md5>5dab30da34cac59d24e04271e8964317</md5>
   </package>
   <package>
     <name>karma-html2js-preprocessor</name>
-    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/karma-html2js-preprocessor-0.1.0.tgz</url>
-    <format>npm</format>
-    <md5>0cc316d69f65d60533843120fb83ef72</md5>
+    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/common/npm-sources/karma-html2js-preprocessor-0.1.0.tar.gz</url>
+    <format>npm-cached</format>
+    <md5>17992ba98cf6c94a6bfa23297bb74985</md5>
   </package>
   <package>
     <name>karma-junit-reporter</name>
-    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/karma-junit-reporter-0.2.1.tgz</url>
-    <format>npm</format>
-    <md5>e14bed0f5653784ae94ccea90f02acab</md5>
+    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/common/npm-sources/karma-junit-reporter-0.3.8.tar.gz</url>
+    <format>npm-cached</format>
+    <md5>8ca0ad15c18a8ae9e9ba58cceb1ff7a4</md5>
   </package>
   <package>
     <name>karma-safari-launcher</name>
-    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/karma-safari-launcher-0.1.1.tgz</url>
-    <format>npm</format>
-    <md5>d016de43f191dbcbe71d18688ba2fdb9</md5>
+    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/common/npm-sources/karma-safari-launcher-0.1.1.tar.gz</url>
+    <format>npm-cached</format>
+    <md5>cbed7abe823a3f2b219d176611aa201f</md5>
   </package>
   <package>
     <name>sinon</name>
-    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/sinon-1.9.1.tgz</url>
-    <format>npm</format>
-    <md5>2f069514a4dee25913203c1498e9c38c</md5>
+    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/common/npm-sources/sinon-1.17.2.tar.gz</url>
+    <format>npm-cached</format>
+    <md5>6752f492828e5705c042ce93a0270999</md5>
   </package>
   <package>
     <name>karma-sinon</name>
-    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/karma-sinon-1.0.3.tgz</url>
-    <format>npm</format>
-    <md5>78bcd9e7561437e002beb69309b12e76</md5>
+    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/common/npm-sources/karma-sinon-1.0.4.tar.gz</url>
+    <format>npm-cached</format>
+    <md5>572a1f26f1318dc9108eafeb588b997d</md5>
   </package>
   <package>
     <name>grunt-cli</name>
-    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/grunt-cli-0.1.13.tgz</url>
-    <format>npm</format>
-    <md5>fe47325c8b6f48d752c33c9ea57d9217</md5>
+    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/common/npm-sources/grunt-cli-0.1.13.tar.gz</url>
+    <format>npm-cached</format>
+    <md5>4133427fd8313bcd6e1be869b8c72678</md5>
   </package>
 </packages>
+
