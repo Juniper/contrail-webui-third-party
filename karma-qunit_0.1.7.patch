@@ -1,0 +1,199 @@
+--- old/contrail-webui-third-party/node_modules/karma-qunit/lib/adapter.js	2015-11-03 14:33:59.000000000 -0800
++++ new/contrail-webui-third-party/node_modules/karma-qunit/lib/adapter.js	2015-11-03 14:31:05.000000000 -0800
+@@ -14,91 +14,125 @@
+   return config
+ }
+ 
+-function createQUnitStartFn (tc, runnerPassedIn) { // eslint-disable-line no-unused-vars
++  /**
++   * Additional Parameters to support running multiple tests in a single karma run
++   * @param tc (window.__karma__ )
++   * @param defObj (A promise that will resolve once all tests in a test file is executed.)
++   * @param loadRunner (Set to true when Karma is called for first time)
++   * @param runnerPassedIn
++   * @returns {Function}
++   */
++function createQUnitStartFn (tc, defObj, loadRunner, runnerPassedIn) { // eslint-disable-line no-unused-vars
+   return function () {
+     var FIXTURE_ID = 'qunit-fixture'
+     var runner = runnerPassedIn || window.QUnit
+-    var totalNumberOfTest = 0
++    var totalNumberOfTest = ifNull(window.QUnit.config.totalNumberOfTest, 0)
+     var timer = null
+     var testResult = {}
+     var supportsTestTracking = false
+ 
+-    if (runner.begin) {
+-      runner.begin(function (args) {
+-        if (args && typeof args.totalTests === 'number') {
+-          tc.info({ total: args.totalTests })
+-          supportsTestTracking = true
+-        }
+-      })
+-    }
++    if (loadRunner == undefined) loadRunner = true
+ 
+-    runner.done(function () {
+-      if (!supportsTestTracking) {
+-        tc.info({ total: totalNumberOfTest })
++    /**
++     * when loadRunner is set, test is running for the first time.
++     * set all the required CB that needs to be set only once in running life cycle.
++     */
++    if (loadRunner) {
++
++      if (runner.begin) {
++        runner.begin(function (args) {
++          if (args && typeof args.totalTests === 'number') {
++            tc.info({ total: args.totalTests})
++            supportsTestTracking = true
++          }
++        })
+       }
+ 
+-      tc.complete({
+-        coverage: window.__coverage__
++      runner.done(function () {
++        if (!supportsTestTracking) {
++          tc.info({ total: totalNumberOfTest })
++        }
++        // This will be taken care out side.
++        //tc.complete({
++        //  coverage: window.__coverage__
++        //})
++        window.QUnit.config.totalNumberOfTest = totalNumberOfTest
+       })
+-    })
+ 
+-    runner.testStart(function (test) {
+-      totalNumberOfTest += 1
+-      timer = new Date().getTime()
+-      testResult = { success: true, errors: [] }
+-
+-      // create a qunit-fixture element to match behaviour of regular qunit
+-      // runner. The fixture is only removed at the start of a subsequent test
+-      // so it can be inspected after a test run.
+-      var fixture = document.getElementById(FIXTURE_ID)
+-      if (fixture) {
+-        fixture.parentNode.removeChild(fixture)
+-      }
+-      fixture = document.createElement('div')
+-      fixture.id = FIXTURE_ID
+-      // style to match qunit runner's CSS
+-      fixture.style.position = 'absolute'
+-      fixture.style.left = '-10000px'
+-      fixture.style.top = '-10000px'
+-      fixture.style.width = '1000px'
+-      fixture.style.height = '1000px'
+-      document.body.appendChild(fixture)
+-    })
++      runner.testStart(function (test) {
++        totalNumberOfTest += 1
++        timer = new Date().getTime()
++        testResult = { success: true, errors: [] }
++
++        // create a qunit-fixture element to match behaviour of regular qunit
++        // runner. The fixture is only removed at the start of a subsequent test
++        // so it can be inspected after a test run.
++        var fixture = document.getElementById(FIXTURE_ID)
++        if (fixture) {
++          fixture.parentNode.removeChild(fixture)
++        }
++        fixture = document.createElement('div')
++        fixture.id = FIXTURE_ID
++        // style to match qunit runner's CSS
++        fixture.style.position = 'absolute'
++        fixture.style.left = '-10000px'
++        fixture.style.top = '-10000px'
++        fixture.style.width = '1000px'
++        fixture.style.height = '1000px'
++        document.body.appendChild(fixture)
++      })
+ 
+-    runner.log(function (details) {
+-      if (!details.result) {
+-        var msg = ''
++      runner.log(function (details) {
++        if (!details.result) {
++          var msg = ''
++
++          if (details.message) {
++            msg += details.message + '\n'
++          }
++
++          if (typeof details.expected !== 'undefined') {
++            msg += 'Expected: ' + details.expected + '\n' + 'Actual: ' + details.actual + '\n'
++          }
++
++          if (details.source) {
++            msg += details.source + '\n'
++          }
+ 
+-        if (details.message) {
+-          msg += details.message + '\n'
++          testResult.success = false
++          testResult.errors.push(msg)
+         }
++      })
+ 
+-        if (typeof details.expected !== 'undefined') {
+-          msg += 'Expected: ' + details.expected + '\n' + 'Actual: ' + details.actual + '\n'
++      runner.testDone(function (test) {
++        var result = {
++          description: test.name,
++          suite: test.module && [test.module] || [],
++          success: testResult.success,
++          log: testResult.errors || [],
++          time: new Date().getTime() - timer
+         }
+ 
+-        if (details.source) {
+-          msg += details.source + '\n'
+-        }
++        tc.result(result)
++      })
+ 
+-        testResult.success = false
+-        testResult.errors.push(msg)
+-      }
+-    })
++      //Load the QUnit only after the test page has the AsyncTest regiestered. for safety adding setTimeout
++      setTimeout(function() {
++        runner.load()
++      }, 50)
+ 
+-    runner.testDone(function (test) {
+-      var result = {
+-        description: test.name,
+-        suite: test.module && [test.module] || [],
+-        success: testResult.success,
+-        log: testResult.errors || [],
+-        time: new Date().getTime() - timer
+-      }
++    }
++
++    // we need only 2 done callbacks totaly. pop last one if there's already 2
++    // before pushing new one.
++    if (runner.config.callbacks.done.length > 1) {
++      runner.config.callbacks.done.pop();
++    }
+ 
+-      tc.result(result)
++    // instead of resolving the defObj in the initial done CB, have a second CB pushed with defObj
++    runner.done(function (details) {
++      if (defObj) defObj.resolve()
+     })
+ 
+-    runner.load()
+     runner.start()
+   }
+ }
+@@ -117,5 +151,7 @@
+   window.detachEvent('onload', window.QUnit.load);
+ }
+ 
+-window.__karma__.start = createQUnitStartFn(window.__karma__);
++window.__karma__.start = function(defObj, loadRunner){
++  return createQUnitStartFn(window.__karma__, defObj, loadRunner);
++}
+ })(window);
