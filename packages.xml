@@ -250,9 +250,6 @@
     <format>tgz</format>
     <md5>4f4880148fd1222f85f605bbbc4e4e57</md5>
     <rename>nvd3-v1.8.1</rename>
-    <patches>
-      <patch strip="2">nvd3-v1.8.1.patch</patch>
-    </patches>
   </package>
   <package>
     <name>knockout-3.0.0</name>
