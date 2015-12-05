@@ -17,14 +17,6 @@
                   download and copy to currect directory is complete.
   -->
   <package>
-    <name>Sinon.JS-v1.8.1</name>
-    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/Sinon.JS-v1.8.1.tar.gz</url>
-    <local-filename>Sinon.JS-v1.8.1.tar.gz</local-filename>
-    <format>tgz</format>
-    <md5>a0beba04c7925d81175d08b9d8959ac8</md5>
-    <rename>Sinon.JS</rename>
-  </package>
-  <package>
     <name>bootstrap-v2.3.2</name>
     <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/bootstrap-v2.3.2.zip</url>
     <local-filename>bootstrap.zip</local-filename>
@@ -188,14 +180,6 @@
     <format>tgz</format>
     <md5>f9669e23f3e79ab9408506b812a2bd15</md5>
     <rename>crossfilter</rename>
-  </package>
-  <package>
-    <name>d3-v3.2.1</name>
-    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/d3-v3.2.1.tar.gz</url>
-    <local-filename>d3-v3.2.1.tar.gz</local-filename>
-    <format>tgz</format>
-    <md5>119277c47ad6aabaeb64475196e9c6ee</md5>
-    <rename>d3</rename>
   </package>
   <package>
     <name>d3-v3.5.6</name>
@@ -531,13 +515,6 @@
     <md5>ba0d413ebe08a9248aaa1588aca34267</md5>
   </package>
   <package>
-    <name>textjs-v2.0.12</name>
-    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/server-manager/text.js</url>
-    <local-filename>text.js</local-filename>
-    <format>file</format>
-    <md5>23c1dcd2102700c6b515348af814e44a</md5>
-  </package>
-  <package>
     <name>jquery.multiselect-v1.13</name>
     <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/jquery-ui-multiselect-widget-1.13.tar.gz</url>
     <local-filename>jquery-ui-multiselect-widget-1.13.tar.gz</local-filename>
@@ -642,10 +619,24 @@
   </package>
   <package>
     <name>require</name>
-    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/require.js</url>
+    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/require.min.js</url>
     <local-filename>require.js</local-filename>
     <format>file</format>
-    <md5>a0fb07562ceae36e8342f297e427f28e</md5>
+    <md5>9a5abad043df0d348bdc5eb2c200973a</md5>
+  </package>
+  <package>
+    <name>textjs-v2.0.12</name>
+    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/text.min.js</url>
+    <local-filename>text.js</local-filename>
+    <format>file</format>
+    <md5>cd3ef7ba623a6a062ae3b2e0281367cb</md5>
+  </package>
+  <package>
+    <name>lodashjs-v3.10.1</name>
+    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/lodash.min.js</url>
+    <local-filename>lodash.min.js</local-filename>
+    <format>file</format>
+    <md5>b57cd4499efb77d94419be79fe212fe9</md5>
   </package>
   <package>
     <name>Tristate</name>
