@@ -174,11 +174,11 @@
     <rename>jquery-ui-1.10.4</rename>
   </package>
   <package>
-    <name>crossfilter-v1.2.0</name>
-    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/crossfilter-v1.2.0.tar.gz</url>
-    <local-filename>crossfilter-v1.2.0.tar.gz</local-filename>
+    <name>crossfilter-1.3.11</name>
+    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/crossfilter-1.3.11.tar.gz</url>
+    <local-filename>crossfilter-1.3.11.tar.gz</local-filename>
     <format>tgz</format>
-    <md5>f9669e23f3e79ab9408506b812a2bd15</md5>
+    <md5>0f810ecf1d81ecf458c82cf61e85f18b</md5>
     <rename>crossfilter</rename>
   </package>
   <package>
