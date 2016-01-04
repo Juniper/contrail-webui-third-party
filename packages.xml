@@ -549,6 +549,14 @@
     </patches>
   </package>
   <package>
+    <name>visjs</name>
+    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/vis-v4.9.0.zip</url>
+    <local-filename>vis-v4.9.0.zip</local-filename>
+    <format>zip</format>
+    <md5>3a64f824c8ce059585591c6c29809035</md5>
+    <rename>vis-v4.9.0</rename>
+  </package>
+  <package>
     <name>JointJS</name>
     <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/joint-0.9.3.tar.gz</url>
     <local-filename>joint-v0.9.3.tar.gz</local-filename>
