@@ -501,6 +501,12 @@
     <rename>requirejs-v1.0.2</rename>
   </package>
   <package>
+    <name>requirejs</name>
+    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/common/npm-sources/requirejs-2.1.20.tar.gz</url>
+    <format>npm-cached</format>
+    <md5>5e2121931b2a5730fc5887535fdad1b6</md5>
+  </package>
+  <package>
     <name>underscore-v1.6.0</name>
     <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/server-manager/underscore-min.js</url>
     <local-filename>underscore-min.js</local-filename>
