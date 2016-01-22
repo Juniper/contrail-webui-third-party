@@ -1,0 +1,29 @@
+--- node_modules/express/node_modules/connect/lib/middleware/csrf.js	2016-01-21 21:55:11.000000000 +0530
++++ node_modules/express/node_modules/connect/lib/middleware/csrf.js	2016-01-21 21:11:48.000000000 +0530
+@@ -39,6 +39,7 @@
+ module.exports = function csrf(options) {
+   options = options || {};
+   var value = options.value || defaultValue;
++  var csrfInvalidEvent = options.eventEmitter;
+ 
+   return function(req, res, next){
+     // generate CSRF token
+@@ -51,9 +52,15 @@
+     var val = value(req);
+ 
+     // check
+-    if (val != token) return next(utils.error(403));
+-    
+-    next();
++    if (val != token) {
++        if (null != csrfInvalidEvent) {
++            csrfInvalidEvent.emit('csrfInvalidated', req, res);
++        } else {
++            return next(utils.error(403));
++        }
++    } else {
++        next();
++    }
+   }
+ };
+ 
