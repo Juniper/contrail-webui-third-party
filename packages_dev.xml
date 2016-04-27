@@ -33,6 +33,7 @@
     <name>phantomjs</name>
     <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/common/phantomjs-1.9.18.tar.gz</url>
     <format>npm</format>
+    <install-arguments>--phantomjs_cdnurl=https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/common/phantomjs-bin</install-arguments>
     <md5>898f5c9feb3797b78d555b433bacaa13</md5>
   </package>
   <package>

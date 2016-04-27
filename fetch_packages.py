@@ -107,6 +107,7 @@ def ProcessPackage(pkg):
     url = str(pkg['url'])
     filename = getFilename(pkg, url)
     ccfile = _PACKAGE_CACHE + '/' + filename
+    installArguments = pkg.find('install-arguments')
     if pkg.format == 'npm-cached':
         try:
             shutil.rmtree(str(_NODE_MODULES + '/' + pkg['name']))
@@ -174,6 +175,8 @@ def ProcessPackage(pkg):
         cmd = ['unzip', '-o', ccfile]
     elif pkg.format == 'npm':
         cmd = ['npm', 'install', ccfile, '--prefix', _PACKAGE_CACHE]
+        if installArguments:
+            cmd.append(str(installArguments))
     elif pkg.format == 'file':
         cmd = ['cp', '-af', ccfile, dest]
     elif pkg.format == 'npm-cached':
@@ -181,6 +184,8 @@ def ProcessPackage(pkg):
     else:
         print 'Unexpected format: %s' % (pkg.format)
         return
+
+    print 'Issuing command: %s' % (cmd)
 
     if not _OPT_DRY_RUN:
         cd = None
