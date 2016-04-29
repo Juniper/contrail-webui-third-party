@@ -16,6 +16,7 @@ _OPT_DRY_RUN = None
 _PACKAGE_CACHE='/tmp/cache/' + os.environ['USER'] + '/webui_third_party'
 _NODE_MODULES='./node_modules'
 _TMP_NODE_MODULES=_PACKAGE_CACHE + '/' + _NODE_MODULES
+_TAR_COMMAND = ['tar']
 
 from lxml import objectify
 
@@ -30,8 +31,25 @@ def getFilename(pkg, url):
         filename = m.group(1)
     return filename
 
+def setTarCommand():
+    if isTarGnuVersion():
+        print 'GNU tar found. we will skip the no-unknown-keyword warning'
+        global _TAR_COMMAND
+        _TAR_COMMAND = ['tar', '--warning=no-unknown-keyword']
+    else:
+        print 'No GNU tar. will use default tar utility'
+
+def isTarGnuVersion():
+    cmd = subprocess.Popen(['tar', '--version'],
+                           stdout=subprocess.PIPE)
+    (output, _) = cmd.communicate()
+    (first, _) = output.split('\n', 1)
+    if first.lower().find('gnu') != -1:
+        return True
+    return False
+
 def getTarDestination(tgzfile, compress_flag):
-    cmd = subprocess.Popen(['tar', compress_flag + 'tf', tgzfile],
+    cmd = subprocess.Popen( _TAR_COMMAND + [ '-' + compress_flag + 'tf', tgzfile],
                            stdout=subprocess.PIPE)
     (output, _) = cmd.communicate()
     (first, _) = output.split('\n', 1)
@@ -168,9 +186,9 @@ def ProcessPackage(pkg):
 
     cmd = None
     if pkg.format == 'tgz':
-        cmd = ['tar', 'zxvf', ccfile]
+        cmd = _TAR_COMMAND + ['-zxvf', ccfile]
     elif pkg.format == 'tbz':
-        cmd = ['tar', 'jxvf', ccfile]
+        cmd = _TAR_COMMAND + ['-jxvf', ccfile]
     elif pkg.format == 'zip':
         cmd = ['unzip', '-o', ccfile]
     elif pkg.format == 'npm':
@@ -180,7 +198,7 @@ def ProcessPackage(pkg):
     elif pkg.format == 'file':
         cmd = ['cp', '-af', ccfile, dest]
     elif pkg.format == 'npm-cached':
-        cmd = ['tar', 'zxvf', ccfile, '-C', _NODE_MODULES]
+        cmd = _TAR_COMMAND + ['-zxvf', ccfile, '-C', _NODE_MODULES]
     else:
         print 'Unexpected format: %s' % (pkg.format)
         return
@@ -250,7 +268,8 @@ def FindMd5sum(anyfile):
 def main(filename):
     tree = objectify.parse(filename)
     root = tree.getroot()
-
+    #Check which version of tar is used and skip warning messages.
+    setTarCommand()
     for object in root.iterchildren():
         if object.tag == 'package':
             ProcessPackage(object)
