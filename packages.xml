@@ -47,6 +47,13 @@
     <md5>396a695751d02153f66f830d60a7f5cc</md5>
   </package>
   <package>
+    <name>xml2json.js</name>
+    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/x2js-1.2.0.tar.gz</url>
+    <local-filename>x2js-1.2.0</local-filename>
+    <format>tgz</format>
+    <md5>3679bf8229254307014f12ba20ec5173</md5>
+  </package>
+  <package>
     <name>jquery.ui.touch-punch.min-0.2.2</name>
     <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/jquery.ui.touch-punch.min-0.2.2.js</url>
     <local-filename>jquery.ui.touch-punch.min.js</local-filename>
