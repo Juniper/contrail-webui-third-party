@@ -411,12 +411,6 @@
     <md5>a4ee9c8f51a40383f84d56d021b02680</md5>
   </package>
   <package>
-    <name>helenus</name>
-    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/npm-sources/helenus-0.6.2.tar.gz</url>
-    <format>npm-cached</format>
-    <md5>256eac982a5317c3534f295c5e51be7b</md5>
-  </package>
-  <package>
     <name>ssh2</name>
     <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/npm-sources/ssh2-0.2.12.tar.gz</url>
     <format>npm-cached</format>
@@ -695,5 +689,16 @@
     <format>npm-cached</format>
     <md5>8809cf6fbf7fee2083ede37ec97ad36d</md5>
   </package>
-
+  <package>
+    <name>webworker-threads</name>
+    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/common/npm-sources/webworker-threads-0.7.4.tar.gz</url>
+    <format>npm</format>
+    <md5>0fc35fa2c2e61978a8db3968afd98b4a</md5>
+  </package>
+  <package>
+    <name>cassandra-driver</name>
+    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/common/npm-sources/nodejs-driver-3.0.2.tar.gz</url>
+    <format>npm</format>
+    <md5>4495943888999c3c666debc8466f6243</md5>
+  </package>
 </packages>
