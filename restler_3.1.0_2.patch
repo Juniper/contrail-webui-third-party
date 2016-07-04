@@ -1,0 +1,38 @@
+--- node_modules/restler/lib/restler.js	2016-05-11 10:08:03.000000000 +0530
++++ node_modules/restler/lib/restler.js	2016-07-04 14:20:56.000000000 +0530
+@@ -134,11 +134,35 @@
+       }
+     } else {
+       var body = '';
++      var jsonData = '';
+ 
+       response.setEncoding('binary');
+ 
+       response.on('data', function(chunk) {
+         body += chunk;
++        var contentType = response.headers['content-type'];
++        if ('text/event-stream' == contentType) {
++            try {
++                /* SSE data format:
++                    event: update
++                    data: ....
++                 */
++                var data = (chunk.split('\n'))[1].split('data: ')[1];
++                if (null == data) {
++                    jsonData += chunk;
++                } else {
++                    jsonData += data;
++                }
++            } catch(e) {
++                jsonData += chunk;
++            }
++            try {
++                var tryIfJsonData = JSON.parse(jsonData);
++                self.emit('streamData', tryIfJsonData, response);
++                jsonData = '';
++            } catch(e) {
++            }
++         }
+       });
+ 
+       response.on('end', function() {

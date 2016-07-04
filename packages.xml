@@ -402,6 +402,7 @@
         <md5>a4744bae84bd65089a5dac04016c2885</md5>
         <patches>
             <patch strip="0">restler_3.1.0.patch</patch>
+            <patch strip="0">restler_3.1.0_2.patch</patch>
         </patches>
     </package>
     <package>
