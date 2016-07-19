@@ -685,6 +685,20 @@
     <md5>40adf514209f278cf705644027533e0e</md5>
   </package>
   <package>
+    <name>jsoneditor-v5.5.6</name>
+    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/common/jsoneditor-5.5.6.zip</url>
+    <local-filename>jsoneditor-5.5.6.zip</local-filename>
+    <format>zip</format>
+    <md5>90fb070e6cc5b8718f10ee1a7fdad70d</md5>
+  </package>
+  <package>
+    <name>ajv-4.1.0</name>
+    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/common/ajv-4.1.0.zip</url>
+    <local-filename>ajv-4.1.0.zip</local-filename>
+    <format>zip</format>
+    <md5>643dfa0f57d46b5ea281785c13d7389b</md5>
+  </package>
+  <package>
     <name>moment-2.10.3</name>
     <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/npm-sources/moment-2.10.3.tar.gz</url>
     <format>npm-cached</format>
