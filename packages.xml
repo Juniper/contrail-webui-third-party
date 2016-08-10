@@ -17,12 +17,12 @@
                   download and copy to currect directory is complete.
   -->
   <package>
-    <name>bootstrap-v2.3.2</name>
-    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/bootstrap-v2.3.2.zip</url>
-    <local-filename>bootstrap.zip</local-filename>
-    <format>zip</format>
-    <md5>2b2df1b111dfb560e7b0a1f1b8e0743a</md5>
-    <rename>bootstrap-v2.3.2</rename>
+    <name>bootstrap-v3.3.6</name>
+    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/bootstrap-3.3.6.tar.gz</url>
+    <local-filename>bootstrap-3.zip</local-filename>
+    <format>tgz</format>
+    <md5>c03136acf77f17bd5680cc89d9ef90f4</md5>
+    <rename>bootstrap-v3.3.6</rename>
   </package>
   <package>
     <name>xdate-0.7</name>
@@ -89,18 +89,11 @@
     <md5>e28a848e7f64c9801bfb6d41c3941f76</md5>
   </package>
   <package>
-    <name>jquery.min-1.8.3</name>
-    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/jquery.min-1.8.3.js</url>
-    <local-filename>jquery-1.8.3.min.js</local-filename>
-    <format>file</format>
-    <md5>3576a6e73c9dccdbbc4a2cf8ff544ad7</md5>
-  </package>
-  <package>
-    <name>jquery.min-1.9.1</name>
-    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/jquery.min-1.9.1.js</url>
-    <local-filename>jquery-1.9.1.min.js</local-filename>
-    <format>file</format>
-    <md5>397754ba49e9e0cf4e7c190da78dda05</md5>
+    <name>jquery-v2.2.4</name>
+    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/jquery-2.2.4.tar.gz</url>
+    <local-filename>jquery-2.2.4</local-filename>
+    <format>tgz</format>
+    <md5>e4d1258304640e73d17fafc5ef2d1457</md5>
   </package>
   <package>
     <name>ImageFile</name>
@@ -173,12 +166,12 @@
     <md5>c19f25fe27b2341bd1b1a13d9992dfe6</md5>
   </package>
   <package>
-    <name>jquery-ui-1.10.4</name>
-    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/jqueryui-1.10.4.tar.gz</url>
-    <local-filename>jqueryui-1.10.4.tar.gz</local-filename>
-    <format>tgz</format>
-    <md5>0fb6fad62927105c7f800d37a1e6d42a</md5>
-    <rename>jquery-ui-1.10.4</rename>
+    <name>jquery-ui-1.11.4</name>
+    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/jquery-ui-1.11.4.zip</url>
+    <local-filename>jqueryui-1.11.4.zip</local-filename>
+    <format>zip</format>
+    <md5>c578de5feaeca4190ef89e00519e91dc</md5>
+    <rename>jquery-ui-1.11.4</rename>
   </package>
   <package>
     <name>crossfilter-1.3.11</name>
@@ -205,20 +198,12 @@
     <rename>datetimepicker-v2.4.5</rename>
   </package>
   <package>
-    <name>font-awesome</name>
-    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/font-awesome-3.2.1.zip</url>
-    <local-filename>font-awesome.zip</local-filename>
-    <format>zip</format>
-    <md5>7307590b3dd3368ae4b57ea24e3bfe7f</md5>
-    <rename>font-awesome-v3.2.1</rename>
-  </package>
-  <package>
-    <name>font-awesome-v4.3.0</name>
-    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/Font-Awesome-4.3.0.tar.gz</url>
-    <local-filename>Font-Awesome-4.3.0.tar.gz</local-filename>
+    <name>font-awesome-v4.6.3</name>
+    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/Font-Awesome-4.6.3.tar.gz</url>
+    <local-filename>Font-Awesome-4.6.3.tar.gz</local-filename>
     <format>tgz</format>
-    <md5>b61c254e706c12af0d0a9c5044ec6f0c</md5>
-    <rename>font-awesome-v4.3.0</rename>
+    <md5>79962d04a5c34e42d1333c4ff3337c90</md5>
+    <rename>font-awesome-v4.6.3</rename>
   </package>
   <package>
     <name>nvd3-v1.0.0-beta</name>
@@ -525,14 +510,11 @@
     <md5>ba0d413ebe08a9248aaa1588aca34267</md5>
   </package>
   <package>
-    <name>jquery.multiselect-v1.13</name>
-    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/jquery-ui-multiselect-widget-1.13.tar.gz</url>
-    <local-filename>jquery-ui-multiselect-widget-1.13.tar.gz</local-filename>
+    <name>jquery.multiselect-v1.15</name>
+    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/jquery-ui-multiselect-widget-1.15.tar.gz</url>
+    <local-filename>jquery-ui-multiselect-widget-1.15.tar.gz</local-filename>
     <format>tgz</format>
-    <md5>dc3d1734769f64df4abd98e922a5891a</md5>
-    <patches>
-      <patch strip="2">jquery-ui-multiselect-widget.patch</patch>
-    </patches>
+    <md5>daff4011cd0d2fa7f46e33c359ac9b24</md5>
   </package>
   <package>
     <name>knockback-v0.19.2</name>
@@ -592,14 +574,6 @@
     <format>tgz</format>
     <md5>f68f04f3df4cdd0b65c17d489f20e6ac</md5>
     <rename>jquery.panzoom-v2.0.5</rename>
-  </package>
-  <package>
-    <name>jQuery-contextMenu</name>
-    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/jQuery-contextMenu-1.6.5.tar.gz</url>
-    <local-filename>jquery-contextMenu-v1.6.5.tar.gz</local-filename>
-    <format>tgz</format>
-    <md5>040ce8ff6ef45b78dcdca80d3de7f1d6</md5>
-    <rename>jquery-contextMenu-v1.6.5</rename>
   </package>
   <package>
     <name>ipv6</name>
@@ -721,5 +695,17 @@
     <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/common/npm-sources/nodejs-driver-3.0.2.tar.gz</url>
     <format>npm</format>
     <md5>4495943888999c3c666debc8466f6243</md5>
+  </package>
+  <package>
+    <name>node-sass</name>
+    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/node-sass-3.8.0.tar.gz</url>
+    <format>npm</format>
+    <md5>2c4de27b5b9322395a7e249d5b11265c</md5>
+  </package>
+  <package>
+    <name>bootstrap-sass</name>
+    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/bootstrap-sass-3.3.6.tar.gz</url>
+    <format>npm</format>
+    <md5>146ba506a45c1a79872649eee142a1c4</md5>
   </package>
 </packages>
