@@ -708,4 +708,15 @@
     <format>npm</format>
     <md5>146ba506a45c1a79872649eee142a1c4</md5>
   </package>
+  <package>
+    <name>jdorn-jsoneditor-0.7.25</name>
+    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/common/jdorn-jsoneditor-0.7.25.js</url>
+    <local-filename>jdorn-jsoneditor-0.7.25.js</local-filename>
+    <format>file</format>
+    <md5>2127c776d47394f3aa4de54ffa61453f</md5>
+    <rename>jdorn-jsoneditor.js</rename>
+    <patches>
+      <patch strip="0">jdorn-jsoneditor-0.7.25.patch</patch>
+    </patches>
+  </package>
 </packages>
