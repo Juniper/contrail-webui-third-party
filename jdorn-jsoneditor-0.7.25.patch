@@ -1,0 +1,1214 @@
+--- jdorn-jsoneditor.js	2016-08-17 16:57:19.000000000 +0530
++++ jdorn-jsoneditor.js	2016-08-17 17:11:09.000000000 +0530
+@@ -125,11 +125,11 @@
+ // Array.isArray polyfill
+ // From MDN
+ (function() {
+-	if(!Array.isArray) {
+-	  Array.isArray = function(arg) {
+-		return Object.prototype.toString.call(arg) === '[object Array]';
+-	  };
+-	}
++    if(!Array.isArray) {
++      Array.isArray = function(arg) {
++        return Object.prototype.toString.call(arg) === '[object Array]';
++      };
++    }
+ }());
+ /**
+  * Taken from jQuery 2.1.3
+@@ -215,23 +215,59 @@
+   if (!(element instanceof Element)) {
+     throw new Error('element should be an instance of Element');
+   }
++  objectPropertiesStack = [];
++  propertyDeleteCount = 0;
++  directLevelKey = [];
++  removedKeyStack = [];
++  enableInputField = true
++  addPropertyFlag = false;
++  disableCheckBoxTrash = true;
++  removedKeyStack = [];
++  disableTashIconInArray = true;
++  blockFirstOptions = true;
+   options = $extend({},JSONEditor.defaults.options,options||{});
+   this.element = element;
+   this.options = options;
++  clickAddItem = false;
+   this.init();
+ };
+ JSONEditor.prototype = {
+   // necessary since we remove the ctor property by doing a literal assignment. Without this
+   // the $isplainobject function will think that this is a plain object.
+   constructor: JSONEditor,
++  addAdditionalFlagInProp :function(schema, order) {
++      var self = this;
++      for (var i in schema) {
++          if (typeof schema[i] === 'object' || i === 'properties') {
++                 self.addAdditionalFlagInProp(schema[i], order);
++          }else{
++              if(i !== 'properties'){
++                  if(!schema.hasOwnProperty('collapse')){
++                      if(order === undefined){
++                          schema.collapse = true;
++                      }else{
++                          schema.collapse = false;
++                      }
++                  }
++               }
++              if(schema[i] === 'boolean'){
++                  schema.format = "checkbox";
++              }
++              if(schema[i] === 'string' || schema[i] === 'number'){
++                  schema.readOnly = false;
++              }
++          }
++      }
++    return schema;
++  },
+   init: function() {
+-    var self = this;
+-    
++    var self = this,order;
+     this.ready = false;
+-
+     var theme_class = JSONEditor.defaults.themes[this.options.theme || JSONEditor.defaults.theme];
+     if(!theme_class) throw "Unknown theme " + (this.options.theme || JSONEditor.defaults.theme);
+-    
++    this.addAdditionalFlagInProp(this.options.schema, order);
++    delete this.options.schema.collapse;
++    this.options.schema.properties[Object.keys(this.options.schema.properties)[0]].collapse = false;
+     this.schema = this.options.schema;
+     this.theme = new theme_class();
+     this.template = this.options.template;
+@@ -314,7 +350,6 @@
+   destroy: function() {
+     if(this.destroyed) return;
+     if(!this.ready) return;
+-    
+     this.schema = null;
+     this.options = null;
+     this.root.destroy();
+@@ -328,14 +363,12 @@
+     this.__data = null;
+     this.ready = false;
+     this.element.innerHTML = '';
+-    
+     this.destroyed = true;
+   },
+   on: function(event, callback) {
+     this.callbacks = this.callbacks || {};
+     this.callbacks[event] = this.callbacks[event] || [];
+     this.callbacks[event].push(callback);
+-    
+     return this;
+   },
+   off: function(event, callback) {
+@@ -359,7 +392,6 @@
+     else {
+       this.callbacks = {};
+     }
+-    
+     return this;
+   },
+   trigger: function(event) {
+@@ -368,7 +400,6 @@
+         this.callbacks[event][i]();
+       }
+     }
+-    
+     return this;
+   },
+   setOption: function(option, value) {
+@@ -380,7 +411,6 @@
+     else {
+       throw "Option "+option+" must be set during instantiation and cannot be changed later";
+     }
+-    
+     return this;
+   },
+   getEditorClass: function(schema) {
+@@ -412,9 +442,9 @@
+
+     if(this.firing_change) return;
+     this.firing_change = true;
+-    
++
+     var self = this;
+-    
++
+     window.requestAnimationFrame(function() {
+       self.firing_change = false;
+       if(!self.ready) return;
+@@ -1432,6 +1462,7 @@
+   setContainer: function(container) {
+     this.container = container;
+     if(this.schema.id) this.container.setAttribute('data-schemaid',this.schema.id);
++    if(this.schema.type === null) this.schema.type = 'string';
+     if(this.schema.type && typeof this.schema.type === "string") this.container.setAttribute('data-schematype',this.schema.type);
+     this.container.setAttribute('data-schemapath',this.path);
+   },
+@@ -1868,7 +1899,9 @@
+   },
+   setValue: function(value,initial,from_template) {
+     var self = this;
+-    
++    if(addPropertyFlag){
++        value = null;
++    }
+     if(this.template && !from_template) {
+       return;
+     }
+@@ -2040,7 +2073,22 @@
+     else {
+       if(this.options.input_width) this.input.style.width = this.options.input_width;
+     }
+-
++  //set readOnly true
++    if(this.schema.type == 'string' || this.schema.type == 'number'){
++            if(this.options.jsoneditor.options.unDeletableProperty.indexOf(this.label.innerHTML) >= 0){
++                if(enableInputField){
++                    this.schema.readOnly = true;
++                    this.hideIconForProp = false;
++                }else{
++                    this.schema.readOnly = false;
++                    this.hideIconForProp = true;
++                }
+
++            }else{
++                this.schema.readOnly = false;
++                this.hideIconForProp = true;
++            }
++        }
+     if(this.schema.readOnly || this.schema.readonly || this.schema.template) {
+       this.always_disabled = true;
+       this.input.disabled = true;
+@@ -2108,8 +2156,8 @@
+     }
+
+     if(this.format) this.input.setAttribute('data-schemaformat',this.format);
+-
+-    this.control = this.theme.getFormControl(this.label, this.input, this.description);
+
++    this.control = this.theme.getFormControl(this.label, this.input, this.description,this.hideIconForProp);
+     this.container.appendChild(this.control);
+
+     // Any special formatting that needs to happen after the input is added to the dom
+@@ -2591,8 +2639,9 @@
+   },
+   build: function() {
+     var self = this;
++    objectDelete = false;
++    trashIconHide = undefined;
+
+-    // If the object should be rendered as a table row
+     if(this.options.table_row) {
+       this.editor_holder = this.container;
+       $each(this.editors, function(key,editor) {
+@@ -2619,16 +2668,16 @@
+     // If the object should be rendered as a div
+     else {
+       this.header = document.createElement('span');
+-      this.header.textContent = this.getTitle();
+-      this.title = this.theme.getHeader(this.header);
++      //this.header.textContent = this.getTitle();
++      this.title = this.theme.getHeader('');
+       this.container.appendChild(this.title);
+       this.container.style.position = 'relative';
+
+       // Edit JSON modal
+       this.editjson_holder = this.theme.getModal();
+       this.editjson_textarea = this.theme.getTextareaInput();
+-      this.editjson_textarea.style.height = '170px';
+-      this.editjson_textarea.style.width = '300px';
++      this.editjson_textarea.style.height = '300px';
++      this.editjson_textarea.style.width = '600px';
+       this.editjson_textarea.style.display = 'block';
+       this.editjson_save = this.getButton('Save','save','Save');
+       this.editjson_save.addEventListener('click',function(e) {
+@@ -2648,6 +2697,7 @@
+
+       // Manage Properties modal
+       this.addproperty_holder = this.theme.getModal();
++      this.addproperty_holder.className = 'addPropertyHolder';
+       this.addproperty_list = document.createElement('div');
+       this.addproperty_list.style.width = '295px';
+       this.addproperty_list.style.maxHeight = '160px';
+@@ -2656,13 +2706,14 @@
+       this.addproperty_list.style.overflowX = 'hidden';
+       this.addproperty_list.style.paddingLeft = '5px';
+       this.addproperty_list.setAttribute('class', 'property-selector');
+-      this.addproperty_add = this.getButton('add','add','add');
++      this.addproperty_add = this.getButton('Add','','');
+       this.addproperty_input = this.theme.getFormInputField('text');
+       this.addproperty_input.setAttribute('placeholder','Property name...');
+       this.addproperty_input.style.width = '220px';
+       this.addproperty_input.style.marginBottom = '0';
+       this.addproperty_input.style.display = 'inline-block';
+       this.addproperty_add.addEventListener('click',function(e) {
++         // this.types = ['string','number','integer','boolean','null'];
+         e.preventDefault();
+         e.stopPropagation();
+         if(self.addproperty_input.value) {
+@@ -2677,6 +2728,7 @@
+           }
+           self.onChange(true);
+         }
++        self.hideAddProperty();
+       });
+       this.addproperty_holder.appendChild(this.addproperty_list);
+       this.addproperty_holder.appendChild(this.addproperty_input);
+@@ -2691,7 +2743,15 @@
+         this.description = this.theme.getDescription(this.schema.description);
+         this.container.appendChild(this.description);
+       }
+-
++      if(this.schema.title !== undefined){
++          if(this.schema.title.search('item') == 0){
++              if(this.schema.required !== undefined){
++                  if(this.schema.required.length > 1){
++                      trashIconHide = true;
++                  }
++              }
++          }
++      }
+       // Validation error placeholder area
+       this.error_holder = document.createElement('div');
+       this.container.appendChild(this.error_holder);
+@@ -2707,24 +2767,70 @@
+       $each(this.editors, function(key,editor) {
+         var holder = self.theme.getGridColumn();
+         self.row_container.appendChild(holder);
+-
+         editor.setContainer(holder);
+-        editor.build();
++        editor.build(trashIconHide);
+         editor.postBuild();
+       });
++      this.headerText = document.createElement('span');
++      this.headerText.textContent = this.getTitle();
+
+-      // Control buttons
+       this.title_controls = this.theme.getHeaderButtonHolder();
+       this.editjson_controls = this.theme.getHeaderButtonHolder();
+       this.addproperty_controls = this.theme.getHeaderButtonHolder();
+       this.title.appendChild(this.title_controls);
++      this.title.appendChild(this.headerText);
+       this.title.appendChild(this.editjson_controls);
+-      this.title.appendChild(this.addproperty_controls);
++      if(addPropertyFlag){
++          this.title.appendChild(this.addproperty_controls);
++      }
++      if(this.options.path !== undefined){
++          var elePath = this.options.path.split('.');
++          if(elePath.length > 2){
++             var index = true;
++                  var trashObj = document.createElement('button');
++                  trashObj.type = 'button';
++                  trashObj.style.width = '30px'
++                  trashObj.className = 'btn btn-mini json-editor-btn-trash deleteChildLevel';
++                  var objInnerText = document.createElement('i');
++                  objInnerText.className = 'fa fa-trash-o';
++                  trashObj.appendChild(objInnerText);
++                  trashObj.addEventListener('click',function(e) {
++                      e.preventDefault();
++                      e.stopPropagation();
++                      objectDelete = true;
++                      var attrValue = this.parentElement.parentElement.getAttribute('data-schemapath').split('.');
++                      attrValue.splice(0,1);
++                      for(var k = 0; k < attrValue.length; k++){
++                          if(isNumber(attrValue[k])){
++                              index = false;
++                          }
++                      }
++                      if(index){
++                          $(this).closest('.row-fluid')[0].remove();
++                      }else{
++                          this.parentElement.parentElement.remove();
++                      }
++                      jsoneditor.root.removeObjectProperty(attrValue,true);
++                      jsoneditor.root.onChange(true);
++                      objectDelete = false;
++                    });
++                  this.title.appendChild(trashObj);
++          }
++      }
+
+       // Show/Hide button
+-      this.collapsed = false;
+-      this.toggle_button = this.getButton('','collapse','Collapse');
+-      this.title_controls.appendChild(this.toggle_button);
++      if(this.schema.collapse && !clickAddItem){
++          this.toggle_button = this.getButton('','expand','Expand');
++          this.title_controls.appendChild(this.toggle_button);
++          self.editor_holder.style.display = 'none';
++          this.collapsed = true;
++      }else{
++          this.toggle_button = this.getButton('','collapse','Collapse');
++          this.title_controls.appendChild(this.toggle_button);
++          self.editor_holder.style.display = '';
++          this.collapsed = false;
++      }
++
+       this.toggle_button.addEventListener('click',function(e) {
+         e.preventDefault();
+         e.stopPropagation();
+@@ -2754,8 +2860,9 @@
+       }
+
+       // Edit JSON Button
+-      this.editjson_button = this.getButton('JSON','edit','Edit JSON');
++      this.editjson_button = this.getButton('','edit','Edit JSON');
+       this.editjson_button.addEventListener('click',function(e) {
++        //disableTashIconInArray = true;
+         e.preventDefault();
+         e.stopPropagation();
+         self.toggleEditJSON();
+@@ -2770,16 +2877,34 @@
+       else if(this.jsoneditor.options.disable_edit_json) {
+         this.editjson_button.style.display = 'none';
+       }
+-
++      $(document).ready(function () {
++          $('.addPropertyHolder').hide();
++      });
++      $('.addObjectPropperty').on('click', function () {
++      });
++     $(document).mouseup(function (e) {
++          var popup = $(".addPropertyHolder");
++          if (!$('.addObjectPropperty').is(e.target.parentElement) && !popup.is(e.target) && popup.has(e.target).length == 0) {
++              popup.hide();
++              jsoneditor.root.addingProperty = false;
++              self.enable();
++          }
++      });
+       // Object Properties Button
+-      this.addproperty_button = this.getButton('Properties','edit','Object Properties');
++      this.addproperty_button = this.getButton('','add','Object Properties');
++      this.addproperty_button.className='btn btn-mini json-editor-btn-plus addObjectPropperty';
+       this.addproperty_button.addEventListener('click',function(e) {
+         e.preventDefault();
+         e.stopPropagation();
+-        self.toggleAddProperty();
+-      });
+-      this.addproperty_controls.appendChild(this.addproperty_button);
+-      this.addproperty_controls.appendChild(this.addproperty_holder);
++        disableCheckBoxTrash = false;
++        var siblingText = this.parentElement.previousSibling.previousSibling.innerHTML;
++        self.toggleAddProperty(siblingText);
++        disableCheckBoxTrash = true;
++      });
++      if(addPropertyFlag){
++          this.addproperty_controls.appendChild(this.addproperty_button);
++          this.addproperty_controls.appendChild(this.addproperty_holder);
++      }
+       this.refreshAddProperties();
+     }
+
+@@ -2864,10 +2989,24 @@
+   addPropertyCheckbox: function(key) {
+     var self = this;
+     var checkbox, label, labelText, control;
+-
++    if(this.options.path !== undefined){
++        var parentPath = this.options.path.split('.');
++        var parentObj = parentPath[2];
++        var childObj = parentPath[parentPath.length - 1];
++    }
++    if(removedKeyStack.length > 0){
++        for(var i=0; i < removedKeyStack.length; i++){
++            var keyValue = removedKeyStack[i].split('.');
++            var delParentKey = keyValue[2];
++            var delChildKey = keyValue[0];
++            if(delParentKey == parentObj && delChildKey == childObj){
++                key = null;
++            }
++        }
++    }
+     checkbox = self.theme.getCheckbox();
+     checkbox.style.width = 'auto';
+-
++   if(key !== null){
+     if (this.schema.properties[key] && this.schema.properties[key].title)
+       labelText = this.schema.properties[key].title;
+     else
+@@ -2884,19 +3023,21 @@
+
+     checkbox.checked = key in this.editors;
+     checkbox.addEventListener('change',function() {
+-      if(checkbox.checked) {
++       disableCheckBoxTrash = false;
++       if(checkbox.checked) {
+         self.addObjectProperty(key);
+-      }
+-      else {
++       }
++       else {
+         self.removeObjectProperty(key);
+-      }
+-      self.onChange(true);
++       }
++       self.onChange(true);
+     });
+     self.addproperty_checkboxes[key] = checkbox;
+
+     return checkbox;
++    }
+   },
+-  showAddProperty: function() {
++  showAddProperty: function(node) {
+     if(!this.addproperty_holder) return;
+     this.hideEditJSON();
+
+@@ -2911,7 +3052,8 @@
+     this.adding_property = true;
+     this.addproperty_button.disabled = false;
+     this.addproperty_holder.style.display = '';
+-    this.refreshAddProperties();
++    this.refreshAddProperties(node);
++    jsoneditor.root.addingProperty = true;
+   },
+   hideAddProperty: function() {
+     if(!this.addproperty_holder) return;
+@@ -2922,17 +3064,86 @@
+
+     this.adding_property = false;
+   },
+-  toggleAddProperty: function() {
++  toggleAddProperty: function(node) {
++    if(!jsoneditor.root.addingProperty){
++        this.adding_property = false;
++    }
+     if(this.adding_property) this.hideAddProperty();
+-    else this.showAddProperty();
++    else this.showAddProperty(node);
+   },
+-  removeObjectProperty: function(property) {
+-    if(this.editors[property]) {
+-      this.editors[property].unregister();
+-      delete this.editors[property];
+-
+-      this.refreshValue();
+-      this.layoutEditors();
++  hideAddPropertyByContainer: function(node) {
++      this.hideAddProperty();
++  },
++  getValueByJsonPath:function(obj,pathStr,defValue,doClone) {
++          var currObj = obj;
++          var pathArr = pathStr.split(';');
++          var doClone = ifNull(doClone,true);
++          var arrLength = pathArr.length;
++          for(var i=0;i<arrLength;i++) {
++              if(currObj[pathArr[i]] != null) {
++                  currObj = currObj[pathArr[i]];
++              } else
++                  return defValue;
++          }
++          if(currObj instanceof Array) {
++              if(doClone == false) {
++                  return currObj;
++              } else {
++                  return $.extend(true,[],currObj);
++              }
++          } else if(typeof(currObj) == "object") {
++              if(doClone == false) {
++                  return currObj;
++              } else {
++                  return $.extend(true,{},currObj);
++              }
++          } else
++              return currObj;
+
++  },
++  removeObjectProperty: function(property,flag) {
++      var self = this;
++      currentObj = undefined;
++      arrayParentKey = undefined;
++      delFlag = false;
++      childLevelObj = undefined;
++      var childKeyDelete = true;
++      if(flag){
++         var topObjLevel = property.join(';');
++         var lastlevel = property.splice(property.length - 1, 1);
++         parentLevelObj = property[property.length - 1];
++         for(var i = 0; i < property.length; i++){
++             if(isNumber(property[i])){
++                 childKeyDelete = false;
++             }
++         }
++         childLevelObj = property;
++         directLevelKey =[];
++         directLevelKey.push(lastlevel[0]);
++         parentObjCount = 'empty';
++         arrayParentKey = property[1];
++         var addObj = {};
++         if(property.length > 2){
++             var parentObjCount = property[2];
++         }
++         addObj.parentKey = parentLevelObj;
++         addObj.childKey = lastlevel[0];
++         objectPropertiesStack.push(addObj);
++         if(property.length === 1){
++             removedKeyStack.push('directChild'+'.'+parentObjCount+'.'+'noParent'+'.'+objectDelete+'.'+lastlevel[0]);
++         }else{
++             removedKeyStack.push(property[property.length - 1]+'.'+parentObjCount+'.'+property[1]+'.'+objectDelete+'.'+lastlevel[0]);
++         }
++         this.refreshValue();
++         this.layoutEditors();
++    }else{
++        if(this.editors[property]) {
++            this.editors[property].unregister();
++            delete this.editors[property];
++
++            this.refreshValue();
++            this.layoutEditors();
++          }
+     }
+   },
+   addObjectProperty: function(name, prebuild_only) {
+@@ -3010,6 +3221,7 @@
+     this._super();
+   },
+   getValue: function() {
++      var self = this;
+     var result = this._super();
+     if(this.jsoneditor.options.remove_empty_properties || this.options.remove_empty_properties) {
+       for(var i in result) {
+@@ -3018,7 +3230,176 @@
+         }
+       }
+     }
+-    return result;
++    if(directLevelKey.length > 0){
++        if(result[directLevelKey[0]] !== undefined){
++            if(childLevelObj.length > 1){
++                var updatedResult = self.deleteProperty(result,directLevelKey[0],result);
++                directLevelKey =[];
++                return updatedResult;
++            }else{
++                delete result[directLevelKey[0]];
++                directLevelKey =[];
++                return result;
++            }
++        }else{
++            var updatedResult = self.deleteProperty(result,directLevelKey[0],result);
++            directLevelKey =[];
++            return updatedResult;
++        }
++    }else{
++        if(removedKeyStack.length > 0){
++            if(result !== undefined){
++                if(result[childLevelObj[0]] === undefined){
++                    var path = this.options.path.split('.');
++                    if(path.length === 2){
++                      delFlag = false;
++                        for(var j = 0 ; j < removedKeyStack.length; j++){
++                            var source = removedKeyStack[j].split('.');
++                            if(source[0] === 'directChild'){
++                                delete result[source[source.length - 1]];
++                            }else{
++                                currentObjStack = undefined;
++                                arrayObjStack = undefined;
++                                var objectDelete = !!JSON.parse(String(source[3]).toLowerCase());
++                                result = self.removeKeyFromStack(result,source[0],source[source.length - 1],source[1],source[2],objectDelete);
++                            }
++                        }
++                   }
++               }
++           }
++         }
++        return result;
++    }
++  },
++  deleteProperty :function(model,delPro,oldModel,Node,next) {
++      var self = this,currentNode = Node;
++      for (var i in model) {
++         if(next === undefined){
++                  currentNode = i;
++          }
++           if(!delFlag){
++              if (typeof model[i] === 'object' && model[i] !== null && model[i].constructor !== Array) {
++                  if(parentLevelObj === i){
++                      delFlag = true;
++                  }
++                  currentObj = i;
++                  if(objectDelete && i === delPro && currentNode === arrayParentKey){
++                      console.log('obj');
++                      delete model[i];
++                  }else{
++                   self.deleteProperty(model[i],delPro,oldModel,currentNode,'next');
++                  }
++              }else {
++                  if(model[i] !== undefined && model[i] !== null){
++                  if(model[i].constructor === Array){
++                      if((typeof model[i][0] === 'object' || typeof model[i][model[i].length - 1] === 'object') && (!isNumber(delPro) || i == arrayParentKey)){
++                          if(objectDelete && typeof model[i][delPro] === 'object'){
++                              delete model[i][delPro];
++                              model[i][delPro] = '';
++                           }else{
++                              for(var k = 0; k < model[i].length; k++){
++                                  if(parentLevelObj !== undefined && isNumber(parentLevelObj)){
++                                      if(k == parentLevelObj){
++                                          self.deleteProperty(model[i][k],delPro,oldModel,currentNode,'next');
++                                      }
++                                  }else{
++                                      self.deleteProperty(model[i][k],delPro,oldModel,currentNode,'next');
++                                  }
++                              }
++                          }
++                       }else if(typeof model[i][0] !== 'object'){
++                          if(isNumber(delPro) && i === parentLevelObj){
++                          delete  model[i][delPro];
++                           model[i][delPro] = '';
++                          }
++                      }
++                       else if(typeof model[i][0] === 'object' && isNumber(delPro) && i === parentLevelObj){
++                          delete  model[i][delPro];
++                       }
++                  }
++                  if(currentObj === parentLevelObj || isNumber(parentLevelObj)){
++                      if(i === delPro && currentNode === arrayParentKey){
++                          delete model[i];
++                      }
++                  }
++             }
++           }
++          }else{
++              if(currentObj === parentLevelObj || isNumber(parentLevelObj)){
++                  if(i === delPro ){
++                      delete model[i];
++                      delFlag = false;
++                     }
++              }
++          }
++      }
++      return model;
++  },
++  removeKeyFromStack :function(model,parentLevelObj,delPro,objLevel,rootLevel,objectDelete) {
++      var self = this;
++      for (var i in model) {
++          if(!delFlag){
++              if (typeof model[i] === 'object' && model[i] !== null && model[i].constructor !== Array) {
++                  if(parentLevelObj === i){
++                      delFlag = true;
++                  }
++                  currentObjStack = i;
++                  self.removeKeyFromStack(model[i],parentLevelObj,delPro,objLevel,rootLevel,objectDelete);
++              } else {
++                  if(model[i] !== undefined && model[i] !== null){
++                      if(model[i].constructor === Array){
++                          if((typeof model[i][0] === 'object' || typeof model[i][model[i].length - 1] === 'object') && (!isNumber(delPro) || i == rootLevel)){
++                              for(var k = 0; k < model[i].length; k++){
++                                  if(i == rootLevel){
++                                      if(k == objLevel){
++                                          if(model[i][k][delPro] !== undefined){
++                                              arrayObjStack = i;
++                                          }
++                                          self.removeKeyFromStack(model[i][k], parentLevelObj,delPro,objLevel,rootLevel,objectDelete);
++                                       }
++                                      if(objectDelete){
++                                          delete  model[i][delPro];
++                                          model[i][delPro] = '';
++                                       }
++                                  }else{
++                                      arrayObjStack = i;
++                                      self.removeKeyFromStack(model[i][k], parentLevelObj,delPro,objLevel,rootLevel,objectDelete);
++                                  }
++                             }
++                           }else if(typeof model[i][0] !== 'object'){
++                              if(isNumber(delPro) && i === parentLevelObj){
++                                 delete  model[i][delPro];
++                                 model[i][delPro] = '';
++                               }
++                          }else if(typeof model[i][0] === 'object' && isNumber(delPro) && i === parentLevelObj){
++                            delete model[i][delPro];
++                             console.log('3'+ model[i][delPro]);
++                          }
++                      }
++                      if(isNumber(parentLevelObj)){
++                          if(arrayObjStack === rootLevel){
++                              if(i === delPro ){
++                                  delete model[i];
++                                  arrayObjStack = undefined;
++                                 }
++                          }
++                      }else if(currentObjStack === parentLevelObj){
++                          if(i === delPro ){
++                              delete model[i];
++                             }
++                      }
++                  }
++               }
++          }else{
++              if(currentObjStack === parentLevelObj || isNumber(parentLevelObj)){
++                  if(i === delPro ){
++                      delete model[i];
++                      delFlag = false;
++                     }
++              }
++          }
++      }
++      return model;
+   },
+   refreshValue: function() {
+     this.value = {};
+@@ -3026,19 +3407,26 @@
+
+     for(var i in this.editors) {
+       if(!this.editors.hasOwnProperty(i)) continue;
+-      this.value[i] = this.editors[i].getValue();
++      this.value[i] = this.editors[i].getValue();
+     }
+
+     if(this.adding_property) this.refreshAddProperties();
+   },
+-  refreshAddProperties: function() {
++  refreshAddProperties: function(node) {
+     if(this.options.disable_properties || (this.options.disable_properties !== false && this.jsoneditor.options.disable_properties)) {
+       this.addproperty_controls.style.display = 'none';
+       return;
+     }
+-
+     var can_add = false, can_remove = false, num_props = 0, i, show_modal = false;
+-
++    if(objectPropertiesStack.length > 0){
++        for(var k = 0 ; k < objectPropertiesStack.length; k++){
++            if(objectPropertiesStack[k].parentKey === node){
++                delete this.editors[objectPropertiesStack[k].childKey];
++                delete this.cached_editors[objectPropertiesStack[k].childKey];
++                delete this.schema.properties[objectPropertiesStack[k].childKey];
++            }
++        }
++    }
+     // Get number of editors
+     for(i in this.editors) {
+       if(!this.editors.hasOwnProperty(i)) continue;
+@@ -3132,10 +3520,6 @@
+         self.addObjectProperty(i);
+         editor.setValue(value[i],initial);
+       }
+-      // Otherwise, remove value unless this is the initial set or it's required
+-      else if(!initial && !self.isRequired(editor)) {
+-        self.removeObjectProperty(i);
+-      }
+       // Otherwise, set the value to the default
+       else {
+         editor.setValue(editor.getDefault(),initial);
+@@ -3275,16 +3659,85 @@
+     this.hide_move_buttons = this.options.disable_array_reorder || this.jsoneditor.options.disable_array_reorder;
+     this.hide_add_button = this.options.disable_array_add || this.jsoneditor.options.disable_array_add;
+   },
+-  build: function() {
++  build: function(trashIconFlag) {
+     var self = this;
+-
++    directLevelKey = [];
++    objectPropertiesStack =[];
++    currentObj = undefined;
++    currentObjStack = undefined;
++    arrayObjStack = undefined;
+     if(!this.options.compact) {
+-      this.header = document.createElement('span');
+-      this.header.textContent = this.getTitle();
+-      this.title = this.theme.getHeader(this.header);
++      this.title = this.theme.getHeader('');
+       this.container.appendChild(this.title);
+       this.title_controls = this.theme.getHeaderButtonHolder();
+       this.title.appendChild(this.title_controls);
++      this.rootheaderText = document.createElement('span');
++      this.rootheaderText.textContent = this.getTitle();
++      this.title.appendChild(this.rootheaderText);
++      if(this.schema.type === 'array'){
++          var addItemIcon = document.createElement('button');
++          addItemIcon.type = 'button';
++          addItemIcon.style.marginTop = '4px';
++          addItemIcon.style.marginLeft = '4px';
++          addItemIcon.style.fontSize = '9px';
++          addItemIcon.title = 'Add Item';
++          addItemIcon.className = 'btn btn-mini json-editor-btn-plus';
++          var innerText = document.createElement('i');
++          innerText.className = 'fa fa-plus';
++          addItemIcon.appendChild(innerText);
++          addItemIcon.addEventListener('click',function(e) {
++              clickAddItem = true;
++              addPropertyFlag = true;
++              propertyDeleteCount = 0;
++              e.preventDefault();
++              e.stopPropagation();
++              enableInputField = true;
++              var i = self.rows.length;
++              if(self.row_cache[i]) {
++                self.rows[i] = self.row_cache[i];
++                self.rows[i].setValue(self.rows[i].getDefault());
++                self.rows[i].container.style.display = '';
++                if(self.rows[i].tab) self.rows[i].tab.style.display = '';
++                self.rows[i].register();
++              }
++              else {
++                self.addRow();
++              }
++              self.active_tab = self.rows[i].tab;
++              self.refreshTabs();
++              self.refreshValue();
++              self.onChange(true);
++              enableInputField = false;
++              addPropertyFlag = false;
++              clickAddItem = false;
++              $(this.parentElement.parentElement).find('.well-small')[0].firstChild.setAttribute('style','display:block');
++              $(this.parentElement.parentElement).find('.well-small')[0].setAttribute('style','padding-bottom:0px;display:block');
++              self.collapsed = false;
++              this.parentElement.firstChild.firstChild.firstChild.setAttribute('class','fa fa-sort-desc');
++              this.parentElement.firstChild.firstChild.setAttribute('title','Collapse');
++           });
++          this.title.appendChild(addItemIcon);
++        if(!trashIconHide){
++          var trashicon = document.createElement('button');
++          trashicon.type = 'button';
++          trashicon.style.width = '30px'
++          trashicon.className = 'btn btn-mini json-editor-btn-trash deleteChildLevel';
++          var innerText = document.createElement('i');
++          innerText.className = 'fa fa-trash-o';
++          trashicon.appendChild(innerText);
++          trashicon.addEventListener('click',function(e) {
++              e.preventDefault();
++              e.stopPropagation();
++              var attrValue = this.parentElement.parentElement.getAttribute('data-schemapath').split('.');
++              attrValue.splice(0,1);
++              $(this).closest('.row-fluid')[0].remove();
++              jsoneditor.root.removeObjectProperty(attrValue,true);
++              jsoneditor.root.onChange(true);
+
++            });
++          this.title.appendChild(trashicon);
++        }
++      }
+       if(this.schema.description) {
+         this.description = this.theme.getDescription(this.schema.description);
+         this.container.appendChild(this.description);
+@@ -3320,7 +3773,7 @@
+     }
+
+     // Add controls
+-    this.addControls();
++    this.addControls(trashIconFlag);
+   },
+   onChildEditorChange: function(editor) {
+     this.refreshValue();
+@@ -3384,7 +3837,20 @@
+     var item_info = this.getItemInfo(i);
+     var schema = this.getItemSchema(i);
+     schema = this.jsoneditor.expandRefs(schema);
+-    schema.title = item_info.title+' '+(i+1);
++    var parentPath = this.options.path.split('.');
++    var parentName = parentPath[parentPath.length - 1];
++    //Element label changed
++    if(addPropertyFlag){
++        if(this.schema.items !== undefined){
++            if(this.schema.type === 'array' && this.schema.items.properties === undefined){
++                addPropertyFlag = true;
++             }else{
++                 addPropertyFlag = false;
++             }
++        }
++    }
++    schema.title = '[ '+(i)+' ]';
++    //schema.title = item_info.title+' '+(i+1);
+
+     var editor = this.jsoneditor.getEditorClass(schema);
+
+@@ -3490,7 +3956,9 @@
+   setValue: function(value, initial) {
+     // Update the array's value, adding/removing rows when necessary
+     value = value || [];
+-    
++    if(addPropertyFlag){
++        value = [];
++    }
+     if(!(Array.isArray(value))) value = [value];
+
+     var serialized = JSON.stringify(value);
+@@ -3595,8 +4063,8 @@
+         this.delete_last_row_button.style.display = 'none';
+         this.remove_all_rows_button.style.display = 'none';
+       }
+-      else if(this.value.length === 1) {      
+-        this.remove_all_rows_button.style.display = 'none';  
++      else if(this.value.length === 1) {
++        this.remove_all_rows_button.style.display = 'none';
+
+         // If there are minItems items in the array, or configured to hide the delete_last_row button, hide the delete button beneath the rows
+         if(minItems || this.hide_delete_last_row_buttons) {
+@@ -3764,9 +4232,8 @@
+     if(value) self.rows[i].setValue(value, initial);
+     self.refreshTabs();
+   },
+-  addControls: function() {
++  addControls: function(trashDisable) {
+     var self = this;
+-    
+     this.collapsed = false;
+     this.toggle_button = this.getButton('','collapse',this.translate('button_collapse'));
+     this.title_controls.appendChild(this.toggle_button);
+@@ -3792,7 +4259,9 @@
+         self.setButtonText(this,'','expand','Expand');
+       }
+     });
+-
++     if(this.schema.collapse){
++         this.options.collapsed = true;
++     }
+     // If it should start collapsed
+     if(this.options.collapsed) {
+       $trigger(this.toggle_button,'click');
+@@ -3807,7 +4276,7 @@
+     }
+
+     // Add "new row" and "delete last" buttons below editor
+-    this.add_row_button = this.getButton(this.getItemTitle(),'add',this.translate('button_add_row_title',[this.getItemTitle()]));
++    this.add_row_button = this.getButton(this.getItemTitle(),'Add',this.translate('button_add_row_title',[this.getItemTitle()]));
+
+     this.add_row_button.addEventListener('click',function(e) {
+       e.preventDefault();
+@@ -3828,8 +4297,6 @@
+       self.refreshValue();
+       self.onChange(true);
+     });
+-    self.controls.appendChild(this.add_row_button);
+-
+     this.delete_last_row_button = this.getButton(this.translate('button_delete_last',[this.getItemTitle()]),'delete',this.translate('button_delete_last_title',[this.getItemTitle()]));
+     this.delete_last_row_button.addEventListener('click',function(e) {
+       e.preventDefault();
+@@ -4438,7 +4905,10 @@
+         if(self.keep_values) editor.setValue(current_value,true);
+         editor.container.style.display = '';
+       }
+-      else editor.container.style.display = 'none';
++      else{
++          editor.container.style.display = 'none';
++      }
+
+     });
+     self.refreshValue();
+     self.refreshHeaderText();
+@@ -4547,11 +5017,12 @@
+     this.switcher = this.theme.getSwitcher(this.display_text);
+     container.appendChild(this.switcher);
+     this.switcher.addEventListener('change',function(e) {
++      addPropertyFlag = true;
+       e.preventDefault();
+       e.stopPropagation();
+-
+       self.switchEditor(self.display_text.indexOf(this.value));
+       self.onChange(true);
++      addPropertyFlag = false;
+     });
+
+     this.editor_holder = document.createElement('div');
+@@ -6296,7 +6767,9 @@
+       button.appendChild(icon);
+       button.innerHTML += ' ';
+     }
++    if(text !=='item'){
+     button.appendChild(document.createTextNode(text));
++    }
+     if(title) button.setAttribute('title',title);
+   },
+   getTable: function() {
+@@ -6456,7 +6929,8 @@
+   },
+   getFormInputField: function(type) {
+     var el = this._super(type);
+-    el.style.width = '98%';
++    el.style.width = '95%';
++    el.style.height = '30px';
+     return el;
+   },
+   afterInputReady: function(input) {
+@@ -6483,7 +6957,9 @@
+     el.textContent = text;
+     return el;
+   },
+-  getFormControl: function(label, input, description) {
++  getFormControl: function(label, input, description, trashFlag) {
++    var self = this;
++    //arrayDelFlag = false;
+     var ret = document.createElement('div');
+     ret.className = 'control-group';
+
+@@ -6491,11 +6967,37 @@
+     controls.className = 'controls';
+
+     if(label && input.getAttribute('type') === 'checkbox') {
+-      ret.appendChild(controls);
+-      label.className += ' checkbox';
+-      label.appendChild(input);
+-      controls.appendChild(label);
+-      controls.style.height = '30px';
++          ret.appendChild(controls);
++          label.className += ' checkbox';
++          label.appendChild(input);
++          controls.appendChild(label);
++          controls.style.height = '30px';
++          if(disableCheckBoxTrash){
++              //if(blockFirstOptions){
++                  var trashButton = document.createElement('button');
++                  trashButton.type = 'button';
++                  trashButton.style.width = '30px'
++                  trashButton.className = 'btn btn-mini json-editor-btn-trash deleteChildLevel';
++                  var iconInnerText = document.createElement('i');
++                  iconInnerText.className = 'fa fa-trash-o';
++                  trashButton.appendChild(iconInnerText);
++                  trashButton.addEventListener('click',function(e) {
++                      e.preventDefault();
++                      e.stopPropagation();
++                      var objPath = [];
++                      var attrValue = this.previousSibling.lastChild.getAttribute('name').split('[');
++                      attrValue.splice(0,1);
++                      for(var j = 0; j < attrValue.length; j++){
++                           var obj = attrValue[j].substring(0,attrValue[j].length-1);
++                           objPath.push(obj);
++                      }
++                      $(this).closest('.row-fluid')[0].remove();
++                      jsoneditor.root.removeObjectProperty(objPath,true);
++                      jsoneditor.root.onChange(true);
++                    });
++                  controls.appendChild(trashButton);
++                  //}
++              }
+     }
+     else {
+       if(label) {
+@@ -6503,7 +7005,40 @@
+         ret.appendChild(label);
+       }
+       controls.appendChild(input);
+-      ret.appendChild(controls);
++     if(trashFlag){
++         //if(blockFirstOptions){
++          var trashButton = document.createElement('button');
++          trashButton.type = 'button';
++          trashButton.style.width = '30px'
++          trashButton.className = 'btn btn-mini json-editor-btn-trash deleteChildLevel';
++          var iconInnerText = document.createElement('i');
++          iconInnerText.className = 'fa fa-trash-o';
++          trashButton.appendChild(iconInnerText);
++          trashButton.addEventListener('click',function(e) {
++              e.preventDefault();
++              e.stopPropagation();
++              var parentPath = this.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.getAttribute('data-schematype');
++              var objPath = [];
++              var attrValue = this.previousSibling.getAttribute('name').split('[');
++              attrValue.splice(0,1);
++              for(var j = 0; j < attrValue.length; j++){
++                   var obj = attrValue[j].substring(0,attrValue[j].length-1);
++                   objPath.push(obj);
++              }
++              if(parentPath == 'array'){
++                  this.parentElement.parentElement.parentElement.remove();
++                  //arrayDelFlag = true;
++              }else{
++                  $(this).closest('.row-fluid')[0].remove();
++              }
++              jsoneditor.root.removeObjectProperty(objPath,true);
++              jsoneditor.root.onChange(true);
++             // arrayDelFlag = false;
++            });
++          controls.appendChild(trashButton);
++          //}
++       }
++     ret.appendChild(controls);
+     }
+
+     if(description) controls.appendChild(description);
+@@ -6512,7 +7047,7 @@
+   },
+   getHeaderButtonHolder: function() {
+     var el = this.getButtonHolder();
+-    el.style.marginLeft = '10px';
++    //el.style.marginLeft = '10px';
+     return el;
+   },
+   getButtonHolder: function() {
+@@ -6522,7 +7057,7 @@
+   },
+   getButton: function(text, icon, title) {
+     var el =  this._super(text, icon, title);
+-    el.className += ' btn btn-default';
++    el.className += ' btn btn-mini';
+     return el;
+   },
+   getTable: function() {
+@@ -7394,26 +7929,26 @@
+
+ JSONEditor.defaults.iconlibs.bootstrap2 = JSONEditor.AbstractIconLib.extend({
+   mapping: {
+-    collapse: 'chevron-down',
+-    expand: 'chevron-up',
++    collapse: 'sort-desc',
++    expand: 'caret-right',
+     "delete": 'trash',
+     edit: 'pencil',
+-    add: 'plus',
++    add: 'plus-sign',
+     cancel: 'ban-circle',
+     save: 'ok',
+     moveup: 'arrow-up',
+     movedown: 'arrow-down'
+   },
+-  icon_prefix: 'icon-'
++  icon_prefix: 'fa fa-'
+ });
+
+ JSONEditor.defaults.iconlibs.bootstrap3 = JSONEditor.AbstractIconLib.extend({
+   mapping: {
+-    collapse: 'chevron-down',
+-    expand: 'chevron-right',
++    collapse: 'sort-down',
++    expand: 'caret-right',
+     "delete": 'remove',
+     edit: 'pencil',
+-    add: 'plus',
++    add: 'plus-sign',
+     cancel: 'floppy-remove',
+     save: 'floppy-saved',
+     moveup: 'arrow-up',
+@@ -7424,26 +7959,26 @@
+
+ JSONEditor.defaults.iconlibs.fontawesome3 = JSONEditor.AbstractIconLib.extend({
+   mapping: {
+-    collapse: 'chevron-down',
+-    expand: 'chevron-right',
++    collapse: 'sort-desc',
++    expand: 'caret-right',
+     "delete": 'remove',
+     edit: 'pencil',
+-    add: 'plus',
++    add: 'plus-sign',
+     cancel: 'ban-circle',
+     save: 'save',
+     moveup: 'arrow-up',
+     movedown: 'arrow-down'
+   },
+-  icon_prefix: 'icon-'
++  icon_prefix: 'fa fa-'
+ });
+
+ JSONEditor.defaults.iconlibs.fontawesome4 = JSONEditor.AbstractIconLib.extend({
+   mapping: {
+-    collapse: 'caret-square-o-down',
++    collapse: 'sort-desc',
+     expand: 'caret-square-o-right',
+     "delete": 'times',
+     edit: 'pencil',
+-    add: 'plus',
++    add: 'plus-sign',
+     cancel: 'ban',
+     save: 'save',
+     moveup: 'arrow-up',
+@@ -8007,4 +8542,4 @@
+   window.JSONEditor = JSONEditor;
+ })();
+
+-//# sourceMappingURL=jsoneditor.js.map
+\ No newline at end of file
++//# sourceMappingURL=jsoneditor.js.map
