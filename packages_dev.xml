@@ -177,5 +177,29 @@
     <format>npm-cached</format>
     <md5>4133427fd8313bcd6e1be869b8c72678</md5>
   </package>
+  <package>
+    <name>eslint</name>
+    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/common/eslint-2.13.1.tar.gz</url>
+    <format>npm-cached</format>
+    <md5>5daca0f0e19152ab86e4abaa66e31a7d</md5>
+  </package>
+  <package>
+    <name>csslint</name>
+    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/common/csslint-1.0.2.tar.gz</url>
+    <format>npm-cached</format>
+    <md5>47645297e4ebacfd3abadb9c9b2a09cf</md5>
+  </package>
+  <package>
+    <name>grunt-contrib-csslint</name>
+    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/common/grunt-contrib-csslint-1.0.0.tar.gz</url>
+    <format>npm-cached</format>
+    <md5>df7f6934bfab766ef767e39073e7b376</md5>
+  </package>
+  <package>
+    <name>csslint-stylish</name>
+    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/common/csslint-stylish-0.0.4.tar.gz</url>
+    <format>npm-cached</format>
+    <md5>dbd7bfd285b8140fe8417e65d84ed950</md5>
+  </package>
 </packages>
 
