@@ -1,5 +1,5 @@
 --- jdorn-jsoneditor.js	2016-08-17 16:57:19.000000000 +0530
-+++ jdorn-jsoneditor.js	2016-08-17 17:11:09.000000000 +0530
++++ jdorn-jsoneditor.js	2016-09-16 16:05:21.000000000 +0530
 @@ -125,11 +125,11 @@
  // Array.isArray polyfill
  // From MDN
@@ -194,7 +194,43 @@
      this.container.appendChild(this.control);
  
      // Any special formatting that needs to happen after the input is added to the dom
-@@ -2591,8 +2639,9 @@
+@@ -2482,13 +2530,34 @@
+     else {
+       container = document.createElement('div');
+       $each(this.property_order, function(i,key) {
++        var size = 12;
+         var editor = self.editors[key];
++        var element = editor.path.split('.');
++        if(element.length == 3){
++            if(editor.schema.type == 'number' || editor.schema.type == 'string'){
++                if(editor.schema.propertyOrder == 1){
++                    editor.container.setAttribute('style','width:97.4%;');
++                    editor.container.firstChild.setAttribute('style','width:49.4%;');
++                }
++                if(key == 'Parent Href' || key == 'Href'){
++                    editor.container.firstChild.lastChild.firstChild.setAttribute('style','width:97.6%;height:28px;');
++                    size = 12;
++                }else{
++                    size = 6;
++                }
++            }
++            if(editor.schema.type == 'boolean'){
++                //editor.container.setAttribute('style','height:45px;');
++                //editor.container.firstChild.setAttribute('style','margin-top:13px;');
++                size = 6;
++            }
++        }
+         if(editor.property_removed) return;
+         var row = self.theme.getGridRow();
+         container.appendChild(row);
+ 
+         if(editor.options.hidden) editor.container.style.display = 'none';
+-        else self.theme.setGridColumnSize(editor.container,12);
++        else self.theme.setGridColumnSize(editor.container,size);
+         row.appendChild(editor.container);
+       });
+     }
+@@ -2591,8 +2660,9 @@
    },
    build: function() {
      var self = this;
@@ -205,7 +241,7 @@
      if(this.options.table_row) {
        this.editor_holder = this.container;
        $each(this.editors, function(key,editor) {
-@@ -2619,16 +2668,16 @@
+@@ -2619,16 +2689,16 @@
      // If the object should be rendered as a div
      else {
        this.header = document.createElement('span');
@@ -226,7 +262,7 @@
        this.editjson_textarea.style.display = 'block';
        this.editjson_save = this.getButton('Save','save','Save');
        this.editjson_save.addEventListener('click',function(e) {
-@@ -2648,6 +2697,7 @@
+@@ -2648,6 +2718,7 @@
  
        // Manage Properties modal
        this.addproperty_holder = this.theme.getModal();
@@ -234,7 +270,7 @@
        this.addproperty_list = document.createElement('div');
        this.addproperty_list.style.width = '295px';
        this.addproperty_list.style.maxHeight = '160px';
-@@ -2656,13 +2706,14 @@
+@@ -2656,13 +2727,14 @@
        this.addproperty_list.style.overflowX = 'hidden';
        this.addproperty_list.style.paddingLeft = '5px';
        this.addproperty_list.setAttribute('class', 'property-selector');
@@ -250,7 +286,7 @@
          e.preventDefault();
          e.stopPropagation();
          if(self.addproperty_input.value) {
-@@ -2677,6 +2728,7 @@
+@@ -2677,6 +2749,7 @@
            }
            self.onChange(true);
          }
@@ -258,7 +294,7 @@
        });
        this.addproperty_holder.appendChild(this.addproperty_list);
        this.addproperty_holder.appendChild(this.addproperty_input);
-@@ -2691,7 +2743,15 @@
+@@ -2691,7 +2764,15 @@
          this.description = this.theme.getDescription(this.schema.description);
          this.container.appendChild(this.description);
        }
@@ -275,7 +311,7 @@
        // Validation error placeholder area
        this.error_holder = document.createElement('div');
        this.container.appendChild(this.error_holder);
-@@ -2707,24 +2767,70 @@
+@@ -2707,36 +2788,94 @@
        $each(this.editors, function(key,editor) {
          var holder = self.theme.getGridColumn();
          self.row_container.appendChild(holder);
@@ -305,7 +341,7 @@
 +             var index = true;
 +                  var trashObj = document.createElement('button');
 +                  trashObj.type = 'button';
-+                  trashObj.style.width = '30px'
++                  trashObj.style.width = '20px'
 +                  trashObj.className = 'btn btn-mini json-editor-btn-trash deleteChildLevel';
 +                  var objInnerText = document.createElement('i');
 +                  objInnerText.className = 'fa fa-trash-o';
@@ -338,6 +374,14 @@
 -      this.collapsed = false;
 -      this.toggle_button = this.getButton('','collapse','Collapse');
 -      this.title_controls.appendChild(this.toggle_button);
++      var schemaPath = self.editor_holder.parentElement.getAttribute('data-schemapath').split('.');
++      if(schemaPath.length === 3){
++          self.editor_holder.parentElement.firstChild.setAttribute('style','border-bottom:1px solid #eeeeee;');
++      }else if(schemaPath.length >= 4){
++          self.editor_holder.parentElement.lastChild.firstChild.setAttribute('style','border-left: 1px dotted #e5e5e5;margin-left: 9px;');
++      }else if(schemaPath.length == 2){
++          self.editor_holder.parentElement.setAttribute('style','position: relative;padding-right:0px;padding-left:11px;');
++      }
 +      if(this.schema.collapse && !clickAddItem){
 +          this.toggle_button = this.getButton('','expand','Expand');
 +          this.title_controls.appendChild(this.toggle_button);
@@ -353,7 +397,25 @@
        this.toggle_button.addEventListener('click',function(e) {
          e.preventDefault();
          e.stopPropagation();
-@@ -2754,8 +2860,9 @@
+         if(self.collapsed) {
+-          self.editor_holder.style.display = '';
++          //self.editor_holder.style.display = '';
++          $(self.editor_holder).slideDown(700);
+           self.collapsed = false;
+           self.setButtonText(self.toggle_button,'','collapse','Collapse');
++          this.setAttribute('style','margin-top:-8px;');
+         }
+         else {
+-          self.editor_holder.style.display = 'none';
++            //self.editor_holder.style.display = 'none';
++            $(self.editor_holder).slideUp(700);
+           self.collapsed = true;
+           self.setButtonText(self.toggle_button,'','expand','Expand');
++          this.setAttribute('style','margin-top:0px;');
+         }
+       });
+ 
+@@ -2754,8 +2893,9 @@
        }
  
        // Edit JSON Button
@@ -364,7 +426,7 @@
          e.preventDefault();
          e.stopPropagation();
          self.toggleEditJSON();
-@@ -2770,16 +2877,34 @@
+@@ -2770,16 +2910,34 @@
        else if(this.jsoneditor.options.disable_edit_json) {
          this.editjson_button.style.display = 'none';
        }
@@ -405,7 +467,7 @@
        this.refreshAddProperties();
      }
  
-@@ -2864,10 +2989,24 @@
+@@ -2864,10 +3022,24 @@
    addPropertyCheckbox: function(key) {
      var self = this;
      var checkbox, label, labelText, control;
@@ -432,7 +494,7 @@
      if (this.schema.properties[key] && this.schema.properties[key].title)
        labelText = this.schema.properties[key].title;
      else
-@@ -2884,19 +3023,21 @@
+@@ -2884,19 +3056,21 @@
  
      checkbox.checked = key in this.editors;
      checkbox.addEventListener('change',function() {
@@ -460,7 +522,7 @@
      if(!this.addproperty_holder) return;
      this.hideEditJSON();
  
-@@ -2911,7 +3052,8 @@
+@@ -2911,7 +3085,8 @@
      this.adding_property = true;
      this.addproperty_button.disabled = false;
      this.addproperty_holder.style.display = '';
@@ -470,7 +532,7 @@
    },
    hideAddProperty: function() {
      if(!this.addproperty_holder) return;
-@@ -2922,17 +3064,86 @@
+@@ -2922,17 +3097,86 @@
  
      this.adding_property = false;
    },
@@ -566,7 +628,7 @@
      }
    },
    addObjectProperty: function(name, prebuild_only) {
-@@ -3010,6 +3221,7 @@
+@@ -3010,6 +3254,7 @@
      this._super();
    },
    getValue: function() {
@@ -574,7 +636,7 @@
      var result = this._super();
      if(this.jsoneditor.options.remove_empty_properties || this.options.remove_empty_properties) {
        for(var i in result) {
-@@ -3018,7 +3230,176 @@
+@@ -3018,7 +3263,176 @@
          }
        }
      }
@@ -752,7 +814,7 @@
    },
    refreshValue: function() {
      this.value = {};
-@@ -3026,19 +3407,26 @@
+@@ -3026,19 +3440,26 @@
  
      for(var i in this.editors) {
        if(!this.editors.hasOwnProperty(i)) continue;
@@ -783,7 +845,7 @@
      // Get number of editors
      for(i in this.editors) {
        if(!this.editors.hasOwnProperty(i)) continue;
-@@ -3132,10 +3520,6 @@
+@@ -3132,10 +3553,6 @@
          self.addObjectProperty(i);
          editor.setValue(value[i],initial);
        }
@@ -794,7 +856,7 @@
        // Otherwise, set the value to the default
        else {
          editor.setValue(editor.getDefault(),initial);
-@@ -3275,16 +3659,85 @@
+@@ -3275,16 +3692,109 @@
      this.hide_move_buttons = this.options.disable_array_reorder || this.jsoneditor.options.disable_array_reorder;
      this.hide_add_button = this.options.disable_array_add || this.jsoneditor.options.disable_array_add;
    },
@@ -818,12 +880,16 @@
 +      this.rootheaderText = document.createElement('span');
 +      this.rootheaderText.textContent = this.getTitle();
 +      this.title.appendChild(this.rootheaderText);
++      var schemaPath = this.container.getAttribute('data-schemapath').split('.');
++      if(schemaPath.length === 3){
++          this.container.firstChild.setAttribute('style','border-bottom:1px solid #eeeeee;');
++      }
 +      if(this.schema.type === 'array'){
 +          var addItemIcon = document.createElement('button');
 +          addItemIcon.type = 'button';
-+          addItemIcon.style.marginTop = '4px';
-+          addItemIcon.style.marginLeft = '4px';
-+          addItemIcon.style.fontSize = '9px';
++          addItemIcon.style.marginTop = '1px';
++          addItemIcon.style.marginLeft = '8px';
++          addItemIcon.style.fontSize = '12px';
 +          addItemIcon.title = 'Add Item';
 +          addItemIcon.className = 'btn btn-mini json-editor-btn-plus';
 +          var innerText = document.createElement('i');
@@ -854,8 +920,28 @@
 +              enableInputField = false;
 +              addPropertyFlag = false;
 +              clickAddItem = false;
-+              $(this.parentElement.parentElement).find('.well-small')[0].firstChild.setAttribute('style','display:block');
-+              $(this.parentElement.parentElement).find('.well-small')[0].setAttribute('style','padding-bottom:0px;display:block');
++              this.parentElement.firstChild.firstChild.setAttribute('style','margin-top:-8px;');
++              var blockEle = $(this.parentElement.parentElement).find('.well-small')[0].firstChild.getAttribute('style');
++              var parentEle = this.parentElement.parentElement.getAttribute('data-schemapath').split('.');
++              if( blockEle == 'display:block' || blockEle == 'display: block;' || blockEle == 'display:block;' || blockEle == 'border-left: 1px dotted rgb(229, 229, 229); margin-left: 9px; display: block;'){
++                  if(parentEle.length == 3){
++                      $(this.parentElement.parentElement).find('.well-small')[0].firstChild.lastChild.setAttribute('style','display:none;');
++                  }else{
++                      if($(this.parentElement.parentElement).find('.well-small')[0].firstChild.lastChild.getAttribute('data-schematype') == 'array'){
++                         $(this.parentElement.parentElement).find('.well-small')[0].firstChild.lastChild.setAttribute('style','display:none;margin-left:9px;border-left:1px dotted #e5e5e5;');
++                      }else{
++                         $(this.parentElement.parentElement).find('.well-small')[0].firstChild.lastChild.setAttribute('style','display:none;');
++                      }
++                  }
++                  $($(this.parentElement.parentElement).find('.well-small')[0].firstChild.lastChild).slideDown(1200);
++              }else{
++                  if(parentEle.length == 3){
++                      $(this.parentElement.parentElement).find('.well-small')[0].firstChild.setAttribute('style','display:block;');
++                  }else{
++                    $(this.parentElement.parentElement).find('.well-small')[0].firstChild.setAttribute('style','display:block;margin-left:9px;border-left:1px dotted #e5e5e5;');
++                  }
++              }
++              $($(this.parentElement.parentElement).find('.well-small')[0]).slideDown(1200);
 +              self.collapsed = false;
 +              this.parentElement.firstChild.firstChild.firstChild.setAttribute('class','fa fa-sort-desc');
 +              this.parentElement.firstChild.firstChild.setAttribute('title','Collapse');
@@ -864,7 +950,7 @@
 +        if(!trashIconHide){
 +          var trashicon = document.createElement('button');
 +          trashicon.type = 'button';
-+          trashicon.style.width = '30px'
++          trashicon.style.width = '20px'
 +          trashicon.className = 'btn btn-mini json-editor-btn-trash deleteChildLevel';
 +          var innerText = document.createElement('i');
 +          innerText.className = 'fa fa-trash-o';
@@ -885,7 +971,7 @@
        if(this.schema.description) {
          this.description = this.theme.getDescription(this.schema.description);
          this.container.appendChild(this.description);
-@@ -3320,7 +3773,7 @@
+@@ -3320,7 +3830,7 @@
      }
  
      // Add controls
@@ -894,7 +980,7 @@
    },
    onChildEditorChange: function(editor) {
      this.refreshValue();
-@@ -3384,7 +3837,20 @@
+@@ -3384,7 +3894,20 @@
      var item_info = this.getItemInfo(i);
      var schema = this.getItemSchema(i);
      schema = this.jsoneditor.expandRefs(schema);
@@ -916,7 +1002,7 @@
  
      var editor = this.jsoneditor.getEditorClass(schema);
  
-@@ -3490,7 +3956,9 @@
+@@ -3490,7 +4013,9 @@
    setValue: function(value, initial) {
      // Update the array's value, adding/removing rows when necessary
      value = value || [];
@@ -927,7 +1013,7 @@
      if(!(Array.isArray(value))) value = [value];
      
      var serialized = JSON.stringify(value);
-@@ -3595,8 +4063,8 @@
+@@ -3595,8 +4120,8 @@
          this.delete_last_row_button.style.display = 'none';
          this.remove_all_rows_button.style.display = 'none';
        }
@@ -938,7 +1024,7 @@
  
          // If there are minItems items in the array, or configured to hide the delete_last_row button, hide the delete button beneath the rows
          if(minItems || this.hide_delete_last_row_buttons) {
-@@ -3764,9 +4232,8 @@
+@@ -3764,9 +4289,8 @@
      if(value) self.rows[i].setValue(value, initial);
      self.refreshTabs();
    },
@@ -949,8 +1035,36 @@
      this.collapsed = false;
      this.toggle_button = this.getButton('','collapse',this.translate('button_collapse'));
      this.title_controls.appendChild(this.toggle_button);
-@@ -3792,7 +4259,9 @@
+@@ -3778,21 +4302,34 @@
+       if(self.collapsed) {
+         self.collapsed = false;
+         if(self.panel) self.panel.style.display = '';
+-        self.row_holder.style.display = row_holder_display;
++        var displayProp = self.row_holder.getAttribute('style');
++        var ele = self.row_holder.parentElement.parentElement.getAttribute('data-schemapath').split('.');
++        if(ele.length == 3){
++            self.row_holder.setAttribute('style',''+ displayProp +'');
++        }else{
++            self.row_holder.setAttribute('style','border-left:1px dotted #e5e5e5;margin-left:9px;'+ displayProp +'');
++        }
++        $(self.row_holder).slideDown(700);
++        //self.row_holder.style.display = row_holder_display;
+         if(self.tabs_holder) self.tabs_holder.style.display = '';
+         self.controls.style.display = controls_display;
+         self.setButtonText(this,'','collapse','Collapse');
++        this.setAttribute('style','margin-top:-8px;');
+       }
+       else {
+         self.collapsed = true;
+-        self.row_holder.style.display = 'none';
++        $(self.row_holder).slideUp(700);
++        //self.row_holder.style.display = 'none';
+         if(self.tabs_holder) self.tabs_holder.style.display = 'none';
+         self.controls.style.display = 'none';
+-        if(self.panel) self.panel.style.display = 'none';
++        if(self.panel) $(self.panel).slideUp(); //self.panel.style.display = 'none';
          self.setButtonText(this,'','expand','Expand');
++        this.setAttribute('style','margin-top:0px;');
        }
      });
 -
@@ -960,7 +1074,7 @@
      // If it should start collapsed
      if(this.options.collapsed) {
        $trigger(this.toggle_button,'click');
-@@ -3807,7 +4276,7 @@
+@@ -3807,7 +4344,7 @@
      }
      
      // Add "new row" and "delete last" buttons below editor
@@ -969,7 +1083,7 @@
      
      this.add_row_button.addEventListener('click',function(e) {
        e.preventDefault();
-@@ -3828,8 +4297,6 @@
+@@ -3828,8 +4365,6 @@
        self.refreshValue();
        self.onChange(true);
      });
@@ -978,7 +1092,7 @@
      this.delete_last_row_button = this.getButton(this.translate('button_delete_last',[this.getItemTitle()]),'delete',this.translate('button_delete_last_title',[this.getItemTitle()]));
      this.delete_last_row_button.addEventListener('click',function(e) {
        e.preventDefault();
-@@ -4438,7 +4905,10 @@
+@@ -4438,7 +4973,10 @@
          if(self.keep_values) editor.setValue(current_value,true);
          editor.container.style.display = '';
        }
@@ -990,7 +1104,7 @@
      });
      self.refreshValue();
      self.refreshHeaderText();
-@@ -4547,11 +5017,12 @@
+@@ -4547,11 +5085,12 @@
      this.switcher = this.theme.getSwitcher(this.display_text);
      container.appendChild(this.switcher);
      this.switcher.addEventListener('change',function(e) {
@@ -1004,7 +1118,7 @@
      });
  
      this.editor_holder = document.createElement('div');
-@@ -6296,7 +6767,9 @@
+@@ -6296,7 +6835,9 @@
        button.appendChild(icon);
        button.innerHTML += ' ';
      }
@@ -1014,17 +1128,26 @@
      if(title) button.setAttribute('title',title);
    },
    getTable: function() {
-@@ -6456,7 +6929,8 @@
+@@ -6446,7 +6987,7 @@
+     return el;
+   },
+   setGridColumnSize: function(el,size) {
+-    el.className = 'span'+size;
++    el.className = 'col-xs-'+size;
+   },
+   getSelectInput: function(options) {
+     var input = this._super(options);
+@@ -6456,7 +6997,8 @@
    },
    getFormInputField: function(type) {
      var el = this._super(type);
 -    el.style.width = '98%';
 +    el.style.width = '95%';
-+    el.style.height = '30px';
++    el.style.height = '28px';
      return el;
    },
    afterInputReady: function(input) {
-@@ -6483,7 +6957,9 @@
+@@ -6483,7 +7025,9 @@
      el.textContent = text;
      return el;
    },
@@ -1035,7 +1158,7 @@
      var ret = document.createElement('div');
      ret.className = 'control-group';
  
-@@ -6491,11 +6967,37 @@
+@@ -6491,11 +7035,38 @@
      controls.className = 'controls';
  
      if(label && input.getAttribute('type') === 'checkbox') {
@@ -1046,14 +1169,15 @@
 -      controls.style.height = '30px';
 +          ret.appendChild(controls);
 +          label.className += ' checkbox';
-+          label.appendChild(input);
++          //input.appendChild(label);
++          controls.appendChild(input);
 +          controls.appendChild(label);
 +          controls.style.height = '30px';
 +          if(disableCheckBoxTrash){
 +              //if(blockFirstOptions){
 +                  var trashButton = document.createElement('button');
 +                  trashButton.type = 'button';
-+                  trashButton.style.width = '30px'
++                  trashButton.style.width = '20px'
 +                  trashButton.className = 'btn btn-mini json-editor-btn-trash deleteChildLevel';
 +                  var iconInnerText = document.createElement('i');
 +                  iconInnerText.className = 'fa fa-trash-o';
@@ -1062,7 +1186,7 @@
 +                      e.preventDefault();
 +                      e.stopPropagation();
 +                      var objPath = [];
-+                      var attrValue = this.previousSibling.lastChild.getAttribute('name').split('[');
++                      var attrValue = this.previousSibling.previousSibling.getAttribute('name').split('[');
 +                      attrValue.splice(0,1);
 +                      for(var j = 0; j < attrValue.length; j++){
 +                           var obj = attrValue[j].substring(0,attrValue[j].length-1);
@@ -1078,7 +1202,7 @@
      }
      else {
        if(label) {
-@@ -6503,7 +7005,40 @@
+@@ -6503,7 +7074,40 @@
          ret.appendChild(label);
        }
        controls.appendChild(input);
@@ -1087,7 +1211,7 @@
 +         //if(blockFirstOptions){
 +          var trashButton = document.createElement('button');
 +          trashButton.type = 'button';
-+          trashButton.style.width = '30px'
++          trashButton.style.width = '20px'
 +          trashButton.className = 'btn btn-mini json-editor-btn-trash deleteChildLevel';
 +          var iconInnerText = document.createElement('i');
 +          iconInnerText.className = 'fa fa-trash-o';
@@ -1120,7 +1244,7 @@
      }
  
      if(description) controls.appendChild(description);
-@@ -6512,7 +7047,7 @@
+@@ -6512,7 +7116,7 @@
    },
    getHeaderButtonHolder: function() {
      var el = this.getButtonHolder();
@@ -1129,7 +1253,7 @@
      return el;
    },
    getButtonHolder: function() {
-@@ -6522,7 +7057,7 @@
+@@ -6522,7 +7126,7 @@
    },
    getButton: function(text, icon, title) {
      var el =  this._super(text, icon, title);
@@ -1138,7 +1262,7 @@
      return el;
    },
    getTable: function() {
-@@ -7394,26 +7929,26 @@
+@@ -7394,26 +7998,26 @@
  
  JSONEditor.defaults.iconlibs.bootstrap2 = JSONEditor.AbstractIconLib.extend({
    mapping: {
@@ -1172,7 +1296,7 @@
      cancel: 'floppy-remove',
      save: 'floppy-saved',
      moveup: 'arrow-up',
-@@ -7424,26 +7959,26 @@
+@@ -7424,26 +8028,26 @@
  
  JSONEditor.defaults.iconlibs.fontawesome3 = JSONEditor.AbstractIconLib.extend({
    mapping: {
@@ -1205,7 +1329,7 @@
      cancel: 'ban',
      save: 'save',
      moveup: 'arrow-up',
-@@ -8007,4 +8542,4 @@
+@@ -8007,4 +8611,4 @@
    window.JSONEditor = JSONEditor;
  })();
  
