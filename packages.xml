@@ -654,6 +654,12 @@
         <md5>643dfa0f57d46b5ea281785c13d7389b</md5>
     </package>
     <package>
+        <name>lodash-4.15.0</name>
+        <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/common/npm-sources/lodash-4.15.tar.gz</url>
+        <format>npm-cached</format>
+        <md5>25b7ab9477cbce4b4de1fc1d9f0292fa</md5>
+    </package>
+    <package>
         <name>moment-2.10.3</name>
         <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/npm-sources/moment-2.10.3.tar.gz</url>
         <format>npm-cached</format>
