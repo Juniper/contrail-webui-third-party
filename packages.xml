@@ -700,4 +700,11 @@
             <patch strip="0">jdorn-jsoneditor-0.7.25.patch</patch>
         </patches>
     </package>
+    <package>
+        <name>d3-v4.1.1</name>
+        <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/common/d3-v4.1.1.min.js</url>
+        <local-filename>d3-v4.min.js</local-filename>
+        <format>file</format>
+        <md5>129b195a432d7c87310cede803863361</md5>
+    </package>
 </packages>
