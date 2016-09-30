@@ -495,6 +495,9 @@
         <local-filename>jquery-ui-multiselect-widget-1.15.tar.gz</local-filename>
         <format>tgz</format>
         <md5>daff4011cd0d2fa7f46e33c359ac9b24</md5>
+        <patches>
+            <patch strip="2">jquery-ui-multiselect-widget.patch</patch>
+        </patches>
     </package>
     <package>
         <name>knockback-1.1.0</name>

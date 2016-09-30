@@ -1,12 +1,30 @@
-diff -Naur old/contrail-webui-third-party/jquery-ui-multiselect-widget-1.13/src/jquery.multiselect.filter.js new/contrail-webui-third-party/jquery-ui-multiselect-widget-1.13/src/jquery.multiselect.filter.js
---- old/contrail-webui-third-party/jquery-ui-multiselect-widget-1.13/src/jquery.multiselect.filter.js	2012-08-19 08:18:25.000000000 -0700
-+++ new/contrail-webui-third-party/jquery-ui-multiselect-widget-1.13/src/jquery.multiselect.filter.js	2014-09-09 10:43:03.000000000 -0700
-@@ -28,7 +28,7 @@
- 		_create: function(){
- 			var self = this,
- 				opts = this.options,
--				instance = (this.instance = $(this.element).data("multiselect")),
-+				instance = (this.instance = $(this.element).data("echMultiselect")),
- 				
- 				// store header; add filter class so the close/check all/uncheck all links can be positioned correctly
- 				header = (this.header = instance.menu.find(".ui-multiselect-header").addClass("ui-multiselect-hasfilter")),
+diff -Naur old/contrail-webui-third-party/jquery-ui-multiselect-widget-1.15/src/jquery.multiselect.js new/contrail-webui-third-party/jquery-ui-multiselect-widget-1.15/src/jquery.multiselect.js
+--- old/contrail-webui-third-party/jquery-ui-multiselect-widget-1.15/src/jquery.multiselect.js	2016-07-08 07:50:15.000000000 -0700
++++ new/contrail-webui-third-party/jquery-ui-multiselect-widget-1.15/src/jquery.multiselect.js	2016-09-28 12:48:14.000000000 -0700
+@@ -350,7 +350,7 @@
+       .delegate('label', 'mouseenter.multiselect', function() {
+         if(!$(this).hasClass('ui-state-disabled')) {
+           self.labels.removeClass('ui-state-hover');
+-          $(this).addClass('ui-state-hover').find('input').focus();
++          $(this).addClass('ui-state-hover');
+         }
+       })
+       .delegate('label', 'keydown.multiselect', function(e) {
+@@ -386,7 +386,7 @@
+ 
+         // make sure the input has focus. otherwise, the esc key
+         // won't close the menu after clicking an item.
+-        $this.focus();
++        //$this.focus();
+ 
+         // toggle aria state
+         $this.prop('aria-selected', checked);
+@@ -509,7 +509,7 @@
+       $inputs.each(this._toggleState('checked', flag));
+ 
+       // give the first input focus
+-      $inputs.eq(0).focus();
++      //$inputs.eq(0).focus();
+ 
+       // update button text
+       this.update();
