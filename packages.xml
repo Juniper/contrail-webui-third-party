@@ -654,7 +654,7 @@
         <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/common/ajv-4.1.0.zip</url>
         <local-filename>ajv-4.1.0.zip</local-filename>
         <format>zip</format>
-        <md5>643dfa0f57d46b5ea281785c13d7389b</md5>
+        <md5>0e61ff1c2c18a1a7f1265f549fd49fd1</md5>
     </package>
     <package>
         <name>lodash-4.15.0</name>
