@@ -709,4 +709,11 @@
             <patch strip="0">jdorn-jsoneditor-0.7.25.patch</patch>
         </patches>
     </package>
+    <package>
+        <name>jquery-linedtextarea</name>
+        <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/common/jquery-linedtextarea.zip</url>
+        <local-filename>jquery-linedtextarea.zip</local-filename>
+        <format>zip</format>
+        <md5>28a11528a2be68a0173346e0636717cc</md5>
+    </package>
 </packages>
