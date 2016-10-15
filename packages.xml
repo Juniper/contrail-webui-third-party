@@ -294,6 +294,17 @@
         </patches>
     </package>
     <package>
+        <name>gridstack-v0.2.5</name>
+        <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/common/gridstack.js-0.2.5.tar.gz</url>
+        <local-filename>gridstack-v0.2.5.tar.gz</local-filename>
+        <format>tgz</format>
+        <md5>79d62a589d3a0eb8d3090ea78eee3f94</md5>
+        <rename>gridstack-v0.2.5</rename>
+        <patches>
+            <patch strip="0">gridstack_v0.2.5.patch</patch>
+        </patches>
+    </package>
+    <package>
         <name>express</name>
         <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/npm-sources/express-3.0.3.tar.gz</url>
         <format>npm-cached</format>
