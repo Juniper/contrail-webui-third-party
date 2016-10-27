@@ -302,7 +302,16 @@
         <rename>gridstack-v0.2.5</rename>
         <patches>
             <patch strip="0">gridstack_v0.2.5.patch</patch>
+            <patch strip="0">gridstack_v0.2.5_1.patch</patch>
         </patches>
+    </package>
+    <package>
+        <name>toolbar-v1.0.0</name>
+        <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/common/paulkinzett-toolbar-1.0.0-49-gfbfde3e.zip</url>
+        <local-filename>toolbar-v1.0.0.zip</local-filename>
+        <format>zip</format>
+        <md5>f3031a2ea54adb2605f15b4115efb8d1</md5>
+        <rename>toolbar-v1.0.0</rename>
     </package>
     <package>
         <name>express</name>
@@ -536,6 +545,14 @@
         </patches>
     </package>
     <package>
+        <name>palettejs</name>
+        <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/palette.js-master.zip</url>
+        <local-filename>palette.js-master.zip</local-filename>
+        <format>zip</format>
+        <md5>b22800532e93d3ded01a7f5727d56a5d</md5>
+        <rename>palette.js-master</rename>
+    </package>
+    <package>
         <name>visjs</name>
         <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/vis-v4.9.0.zip</url>
         <local-filename>vis-v4.9.0.zip</local-filename>
@@ -575,6 +592,12 @@
         <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/npm-sources/ipv6-3.1.1.tar.gz</url>
         <format>npm-cached</format>
         <md5>84fab87d6290e4a310ddc12c042d855f</md5>
+    </package>
+    <package>
+        <name>event-drops</name>
+        <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/common/npm-sources/event-drops-0.3.0-alpha1.tgz</url>
+        <format>npm</format>
+        <md5>8ee3bcbf185a457c679ad95530fbd7c4</md5>
     </package>
     <package>
         <name>easysoap</name>

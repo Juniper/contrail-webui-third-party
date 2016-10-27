@@ -1,0 +1,21 @@
+--- gridstack-v0.2.5/dist/gridstack.old.js	2016-11-15 12:13:18.544722313 +0530
++++ gridstack-v0.2.5/dist/gridstack.js	2016-11-15 12:13:50.676739875 +0530
+@@ -779,6 +779,9 @@
+                     self.placeholder.detach();
+
+                     var node = $(ui.draggable).data('_gridstack_node');
++                    if(!node){
++                        return;
++                    }
+                     node._grid = self;
+                     var el = $(ui.draggable).clone(false);
+                     el.data('_gridstack_node', node);
+@@ -956,7 +959,7 @@
+     GridStack.prototype._clearRemovingTimeout = function(el) {
+         var node = $(el).data('_gridstack_node');
+
+-        if (!node._removeTimeout) {
++        if (!node || !node._removeTimeout) {
+             return;
+         }
+         clearTimeout(node._removeTimeout);
