@@ -577,6 +577,12 @@
         <md5>84fab87d6290e4a310ddc12c042d855f</md5>
     </package>
     <package>
+        <name>event-drops</name>
+        <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/common/npm-sources/event-drops-0.3.0-alpha1.tgz</url>
+        <format>npm</format>
+        <md5>8ee3bcbf185a457c679ad95530fbd7c4</md5>
+    </package>
+    <package>
         <name>easysoap</name>
         <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/npm-sources/easysoap-0.6.13.tar.gz</url>
         <format>npm-cached</format>
