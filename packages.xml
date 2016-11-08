@@ -305,6 +305,14 @@
         </patches>
     </package>
     <package>
+        <name>toolbar-v1.0.0</name>
+        <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/common/paulkinzett-toolbar-1.0.0-49-gfbfde3e.zip</url>
+        <local-filename>toolbar-v1.0.0.zip</local-filename>
+        <format>zip</format>
+        <md5>f3031a2ea54adb2605f15b4115efb8d1</md5>
+        <rename>toolbar-v1.0.0</rename>
+    </package>
+    <package>
         <name>express</name>
         <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/npm-sources/express-3.0.3.tar.gz</url>
         <format>npm-cached</format>
