@@ -544,6 +544,14 @@
         </patches>
     </package>
     <package>
+        <name>palettejs</name>
+        <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/palette.js-master.zip</url>
+        <local-filename>palette.js-master.zip</local-filename>
+        <format>zip</format>
+        <md5>b22800532e93d3ded01a7f5727d56a5d</md5>
+        <rename>palette.js-master</rename>
+    </package>
+    <package>
         <name>visjs</name>
         <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/vis-v4.9.0.zip</url>
         <local-filename>vis-v4.9.0.zip</local-filename>
