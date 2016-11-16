@@ -302,6 +302,7 @@
         <rename>gridstack-v0.2.5</rename>
         <patches>
             <patch strip="0">gridstack_v0.2.5.patch</patch>
+            <patch strip="0">gridstack_v0.2.5_1.patch</patch>
         </patches>
     </package>
     <package>
