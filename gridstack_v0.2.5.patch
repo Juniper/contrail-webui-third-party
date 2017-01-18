@@ -1,26 +1,12 @@
---- gridstack-v0.2.5/dist/gridstack.old.js	2016-10-13 12:52:05.000000000 +0530
-+++ gridstack-v0.2.5/dist/gridstack.js	2016-10-13 12:52:23.000000000 +0530
-@@ -5,7 +5,7 @@
-  * gridstack.js may be freely distributed under the MIT license.
-  * @preserve
+--- gridstack-v0.2.5/dist/gridstack.old.js	2017-01-18 19:53:38.672942096 +0530
++++ gridstack-v0.2.5/dist/gridstack.js	2017-01-18 20:03:34.432245413 +0530
+@@ -7,8 +7,7 @@
  */
--(function(factory) {
-+/*(function(factory) {
+ (function(factory) {
      if (typeof define === 'function' && define.amd) {
-         define(['jquery', 'lodash', 'jquery-ui/core', 'jquery-ui/widget', 'jquery-ui/mouse', 'jquery-ui/draggable',
-             'jquery-ui/resizable'], factory);
-@@ -16,7 +16,7 @@
-     } else {
-         factory(jQuery, _);
-     }
--})(function($, _) {
-+})*/(function($, _) {
- 
-     var scope = window;
- 
-@@ -1645,4 +1645,4 @@
-     };
- 
-     return scope.GridStackUI;
--});
-+})($,_);
+-        define(['jquery', 'lodash', 'jquery-ui/core', 'jquery-ui/widget', 'jquery-ui/mouse', 'jquery-ui/draggable',
+-            'jquery-ui/resizable'], factory);
++        define(['jquery', 'lodash'], factory);
+     } else if (typeof exports !== 'undefined') {
+         try { jQuery = require('jquery'); } catch (e) {}
+         try { _ = require('lodash'); } catch (e) {}
