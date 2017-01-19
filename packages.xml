@@ -595,9 +595,10 @@
     </package>
     <package>
         <name>event-drops</name>
-        <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/common/npm-sources/event-drops-0.3.0-alpha1.tgz</url>
-        <format>npm</format>
-        <md5>8ee3bcbf185a457c679ad95530fbd7c4</md5>
+        <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/common/event-drops-v0.3.0-alpha1.tar.gz</url>
+        <format>tgz</format>
+        <md5>6f0a13c17e8c023fc0af8ab3a8862c5d</md5>
+        <rename>event-drops-v0.3.0</rename>
     </package>
     <package>
         <name>easysoap</name>
