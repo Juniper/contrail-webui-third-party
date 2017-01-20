@@ -741,6 +741,7 @@
         <rename>jdorn-jsoneditor.js</rename>
         <patches>
             <patch strip="0">jdorn-jsoneditor-0.7.25.patch</patch>
+            <patch strip="0">jdorn-jsoneditor-0.7.25_1.patch</patch>
         </patches>
     </package>
     <package>
