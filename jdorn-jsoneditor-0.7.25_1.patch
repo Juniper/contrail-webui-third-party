@@ -1,0 +1,535 @@
+--- jdorn-jsoneditor.js	2017-01-20 11:19:18.000000000 +0530
++++ jdorn-jsoneditor.js	2017-01-23 15:39:31.000000000 +0530
+@@ -218,7 +218,7 @@
+   objectPropertiesStack = [];
+   propertyDeleteCount = 0;
+   directLevelKey = [];
+-  removedKeyStack = [];
++  deletedPropertyStack = [];
+   enableInputField = true
+   addPropertyFlag = false;
+   disableCheckBoxTrash = true;
+@@ -361,8 +361,10 @@
+   },
+   getValue: function() {
+     if(!this.ready) throw "JSON Editor not ready yet.  Listen for 'ready' event before getting the value";
+-
+-    return this.root.getValue();
++    var returnedStack = [];
++    returnedStack.push(this.root.getValue());
++    returnedStack.push(deletedPropertyStack);
++    return returnedStack;
+   },
+   setValue: function(value) {
+     if(!this.ready) throw "JSON Editor not ready yet.  Listen for 'ready' event before setting the value";
+@@ -2207,9 +2209,13 @@
+         icon.className = 'fa fa-asterisk jsonEditor-form-asterisk';
+         this.label.appendChild(icon);
+     }
+-    this.control = this.theme.getFormControl(this.label, this.input, this.description,this.hideIconForProp);
++    var objPathList = this.options.path.split('.');
++    if(objPathList.length > 3){
++        this.control = this.theme.getFormControl(this.label, this.input, this.description,this.hideIconForProp, false);
++    }else{
++        this.control = this.theme.getFormControl(this.label, this.input, this.description,this.hideIconForProp, true);
++    }
+     this.container.appendChild(this.control);
+-
+     // Any special formatting that needs to happen after the input is added to the dom
+     window.requestAnimationFrame(function() {
+       // Skip in case the input is only a temporary editor,
+@@ -2481,9 +2487,16 @@
+     var self = this, i, j;
+ 
+     if(!this.row_container) return;
+-
+     // Sort editors by propertyOrder
+-    this.property_order = Object.keys(this.editors);
++    var upperStack = [],lowerStack = [];
++    for (var key in this.editors) {
++        if(this.editors[key].schema.type == 'number' || this.editors[key].schema.type == 'string' || this.editors[key].schema.type == 'boolean'){
++            upperStack.push(key);
++        }else{
++            lowerStack.push(key);
++        }
++    }
++    this.property_order = upperStack.concat(lowerStack);
+     this.property_order = this.property_order.sort(function(a,b) {
+       var ordera = self.editors[a].schema.propertyOrder;
+       var orderb = self.editors[b].schema.propertyOrder;
+@@ -2579,6 +2592,65 @@
+     // Normal layout
+     else {
+       container = document.createElement('div');
++      headerWidth = undefined, isCollection = false;
++      var keyPath = this.editors[Object.keys(this.editors)[0]].path.split('.');
++      var count = 0, keyStack = [];
++      if(this.schema.title !== undefined){
++          var objCount = 0;
++          for (var key in this.editors) {
++              if(this.editors[key].schema.type == 'object' || this.editors[key].schema.type == 'array'){
++                  objCount++;
++              }
++          }
++          if(objCount === 0){
++              isCollection = true;
++              for (var key in this.editors) {
++                  if(this.editors[key].schema.type == 'number' || this.editors[key].schema.type == 'string' || this.editors[key].schema.type == 'boolean'){
++                      keyStack.push(key);
++                      count++;
++                  }
++              }
++              if(keyPath.length > 3){
++                  var arrayPath = this.options.path.split('.');
++                  if(isNumber(arrayPath[arrayPath.length - 1])){
++                      headerWidth = 98 / count;
++                      if(arrayPath[arrayPath.length - 1] == 0){
++                          if(keyStack.length > 0){
++                              var headerDiv = document.createElement('div');
++                              headerDiv.className = 'object-top-header';
++                              for(var i=0; i < keyStack.length; i++){
++                                  var preContainer = document.createElement('div');
++                                  var width = headerWidth - 1;
++                                  preContainer.style.width = width+'%';
++                                  preContainer.className = 'object-top-header-child';
++                                  var postContainer = document.createElement('label');
++                                  postContainer.innerHTML = this.jsoneditor.root.parseJsonKeyLowerToUpper(keyStack[i]);
++                                  preContainer.appendChild(postContainer);
++                                  headerDiv.appendChild(preContainer);
++                              }
++                              container.appendChild(headerDiv);
++                          }
++                      }
++                  }else{
++                      if(keyStack.length > 0){
++                          var headerDiv = document.createElement('div');
++                          headerDiv.className = 'object-top-header';
++                          headerWidth = 100 / count;
++                          for(var i=0; i < keyStack.length; i++){
++                              var preContainer = document.createElement('div');
++                              preContainer.style.width = headerWidth+'%';
++                              preContainer.className = 'object-top-header-child';
++                              var postContainer = document.createElement('label');
++                              postContainer.innerHTML = this.jsoneditor.root.parseJsonKeyLowerToUpper(keyStack[i]);
++                              preContainer.appendChild(postContainer);
++                              headerDiv.appendChild(preContainer);
++                          }
++                          container.appendChild(headerDiv);
++                      }
++                  }
++              }
++          }
++      }
+       $each(this.property_order, function(i,key) {
+         var size = 12;
+         var editor = self.editors[key];
+@@ -2605,14 +2677,72 @@
+         if(editor.property_removed) return;
+         var row = self.theme.getGridRow();
+         container.appendChild(row);
+-
+         if(editor.options.hidden) editor.container.style.display = 'none';
+         else self.theme.setGridColumnSize(editor.container,size);
++        var childKeyPath = self.editors[Object.keys(self.editors)[0]].path.split('.');
++        if(childKeyPath.length > 3 && isCollection){
++            var width = headerWidth - 1;
++            var divWidth = width+'%';
++            if(editor.container.getAttribute('data-schematype') == 'boolean'){
++                editor.container.firstChild.firstChild.lastChild.previousSibling.setAttribute('style','display:none');
++                editor.container.firstChild.firstChild.lastChild.setAttribute('style','display:none');
++            }
++            if(editor.container.getAttribute('data-schematype') == 'boolean' || editor.container.getAttribute('data-schematype') == 'string' || editor.container.getAttribute('data-schematype') == 'number'){
++               editor.container.setAttribute('style','width:'+divWidth+';margin-top:5px;margin-left:0px;padding-right:0px !important;padding-left:0px !important;'); 
++               //editor.container.firstChild.firstChild.firstChild.setAttribute('style','width:90%;height:28px');
++               editor.container.firstChild.lastChild.firstChild.setAttribute('style','width:99%;height:28px;');
++               editor.container.firstChild.setAttribute('style','margin-left:0px !important;margin-bottom: 0px !important;');
++               editor.container.parentElement.parentElement.parentElement.setAttribute('class','container-fluid collectionListTrash');
++            }
++            if(editor.container.getAttribute('data-schematype') == 'string' || editor.container.getAttribute('data-schematype') == 'number'){
++                //editor.container.firstChild.firstChild.firstChild.setAttribute('style','width:89%;height:28px');
++                editor.container.firstChild.firstChild.setAttribute('style','display:none');
++                if(editor.container.firstChild.lastChild.lastChild !== undefined){
++                    if(editor.container.firstChild.lastChild.lastChild.getAttribute('type') === 'button'){
++                        editor.container.firstChild.lastChild.lastChild.setAttribute('style','display:none');
++                    }
++                }
++             }
++            if(editor.container.parentElement !== null){
++                editor.container.parentElement.removeAttribute('style');
++            }
++            editor.container.parentElement.parentElement.parentElement.firstChild.setAttribute('style','display:none');
++        }
+         row.appendChild(editor.container);
+       });
+     }
+     this.row_container.innerHTML = '';
+-    this.row_container.appendChild(container);
++    if(isCollection){
++        var trashicon = document.createElement('button');
++        trashicon.type = 'button';
++        trashicon.style.width = '20px';
++        trashicon.style.marginLeft = '2px';
++        trashicon.style.paddingTop = '5px';
++        trashicon.className = 'btn btn-mini json-editor-btn-trash hideTrashIcon';
++        var innerText = document.createElement('i');
++        innerText.className = 'fa fa-trash-o';
++        trashicon.appendChild(innerText);
++        trashicon.addEventListener('click',function(e) {
++            e.preventDefault();
++            e.stopPropagation();
++            objectDelete = true;
++            var attrValue = this.parentElement.parentElement.parentElement.parentElement.getAttribute('data-schemapath').split('.');
++            attrValue.splice(0,1);
++            if(attrValue[attrValue.length - 1] == '0'){
++                $(this.parentElement).children('.row-fluid').remove();
++                $(this.parentElement).children('.hideTrashIcon').remove();
++            }else{
++                this.parentElement.parentElement.parentElement.parentElement.remove();
++            }
++            jsoneditor.root.removeObjectProperty(attrValue,true);
++            jsoneditor.root.onChange(true);
++            objectDelete = false;
++        });
++        container.appendChild(trashicon);
++        this.row_container.appendChild(container);
++    }else{
++       this.row_container.appendChild(container);
++    }
+   },
+   getPropertySchema: function(key) {
+     // Schema declared directly in properties
+@@ -2854,6 +2984,9 @@
+       if(this.schema.description){
+           this.title.lastChild.previousSibling.setAttribute('title',this.schema.description);
+       }
++      if(this.title.lastChild.previousSibling.innerText.search(']') != -1){
++          this.title.setAttribute('style','display:none');
++      }
+       if(this.schema.required == 'required' || this.schema.required == 'true'){
+           var icon = document.createElement('i');
+           icon.className = 'fa fa-asterisk jsonEditor-form-obj-asterisk';
+@@ -3085,6 +3218,14 @@
+       }
+       return strStack.join('_');
+   },
++  parseJsonKeyLowerToUpper: function(key){
++      var splitedKey = key.split('_'); var strStack = [];
++      for(var i = 0; i < splitedKey.length; i++){
++          var captilizeStr = splitedKey[i].charAt(0).toUpperCase() + splitedKey[i].slice(1);
++          strStack.push(captilizeStr);
++      }
++      return strStack.join(' ');
++  },
+   hideEditJSON: function() {
+     if(!this.editjson_holder) return;
+     if(!this.editing_json) return;
+@@ -3227,6 +3368,7 @@
+       var childKeyDelete = true;
+       if(flag){
+          var topObjLevel = property.join(';');
++         deletedPropertyStack.push(topObjLevel);
+          var lastlevel = property.splice(property.length - 1, 1);
+          parentLevelObj = property[property.length - 1];
+          for(var i = 0; i < property.length; i++){
+@@ -3249,10 +3391,11 @@
+          addObj.parentKey = parentLevelObj;
+          addObj.childKey = lastlevel[0];
+          objectPropertiesStack.push(addObj);
++         var prop = property.join('.');
+          if(property.length === 1){
+-             removedKeyStack.push('directChild'+'.'+parentObjCount+'.'+'noParent'+'.'+objectDelete+'.'+lastlevel[0]);
++             removedKeyStack.push('directChild'+'.'+prop+'.'+objectDelete+'.'+lastlevel[0]);
+          }else{
+-             removedKeyStack.push(property[property.length - 1]+'.'+parentObjCount+'.'+property[1]+'.'+objectDelete+'.'+lastlevel[0]);
++             removedKeyStack.push(prop+'.'+objectDelete+'.'+lastlevel[0]);
+          }
+          this.refreshValue();
+          this.layoutEditors();
+@@ -3353,7 +3496,8 @@
+     if(directLevelKey.length > 0){
+         if(result[directLevelKey[0]] !== undefined){
+             if(childLevelObj.length > 1){
+-                var updatedResult = self.deleteProperty(result,directLevelKey[0],result);
++                var delObjFlag = objectDelete;
++                var updatedResult = self.deleteProperty(result, directLevelKey[0], result, delObjFlag);
+                 directLevelKey =[];
+                 return updatedResult;
+             }else{
+@@ -3367,7 +3511,8 @@
+                 return result;
+             }
+         }else{
+-            var updatedResult = self.deleteProperty(result,directLevelKey[0],result);
++            var delObjFlag = objectDelete;
++            var updatedResult = self.deleteProperty(result, directLevelKey[0], result, delObjFlag);
+             directLevelKey =[];
+             return updatedResult;
+         }
+@@ -3385,9 +3530,17 @@
+                             }else{
+                                 currentObjStack = undefined;
+                                 arrayObjStack = undefined;
+-                                var objectDelete = !!JSON.parse(String(source[3]).toLowerCase());
+-                                console.log('Hi i am in stack');
+-                                result = self.removeKeyFromStack(result,source[0],source[source.length - 1],source[1],source[2],objectDelete);
++                                var deletedItem = source.splice(source.length-1,1);
++                                var flag = source.splice(source.length-1,1);
++                                var objectDelete = !!JSON.parse(String(flag[0]).toLowerCase());
++                                arrayParentKey = source[1];
++                                parentLevelObj = source[source.length - 1];
++                                keyHierarchy = source;
++                                keyHierarchy.shift();
++                                keyHierarchy.shift();
++                                //console.log('Hi i am in stack');
++                                result = self.deleteProperty(result, deletedItem[0], result, objectDelete);
++                                //result = self.removeKeyFromStack(result,source[0],source[source.length - 1],source[1],source[2],objectDelete);
+                             }
+                         }
+                    }
+@@ -3397,71 +3550,61 @@
+         return result;
+     }
+   },
+-  deleteProperty :function(model,delPro,oldModel,Node,next) {
++  deleteProperty :function(model, delPro, oldModel, delObjFlag, Node, next) {
+       var self = this,currentNode = Node;
+       for (var i in model) {
+-         if(next === undefined){
+-                  currentNode = i;
+-          }
++           if(next === undefined){
++               currentNode = i;
++           }
++           if(delObjFlag === undefined){
++               delObjFlag = objectDelete;
++           }
+            if(!delFlag){
+               if (typeof model[i] === 'object' && model[i] !== null && model[i].constructor !== Array) {
+                   if(parentLevelObj === i){
+                       delFlag = true;
+                   }
+                   currentObj = i;
+-                  if(objectDelete && i === delPro && currentNode === arrayParentKey){
++                  if(delObjFlag && i === delPro && currentNode === arrayParentKey){
+                        delete model[i];
+                   }else{
+-                   self.deleteProperty(model[i],delPro,oldModel,currentNode,'next');
++                   self.deleteProperty(model[i], delPro, oldModel, delObjFlag, currentNode, 'next');
+                   }
+               }else {
+                   if(model[i] !== undefined && model[i] !== null){
+                   if(model[i].constructor === Array){
+                       if((typeof model[i][0] === 'object' || typeof model[i][model[i].length - 1] === 'object') && (i == arrayParentKey)){
+-                          if(objectDelete && typeof model[i][delPro] === 'object' && keyHierarchy.length == 0){
++                          if(delObjFlag && typeof model[i][delPro] === 'object' && keyHierarchy.length == 0){
+                               delete model[i][delPro];
+-                              model[i][delPro] = '';
++                             // model[i] = model[i].filter(function(n){ return n != undefined });
+                            }else{
+                               for(var k = 0; k < model[i].length; k++){
+-                                  /*if(parentLevelObj !== undefined && isNumber(parentLevelObj)){
+-                                      var key = undefined;
+-                                      if(keyHierarchy.indexOf(i) != -1){
+-                                          var index = keyHierarchy.indexOf(i) + 1;
+-                                          var key = keyHierarchy[index];
+-                                      }
+-                                      if(k == key){
+-                                          self.deleteProperty(model[i][k],delPro,oldModel,currentNode,'next');
+-                                      }
+-                                  }else{*/
+-                                      for(var c = 0; c < keyHierarchy.length; c++){
++                                     for(var c = 0; c < keyHierarchy.length; c++){
+                                           if(isNumber(keyHierarchy[c])){
+                                              var  key = parseInt(keyHierarchy[c]);
+                                              break;
+                                           }
+                                       }
+                                       if(key == k){
+-                                          self.deleteProperty(model[i][k],delPro,oldModel,currentNode,'next');
++                                          self.deleteProperty(model[i][k], delPro, oldModel, delObjFlag, currentNode,'next');
+                                       }
+-                                      //self.deleteProperty(model[i][k],delPro,oldModel,currentNode,'next');
+-                                  //}
+                               }
+                           }
+                        }else if(typeof model[i][0] !== 'object'){
+                           if(isNumber(delPro) && i === parentLevelObj){
+                           delete  model[i][delPro];
+-                          //model[i] = model[i].filter(function(n){ return n != undefined });
++                         // model[i] = model[i].filter(function(n){ return n != undefined });
+                           }
+                       }else if(typeof model[i][0] === 'object' && isNumber(delPro) && i === parentLevelObj){
+                           delete  model[i][delPro];
+                           //model[i] = model[i].filter(function(n){ return n != undefined });
+                       }else if((typeof model[i][0] === 'object' && (isNumber(delPro) || !isNumber(delPro))) && (keyHierarchy.indexOf(parentLevelObj) != -1)){
+-                          //console.log('ssss11');
+                           for(var m = 0; m < model[i].length; m++){
+                               if(keyHierarchy.indexOf(i) != -1){
+                                   var index = keyHierarchy.indexOf(i) + 1;
+                                   var indexData = keyHierarchy[index];
+                                   if(m == parseInt(indexData)){
+-                                      self.deleteProperty(model[i][m],delPro,oldModel,currentNode,'next');
++                                      self.deleteProperty(model[i][m], delPro, oldModel, delObjFlag, currentNode, 'next');
+                                   }
+                               }
+                           }
+@@ -3485,72 +3628,6 @@
+       }
+       return model;
+   },
+-  removeKeyFromStack :function(model,parentLevelObj,delPro,objLevel,rootLevel,objectDelete) {
+-      var self = this;
+-      for (var i in model) {
+-          if(!delFlag){
+-              if (typeof model[i] === 'object' && model[i] !== null && model[i].constructor !== Array) {
+-                  if(parentLevelObj === i){
+-                      delFlag = true;
+-                  }
+-                  currentObjStack = i;
+-                  self.removeKeyFromStack(model[i],parentLevelObj,delPro,objLevel,rootLevel,objectDelete);
+-              } else {
+-                  if(model[i] !== undefined && model[i] !== null){
+-                      if(model[i].constructor === Array){
+-                          if((typeof model[i][0] === 'object' || typeof model[i][model[i].length - 1] === 'object') && (!isNumber(delPro) || i == rootLevel)){
+-                              for(var k = 0; k < model[i].length; k++){
+-                                  if(i == rootLevel){
+-                                      if(k == objLevel){
+-                                          if(model[i][k][delPro] !== undefined){
+-                                              arrayObjStack = i;
+-                                          }
+-                                          self.removeKeyFromStack(model[i][k], parentLevelObj,delPro,objLevel,rootLevel,objectDelete);
+-                                       }
+-                                      if(objectDelete){
+-                                          delete  model[i][delPro];
+-                                          model[i][delPro] = '';
+-                                       }
+-                                  }else{
+-                                      arrayObjStack = i;
+-                                      self.removeKeyFromStack(model[i][k], parentLevelObj,delPro,objLevel,rootLevel,objectDelete);
+-                                  }
+-                             }
+-                           }else if(typeof model[i][0] !== 'object'){
+-                              if(isNumber(delPro) && i === parentLevelObj){
+-                                 delete  model[i][delPro];
+-                                 model[i][delPro] = '';
+-                               }
+-                          }else if(typeof model[i][0] === 'object' && isNumber(delPro) && i === parentLevelObj){
+-                            delete model[i][delPro];
+-                             console.log('3'+ model[i][delPro]);
+-                          }
+-                      }
+-                      if(isNumber(parentLevelObj)){
+-                          if(arrayObjStack === rootLevel){
+-                              if(i === delPro ){
+-                                  delete model[i];
+-                                  arrayObjStack = undefined;
+-                                 }
+-                          }
+-                      }else if(currentObjStack === parentLevelObj){
+-                          if(i === delPro ){
+-                              delete model[i];
+-                             }
+-                      }
+-                  }
+-               }
+-          }else{
+-              if(currentObjStack === parentLevelObj || isNumber(parentLevelObj)){
+-                  if(i === delPro ){
+-                      delete model[i];
+-                      delFlag = false;
+-                     }
+-              }
+-          }
+-      }
+-      return model;
+-  },
+   refreshValue: function() {
+     this.value = {};
+     var self = this;
+@@ -3864,6 +3941,9 @@
+               enableInputField = false;
+               addPropertyFlag = false;
+               clickAddItem = false;
++              if(self.schema.items.properties === undefined){
++                  self.container.childNodes[2].firstChild.lastChild.firstChild.firstChild.setAttribute('style','display:none;');
++              }
+               this.parentElement.firstChild.firstChild.setAttribute('style','margin-top:-8px;');
+               $(this.parentElement.parentElement).find('.well-small')[0].setAttribute('style','padding-bottom:0px;display:block;')
+               var parentEle = this.parentElement.parentElement.getAttribute('data-schemapath').split('.');
+@@ -4433,6 +4513,12 @@
+         }else{
+             self.row_holder.setAttribute('style','border-left:1px dotted #e5e5e5;margin-left:9px;'+ displayProp +'');
+         }
++        for(var j=0; j < self.row_holder.childNodes.length; j++){
++            var arrayObjPath = self.row_holder.childNodes[j].getAttribute('data-schemapath').split('.');
++            if(isNumber(arrayObjPath[arrayObjPath.length - 1])){
++                self.row_holder.childNodes[j].lastChild.previousSibling.setAttribute('style','padding-bottom:0px;display:block;');
++            }
++        }
+         $(self.row_holder).slideDown(700);
+         if(self.tabs_holder) self.tabs_holder.style.display = '';
+         self.controls.style.display = controls_display;
+@@ -4476,16 +4562,48 @@
+     this.title_controls.parentElement.addEventListener('click',function(e) {
+         e.preventDefault();
+         e.stopPropagation();
++        var isObj = true;
+         if(self.collapsed) {
++          var properties = self.schema.items.properties;
++          if(properties !== undefined){
++              for(var i in properties){
++                  if(properties[i].type === 'object' || properties[i].type === 'array'){
++                      isObj = false;
++                  }
++              }
++          }else{
++              isObj = false;
++          }
+           self.collapsed = false;
+           if(self.panel) self.panel.style.display = '';
+           var displayProp = self.row_holder.getAttribute('style');
+           var ele = self.row_holder.parentElement.parentElement.getAttribute('data-schemapath').split('.');
++          if(isObj){
++             if(self.row_holder.firstChild !== null){
++                 self.row_holder.firstChild.lastChild.previousSibling.setAttribute('style','padding-bottom:0px;display:block;');
++             }
++          }
+           if(ele.length == 3){
+               self.row_holder.setAttribute('style',''+ displayProp +'');
+           }else{
+               self.row_holder.setAttribute('style','border-left:1px dotted #e5e5e5;margin-left:9px;'+ displayProp +'');
+           }
++          if($(self.row_holder).children().length != 0){
++              var prop = self.schema.items.properties;
++              var containObject = true;
++              if(prop != undefined){
++                  for(var i in prop){
++                      if(prop[i].type == 'object' || prop[i].type == 'array'){
++                          containObject = false;
++                      }
++                  }
++                  if(self.schema.items.type == 'object' && containObject){
++                      for(var j = 0; j < $(self.row_holder).children().length ; j++){
++                          $(self.row_holder).children()[j].childNodes[2].setAttribute('style','padding-bottom: 0px; display: block;');
++                      }
++                  }
++              }
++          }
+           $(self.row_holder).slideDown(700);
+           //self.row_holder.style.display = row_holder_display;
+           if(self.tabs_holder) self.tabs_holder.style.display = '';
+@@ -4519,9 +4637,12 @@
+           var parentEle = ele.getAttribute('data-schemapath').split('.');
+           if(parentEle.length == 3){
+                 $(ele).find('.well-small')[0].firstChild.setAttribute('style','display:block;');
+-            }else{
++          }else{
+               $(ele).find('.well-small')[0].firstChild.setAttribute('style','display:block;margin-left:9px;border-left:1px dotted #e5e5e5;');
+-            }
++          }
++          if(self.schema.items.properties === undefined){
++              ele.childNodes[2].firstChild.firstChild.firstChild.firstChild.setAttribute('style','display:none;');
++          }
+           $($(ele).find('.well-small')[0]).slideDown(1200);
+           self.collapsed = false;
+         }
