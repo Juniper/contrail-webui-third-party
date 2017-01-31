@@ -1,0 +1,30 @@
+--- gridstack-v0.2.5/dist/gridstack.old.js	2017-01-23 17:30:50.489445758 +0530
++++ gridstack-v0.2.5/dist/gridstack.js	2017-01-23 17:32:11.533480034 +0530
+@@ -5,10 +5,9 @@
+  * gridstack.js may be freely distributed under the MIT license.
+  * @preserve
+ */
+-/*(function(factory) {
++(function(factory) {
+     if (typeof define === 'function' && define.amd) {
+-        define(['jquery', 'lodash', 'jquery-ui/core', 'jquery-ui/widget', 'jquery-ui/mouse', 'jquery-ui/draggable',
+-            'jquery-ui/resizable'], factory);
++        define(['jquery', 'lodash'], factory);
+     } else if (typeof exports !== 'undefined') {
+         try { jQuery = require('jquery'); } catch (e) {}
+         try { _ = require('lodash'); } catch (e) {}
+@@ -16,7 +15,7 @@
+     } else {
+         factory(jQuery, _);
+     }
+-})*/(function($, _) {
++})(function($, _) {
+ 
+     var scope = window;
+ 
+@@ -1648,4 +1647,4 @@
+     };
+ 
+     return scope.GridStackUI;
+-})($,_);
++});
