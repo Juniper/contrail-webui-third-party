@@ -1,0 +1,95 @@
+--- jdorn-jsoneditor.js	2017-02-21 14:10:52.000000000 +0530
++++ jdorn-jsoneditor.js	2017-02-21 14:10:09.000000000 +0530
+@@ -230,6 +230,7 @@
+   this.element = element;
+   this.options = options;
+   clickAddItem = false;
++  hideErrorContainer = true;
+   this.init();
+ };
+ JSONEditor.prototype = {
+@@ -488,14 +489,18 @@
+ 
+       // Validate and cache results
+       self.validation_results = self.validator.validate(self.root.getValue());
++      if(hideErrorContainer){
++        if(self.options.show_errors !== "never") {
++             self.root.showValidationErrors(self.validation_results);
++        }
++        else {
++         self.root.showValidationErrors([]);
++        }
+ 
+-      if(self.options.show_errors !== "never") {
+-        self.root.showValidationErrors(self.validation_results);
+-      }
+-      else {
+-        self.root.showValidationErrors([]);
++      }else{
++        hideErrorContainer = true;
+       }
+-
++      
+       // Fire change event
+       self.trigger('change');
+     });
+@@ -1811,7 +1816,7 @@
+     if(type && Array.isArray(type)) type = type[0];
+ 
+     if(typeof type === "string") {
+-      if(type === "number") return 0.0;
++      if(type === "number") return null;
+       if(type === "boolean") return false;
+       if(type === "integer") return 0;
+       if(type === "string") return "";
+@@ -1957,7 +1962,9 @@
+ 
+     // Sanitize value before setting it
+     var sanitized = this.sanitize(value);
+-
++    if(value == 'null' || value == null){
++        sanitized = null;
++    }
+     if(this.input.value === sanitized) {
+       return;
+     }
+@@ -2150,10 +2157,21 @@
+           return;
+         }
+ 
+-        var val = this.value;
++        if(self.schema.type ===  'number' && this.value == ""){
++        var val = this.value;               hideErrorContainer = false;
++        }
++        if(this.value == ""){
++            var val = null;
++        }else{
++            var val = this.value;
++        }
++        //var val = this.value;
+ 
+         // sanitize value
+         var sanitized = self.sanitize(val);
++        if(val == null){
++            sanitized = null;
++        }
+         if(val !== sanitized) {
+           this.value = sanitized;
+         }
+@@ -2416,7 +2434,15 @@
+     return 2;
+   },
+   getValue: function() {
+-    return this.value*1;
++    if(this.schema.type === 'number'){
++        if(this.value == '' || this.value == null || this.value == 'null'){
++            return null;
++        }else{
++            return this.value*1;
++        }
++    }else{
++        return this.value*1;
++    }
+   }
+ });
+ 
