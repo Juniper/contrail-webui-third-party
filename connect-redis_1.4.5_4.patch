@@ -1,0 +1,32 @@
+--- node_modules/connect-redis/node_modules/redis/index.js	2017-04-17 12:29:17.000000000 +0530
++++ node_modules/connect-redis/node_modules/redis/index.js	2017-04-17 12:33:42.000000000 +0530
+@@ -6,7 +6,8 @@
+     to_array = require("./lib/to_array"),
+     events = require("events"),
+     crypto = require("crypto"),
+-    contrailConfig = process.mainModule.exports["config"],
++    configUtils = require(process.mainModule.exports['corePath'] +
++    '/src/serverroot/common/config.utils'),
+     parsers = [], commands,
+     connection_id = 0,
+     default_port = 6379,
+@@ -1097,15 +1098,16 @@
+ exports.createClient = function (port_arg, host_arg, options) {
+     var port = port_arg || default_port,
+         host = host_arg || default_host,
+-        redis_client, net_client;
++        redis_client, net_client,
++        config = configUtils.getConfig();
+ 
+     net_client = net.createConnection(port, host);
+ 
+-    if (undefined !== contrailConfig.redis_password) {
++    if (undefined !== config.redis_password) {
+         if (undefined === options) {
+             options = {};
+         }
+-        options['auth_pass'] = contrailConfig.redis_password;
++        options['auth_pass'] = config.redis_password;
+     }
+ 
+     redis_client = new RedisClient(net_client, options);
