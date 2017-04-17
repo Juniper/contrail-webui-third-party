@@ -1,0 +1,63 @@
+--- node_modules/kue/lib/http/index.js	2017-04-24 16:19:09.000000000 +0530
++++ node_modules/kue/lib/http/index.js	2017-04-24 16:18:17.000000000 +0530
+@@ -13,13 +13,14 @@
+ var fs = require('fs');
+ var path = require('path');
+ var corePath = process.mainModule.exports['corePath'];
+-var contrailConfig = process.mainModule.exports.config;
+-var userList = contrailConfig.staticAuth;
+-
++var configUtils = require(corePath + '/src/serverroot/common/config.utils');
++var config = configUtils.getConfig();
++var userList = config.staticAuth;
+ var keyFile = './keys/cs-key.pem';
+ var certFile = './keys/cs-cert.pem';
+-if (contrailConfig.server_options) {
+-    keyFile = contrailConfig.server_options.key_file;
++
++if (config.server_options) {
++    keyFile = config.server_options.key_file;
+     if (null != keyFile) {
+         keyFile = path.normalize(keyFile);
+         if (false == fs.existsSync(keyFile)) {
+@@ -28,7 +29,7 @@
+     } else {
+         keyFile = './keys/cs-key.pem';
+     }
+-    certFile = contrailConfig.server_options.cert_file;
++    certFile = config.server_options.cert_file;
+     if (null != certFile) {
+         certFile = path.normalize(certFile);
+         if (false == fs.existsSync(certFile)) {
+--- node_modules/kue/node_modules/redis/index.js	2017-04-24 16:19:39.000000000 +0530
++++ node_modules/kue/node_modules/redis/index.js	2017-04-24 16:17:48.000000000 +0530
+@@ -5,7 +5,8 @@
+     Queue = require("./lib/queue"),
+     to_array = require("./lib/to_array"),
+     events = require("events"),
+-    contrailConfig = process.mainModule.exports["config"],
++    corePath = process.mainModule.exports['corePath'],
++    configUtils = require(corePath + '/src/serverroot/common/config.utils'),
+     parsers = [], commands,
+     connection_id = 0,
+     default_port = 6379,
+@@ -1014,15 +1015,15 @@
+ exports.createClient = function (port_arg, host_arg, options) {
+     var port = port_arg || default_port,
+         host = host_arg || default_host,
+-        redis_client, net_client;
+-
++        redis_client, net_client,
++        config = configUtils.getConfig();
+     net_client = net.createConnection(port, host);
+ 
+-    if (undefined !== contrailConfig.redis_password) {
++    if (undefined !== config.redis_password) {
+         if (undefined === options) {
+             options = {};
+         }
+-        options['auth_pass'] = contrailConfig.redis_password;
++        options['auth_pass'] = config.redis_password;
+     }
+ 
+     redis_client = new RedisClient(net_client, options);
