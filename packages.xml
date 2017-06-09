@@ -456,6 +456,7 @@
             <patch strip="0">connect-redis_1.4.5_2.patch</patch>
             <patch strip="0">connect-redis_1.4.5_3.patch</patch>
             <patch strip="0">connect-redis_1.4.5_4.patch</patch>
+            <patch strip="0">connect-redis_1.4.5_5.patch</patch>
         </patches>
     </package>
     <package>
