@@ -1,0 +1,32 @@
+--- node_modules/connect-redis/lib/connect-redis.js	2017-06-08 16:29:52.000000000 -0700
++++ node_modules/connect-redis/lib/connect-redis.js	2017-06-08 16:59:36.000000000 -0700
+@@ -118,10 +118,14 @@
+    * @param {maxAge} maxAge after which this event should be generated
+    */
+ 
+-  setEventEmitter = function (eventEmitter, sid, maxAge) {
++  setEventEmitter = function (redisClient, eventEmitter, sid, ttlInSecs) {
+     var timer = setTimeout(function () {
+       eventEmitter.emit('sessionDeleted', sid);
+-    }, maxAge);
++      if (null != redisClient) {
++        console.log("Deleting session id " + sid + " from redis");
++        redisClient.del(sid);
++      }
++    }, ttlInSecs * 1000);
+     timerEvent[sid] = timer;
+   }
+ 
+@@ -152,10 +156,11 @@
+        * session id in redis, so we need to set timeout only one time, if the
+        * session id is not already stored in redis
+        */
++      var self = this;
+       this.client.get(sid, function (err, data) {
+         if (null == data) {
+           if (eEmitter) {
+-            setEventEmitter(eEmitter, sid, maxAge);
++            setEventEmitter(self.client, eEmitter, sid, ttl);
+           }
+         }
+       });
