@@ -758,4 +758,27 @@
         <format>zip</format>
         <md5>28a11528a2be68a0173346e0636717cc</md5>
     </package>
+    <package>
+        <name>d3-4.4.3</name>
+        <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/common/npm-sources/d3-4.4.3.tgz</url>
+        <format>npm-cached</format>
+        <md5>a210288fb885b1f3713ed22fdeab7a30</md5>
+        <rename>d3</rename>
+    </package>
+    <package>
+        <name>contrail-charts</name>
+        <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/common/contrail-charts.tgz</url>
+        <format>tgz</format>
+        <patches>
+            <patch strip="0">contrail-charts_1.patch</patch>
+        </patches>
+        <md5>b68dea5f908f4bfa4935d94a2a46890f</md5>
+    </package>
+    <package>
+        <name>lodash-4.17.2</name>
+        <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/common/npm-sources/lodash-4.17.2.tgz</url>
+        <format>npm-cached</format>
+        <md5>a8b41fef414404d0d5d803cc80f70e2f</md5>
+        <rename>lodash-v4.17.2</rename>
+    </package>
 </packages>

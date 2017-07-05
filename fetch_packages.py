@@ -53,7 +53,7 @@ def getTarDestination(tgzfile, compress_flag):
                            stdout=subprocess.PIPE)
     (output, _) = cmd.communicate()
     (first, _) = output.split('\n', 1)
-    fields = first.split()
+    fields = first.split('/')
     return fields[0]
 
 def getZipDestination(tgzfile):
@@ -152,8 +152,10 @@ def ProcessPackage(pkg):
     if unpackdir:
         dest = str(unpackdir)
     else:
-        if pkg.format == 'tgz' or pkg.format == 'npm-cached':
+        if pkg.format == 'tgz':
             dest = getTarDestination(ccfile, 'z')
+        elif pkg.format == 'npm-cached':
+            dest = _NODE_MODULES + '/' + getTarDestination(ccfile, 'z')
         elif pkg.format == 'tbz':
             dest = getTarDestination(ccfile, 'j')
         elif pkg.format == 'zip':
@@ -167,9 +169,11 @@ def ProcessPackage(pkg):
     # clean directory before unpacking and applying patches
     #
     rename = pkg.find('rename')
+    if pkg.format == 'npm-cached':
+        rename = _NODE_MODULES + '/' + str(rename)
     if rename and os.path.isdir(str(rename)):
         if not _OPT_DRY_RUN:
-            shutil.rmtree(str(rename))
+          shutil.rmtree(str(rename))
 
     elif dest and os.path.isdir(dest):
         if _OPT_VERBOSE:
