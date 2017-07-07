@@ -1,0 +1,19 @@
+--- crossfilter/crossfilter.js	2017-07-03 14:24:40.000000000 +0530
++++ crossfilter/crossfilter.js	2017-07-03 14:24:16.000000000 +0530
+@@ -170,6 +170,17 @@
+   } 
+   function quicksort(a, lo, hi) {
++    // First move NaN and undefined to the end.
++     var x;
++     while (lo < hi && !((x = f(a[hi - 1])) <= x || x >= x)) hi--;
++     for (var i = hi - 1; --i >= lo; ) {
++         x = f(a[i]);
++         if (!(x <= x || x >= x)) {
++             a[i] = a[hi - 1];
++             a[i] = a[hi - 1];
++             hi--;
++         }
++     }
+     // Compute the two pivots by looking at 5 elements.
+     var sixth = (hi - lo) / 6 | 0,
+         i1 = lo + sixth,
