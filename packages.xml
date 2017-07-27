@@ -749,6 +749,7 @@
             <patch strip="0">jdorn-jsoneditor-0.7.25.patch</patch>
             <patch strip="0">jdorn-jsoneditor-0.7.25_1.patch</patch>
             <patch strip="0">jdorn-jsoneditor-0.7.25_2.patch</patch>
+            <patch strip="0">jdorn-jsoneditor-0.7.25_3.patch</patch>
         </patches>
     </package>
     <package>
