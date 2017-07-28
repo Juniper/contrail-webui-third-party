@@ -1,0 +1,426 @@
+--- contrail-charts/js/contrail-charts.js	2017-07-25 15:31:05.000000000 +0530
++++ contrail-charts/js/contrail-charts.js	2017-07-28 17:46:02.000000000 +0530
+@@ -12554,8 +12554,6 @@
+ 
+ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+ 
+-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+-
+ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+ 
+ function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+@@ -12586,6 +12584,7 @@
+      * Let's bind super _onResize to this. Also .bind returns new function ref.
+      * we need to store this for successful removal from window event
+      */
++    _this.d3Selection = d3Selection;
+     _this._onResize = _this._onResize.bind(_this);
+     window.addEventListener('resize', _this._onResize);
+     return _this;
+@@ -12652,9 +12651,6 @@
+       _lodash2.default.each(data, function (d, index) {
+         // Parsing a data element should return a 2 element array: [source, destination]
+         var leafs = hierarchyConfig.parse(d);
+-        if (leafs[0].value <= 0 || leafs[1].value <= 0) {
+-          return;
+-        }
+         // Check if we havent already created a node pair (link) with the same id.
+         var foundSrcNode = _lodash2.default.find(leafNodes, function (leafNode) {
+           var found = false;
+@@ -12691,13 +12687,15 @@
+         var foundLeafNode = null;
+         if (foundSrcNode != null) foundLeafNode = foundSrcNode;else foundLeafNode = foundDstNode;
+         if (foundLeafNode) {
+-          foundLeafNode.value += foundLeafNode.id === leafs[0].id ? leafs[0].value : leafs[1].value;
+-          foundLeafNode.otherNode.value += foundLeafNode.otherNode.id === leafs[0].id ? leafs[0].value : leafs[1].value;
+           _this2.valueSum += leafs[0].value + leafs[1].value;
+           if (foundSrcNode) {
++            foundSrcNode.value += foundLeafNode.id === leafs[0].id ? leafs[0].value : leafs[1].value;
++            foundSrcNode.otherNode.value += foundLeafNode.otherNode.id === leafs[0].id ? leafs[0].value : leafs[1].value;
+             foundSrcNode.dataChildren.push(d);
+           }
+           if (foundDstNode) {
++            foundDstNode.value += foundLeafNode.id === leafs[0].id ? leafs[0].value : leafs[1].value;
++            foundDstNode.otherNode.value += foundLeafNode.otherNode.id === leafs[0].id ? leafs[0].value : leafs[1].value;
+             foundDstNode.dataChildren.push(d);
+           }
+         } else {
+@@ -12706,6 +12704,7 @@
+             var children = _this2.rootNode.children;
+             var node = null;
+             var namePath = [];
++            var displayLabels = [];
+             var currLeaf = leaf;
+             _lodash2.default.each(leaf.names, function (name, depth) {
+               _this2.maxDepth = Math.max(_this2.maxDepth, depth + 1);
+@@ -12713,6 +12712,7 @@
+                 return;
+               }
+               namePath.push(name);
++              if (currLeaf.displayLabels instanceof Array) displayLabels.push(currLeaf.displayLabels[depth]);
+               node = _lodash2.default.find(children, function (child) {
+                 return child.name === name;
+               });
+@@ -12722,6 +12722,7 @@
+                   labelAppend: currLeaf.labelAppend,
+                   arcType: currLeaf.type,
+                   namePath: namePath.slice(0),
++                  displayLabels: displayLabels.slice(0),
+                   children: [],
+                   level: depth + 1
+                 };
+@@ -12754,8 +12755,19 @@
+   }, {
+     key: '_prepareHierarchyRootNode',
+     value: function _prepareHierarchyRootNode() {
++      var zeroDataLinks = 0;
++      this.hierarchyRootNode = d3Hierarchy.hierarchy(this.rootNode).each(function (d) {
++        // Nodes with no children are called leaves which are links in the dendrogram,
++        // if the value of the links is zero we are setting it to 1 such that
++        // zero data links also plotted
++        if (d.data && d.children == null && d.data.value == 0) {
++          d.data.value = 1;
++          zeroDataLinks += 1;
++        }
++      });
++      this.valueSum += zeroDataLinks;
+       var valueScale = this.config.get('valueScale').domain([0.01, this.valueSum]).range([0, 360]);
+-      this.hierarchyRootNode = d3Hierarchy.hierarchy(this.rootNode).sum(function (d) {
++      this.hierarchyRootNode = this.hierarchyRootNode.sum(function (d) {
+         return valueScale(d.value);
+       }).sort(function (a, b) {
+         return b.value - a.value;
+@@ -12988,11 +13000,22 @@
+             innerPoints.push([_n.angleScale(_valueStart2), _n.y]);
+           }
+         }
++        var linkCssClass = '';
++        _lodash2.default.each(_this7.params.linkCssClasses, function (cssClass) {
++          var linkCssNode = src && src.data && _lodash2.default.find(src.data.dataChildren, function (child) {
++            return child.linkCssClass === cssClass;
++          });
++          if (linkCssNode) {
++            linkCssClass = cssClass;
++            return false;
++          }
++        });
+         _this7.ribbons.push({
+           outerPoints: outerPoints,
+           innerPoints: innerPoints,
+           id: src.data.linkId,
+-          link: [src, dst]
++          link: [src, dst],
++          linkCssClass: linkCssClass
+         });
+       });
+       if (ribbons) {
+@@ -13020,21 +13043,19 @@
+           return;
+         }
+         // Estimate arc length and wheather the label will fit (default letter width is assumed to be 5px).
+-        n.arcLength = 6 * (n.y - _this8.params.arcLabelYOffset[n.height - 1]) * (n.angleRange[1] - n.angleRange[0]) / 360;
+-        n.label = '' + n.data.namePath[n.data.namePath.length - 1];
++        n.arcLength = 6 * (n.y - _this8._checkValueIsArray(_this8.params.arcLabelYOffset, n.height)) * (n.angleRange[1] - n.angleRange[0]) / 360;
++        var namePath = n.data.displayLabels && n.data.displayLabels.length > 0 ? n.data.displayLabels : n.data.namePath;
++        n.label = '' + namePath[namePath.length - 1];
+         if (n.depth == 1 && n.data.labelAppend) {
+           n.label += '-' + n.data.labelAppend;
+         }
+-        if (n.label && n.data.arcType) {
+-          n.label = n.label.replace(new RegExp('_' + n.data.arcType, 'g'), '');
+-        }
+         var labelArcLengthDiff = void 0;
+         n.labelFits = (labelArcLengthDiff = _this8.config.get('arcLabelLetterWidth') * n.label.length - n.arcLength) < 0;
+         if (!n.labelFits) {
+-          n.labelLengthToTrim = (labelArcLengthDiff + 3 * _this8.config.get('arcLabelLetterWidth')) / _this8.config.get('arcLabelLetterWidth');
++          n.labelLengthToTrim = (labelArcLengthDiff + 4 * _this8.config.get('arcLabelLetterWidth')) / _this8.config.get('arcLabelLetterWidth');
+         }
+         if (_this8.config.get('labelFlow') === 'perpendicular') {
+-          n.labelFits = n.arcLength > 9 && _this8.config.get('innerRadius') / _this8.config.get('drillDownLevel') - _this8.params.arcLabelYOffset[n.height - 1] > _this8.config.get('arcLabelLetterWidth') * n.label.length;
++          n.labelFits = n.arcLength > 9 && _this8.config.get('innerRadius') / _this8.config.get('drillDownLevel') - _this8._checkValueIsArray(_this8.params.arcLabelYOffset, n.height) > _this8.config.get('arcLabelLetterWidth') * n.label.length;
+         }
+         _this8.arcs.push(n);
+       });
+@@ -13094,7 +13115,7 @@
+           return 'ribbon' + (d.active ? ' active' : '');
+         }).merge(_svgLinks) // .transition().ease(this.config.get('ease')).duration(this.params.duration)
+         .attr('class', function (d) {
+-          return 'ribbon' + (d.active ? ' active' : '');
++          return 'ribbon' + (d.active ? ' active' : '') + (d.linkCssClass ? ' ' + d.linkCssClass : '');
+         }).classed(this.selectorClass('interactive'), this.config.hasAction('link')).attr('d', function (d) {
+           // var lastPoint = d.outerPoints[1];
+           // var controlPoint = d.outerPoints[1] = [0,0];
+@@ -13117,13 +13138,17 @@
+           }*/
+           // d.outerPoints.splice(1,0,getMidPoint(d.outerPoints));
+           // d.innerPoints.splice(1,0,getMidPoint(d.innerPoints));
+-          if (d.outerPoints.length == 2 && d.innerPoints.length == 2) {
+-            var out1 = { radians: d.outerPoints[0][0] / 180 * Math.PI, radius: d.outerPoints[0][1] },
+-                out2 = { radians: d.outerPoints[1][0] / 180 * Math.PI, radius: d.outerPoints[1][1] };
+-            var in1 = { radians: d.innerPoints[0][0] / 180 * Math.PI, radius: d.innerPoints[0][1] },
+-                in2 = { radians: d.innerPoints[1][0] / 180 * Math.PI, radius: d.innerPoints[1][1] };
+ 
+-            var ribbon = d3v4.ribbon().radius(out1.radius);
++          var outerPoints = d.outerPoints;
++          var innerPoints = d.innerPoints;
++
++          if (outerPoints.length == 2 && innerPoints.length == 2) {
++            var out1 = { radians: outerPoints[0][0] / 180 * Math.PI, radius: outerPoints[0][1] },
++                out2 = { radians: outerPoints[1][0] / 180 * Math.PI, radius: outerPoints[1][1] };
++            var in1 = { radians: innerPoints[0][0] / 180 * Math.PI, radius: innerPoints[0][1] },
++                in2 = { radians: innerPoints[1][0] / 180 * Math.PI, radius: innerPoints[1][1] };
++
++            var ribbon = (typeof d3v4 != 'undefined' ? d3v4 : d3Chord).ribbon().radius(out1.radius);
+             var radians = [out1.radians, in1.radians, out2.radians, in2.radians];
+             radians.sort();
+             //Adding 10% buffer
+@@ -13139,6 +13164,20 @@
+             });
+           }
+ 
++          if (outerPoints.length == 4 && innerPoints.length == 4) {
++            outerPoints = _lodash2.default.map(outerPoints, _lodash2.default.clone);
++            innerPoints = _lodash2.default.map(innerPoints, _lodash2.default.clone);
++            var percentage = .25;
++            outerPoints[0][0] = outerPoints[0][0] + Math.abs(outerPoints[0][0] - innerPoints[3][0]) * percentage;
++            outerPoints[1][0] = outerPoints[1][0] + Math.abs(outerPoints[1][0] - innerPoints[2][0]) * percentage;
++            outerPoints[2][0] = outerPoints[2][0] - Math.abs(outerPoints[2][0] - innerPoints[1][0]) * percentage;
++            outerPoints[3][0] = outerPoints[3][0] - Math.abs(outerPoints[3][0] - innerPoints[0][0]) * percentage;
++
++            innerPoints[0][0] = innerPoints[0][0] + Math.abs(outerPoints[0][0] - innerPoints[3][0]) * percentage;
++            innerPoints[1][0] = innerPoints[1][0] + Math.abs(outerPoints[1][0] - innerPoints[2][0]) * percentage;
++            innerPoints[2][0] = innerPoints[2][0] - Math.abs(outerPoints[2][0] - innerPoints[1][0]) * percentage;
++            innerPoints[3][0] = innerPoints[3][0] - Math.abs(outerPoints[3][0] - innerPoints[0][0]) * percentage;
++          }
+           //Need to try with simple sample for debugging 
+           //Looks causing issues as it's using elliptical arc
+           /*
+@@ -13152,14 +13191,14 @@
+           });
+           */
+ 
+-          var outerPath = _radialLine(d.outerPoints);
+-          var innerPath = _radialLine(d.innerPoints);
++          var outerPath = _radialLine(outerPoints);
++          var innerPath = _radialLine(innerPoints);
+           var endingStitchLargeArc = 0;
+-          if (Math.abs(d.innerPoints.slice(-1)[0][0] - d.outerPoints.slice(0, 1)[0][0]) > 180) {
++          if (Math.abs(innerPoints.slice(-1)[0][0] - outerPoints.slice(0, 1)[0][0]) > 180) {
+             endingStitchLargeArc = 1;
+           }
+-          var innerStitch = 'A' + d.outerPoints[0][1] + ' ' + d.outerPoints[0][1] + ' 0 0 0 ';
+-          var endingStitch = 'A' + d.outerPoints[0][1] + ' ' + d.outerPoints[0][1] + ' 0 ' + endingStitchLargeArc + ' 0 ' + _radialLine([d.outerPoints[0]]).substr(1);
++          var innerStitch = 'A' + outerPoints[0][1] + ' ' + outerPoints[0][1] + ' 0 0 0 ';
++          var endingStitch = 'A' + outerPoints[0][1] + ' ' + outerPoints[0][1] + ' 0 ' + endingStitchLargeArc + ' 0 ' + _radialLine([outerPoints[0]]).substr(1);
+ 
+           return outerPath + innerStitch + innerPath.substr(1) + endingStitch;
+         });
+@@ -13173,15 +13212,15 @@
+         var svgArcLabelsEnter = svgArcLabels.enter().append('text').attr('class', function (d) {
+           return 'arc-label along-arc arc-label-' + d.height;
+         }).attr('x', this.params.arcLabelXOffset).attr('dy', function (d) {
+-          return _this9.params.arcLabelYOffset[d.height - 1];
++          return _this9._checkValueIsArray(_this9.params.arcLabelYOffset, d.height);
+         });
+         svgArcLabelsEnter.append('textPath').attr('xlink:href', function (d) {
+           return '#' + d.data.namePath.join('-');
+         }).attr('class', function (d) {
+-          return d.data.arcType ? d.data.arcType.split(' ')[0] : '';
++          return d.data.arcType ? d.data.arcType : '';
+         });
+         var svgArcLabelsEdit = svgArcLabelsEnter.merge(svgArcLabels).transition().ease(this.config.get('ease')).duration(this.params.labelDuration != null ? this.params.labelDuration : this.params.duration).attr('x', this.params.arcLabelXOffset).attr('dy', function (d) {
+-          return _this9.params.arcLabelYOffset[d.height - 1];
++          return _this9._checkValueIsArray(_this9.params.arcLabelYOffset, d.height);
+         });
+         svgArcLabelsEdit.select('textPath').attr('startOffset', function (d) {
+           return d.arcLength / 2;
+@@ -13198,8 +13237,8 @@
+           if ((d.angleRange[1] + d.angleRange[0]) / 2 < 180) {
+             alpha -= 180;
+           }
+-          var x = (d.y + _this9.params.arcLabelYOffset[d.height - 1]) * Math.cos((d.angleRange[1] + d.angleRange[0] - 180) * Math.PI / 360) + _this9.params.arcLabelXOffset;
+-          var y = (d.y + _this9.params.arcLabelYOffset[d.height - 1]) * Math.sin((d.angleRange[1] + d.angleRange[0] - 180) * Math.PI / 360);
++          var x = (d.y + _this9._checkValueIsArray(_this9.params.arcLabelYOffset, d.height)) * Math.cos((d.angleRange[1] + d.angleRange[0] - 180) * Math.PI / 360) + _this9.params.arcLabelXOffset;
++          var y = (d.y + _this9._checkValueIsArray(_this9.params.arcLabelYOffset, d.height)) * Math.sin((d.angleRange[1] + d.angleRange[0] - 180) * Math.PI / 360);
+           return 'translate(' + x + ', ' + y + ') rotate(' + alpha + ')';
+         }).style('text-anchor', function (d) {
+           return (d.angleRange[1] + d.angleRange[0]) / 2 < 180 ? 'start' : 'end';
+@@ -13221,7 +13260,7 @@
+         var arc = d3Shape.arc().innerRadius(function (n) {
+           return n.y;
+         }).outerRadius(function (n) {
+-          return n.y + _this9.params.arcWidth[n.height - 1];
++          return n.y + _this9._checkValueIsArray(_this9.params.arcWidth, n.height);
+         }).startAngle(function (n) {
+           return Math.PI * n.angleRange[0] / 180;
+         }).endAngle(function (n) {
+@@ -13233,7 +13272,7 @@
+         svgArcs.enter().append('path').attr('id', function (d) {
+           return d.data.namePath.join('-');
+         }).attr('d', arcEnter).merge(svgArcs).attr('class', function (d) {
+-          return 'arc arc-' + d.depth + (d.data.arcType ? ' ' + d.data.arcType.split(' ')[0] : '') + (d.active ? ' active' : '');
++          return 'arc arc-' + d.depth + (d.data.arcType ? ' ' + d.data.arcType : '') + (d.active ? ' active' : '');
+         }).transition().ease(this.config.get('ease')).duration(this.params.duration).style('fill', function (d) {
+           return _this9.config.getColor([], _this9.config.get('levels')[d.depth - 1], d.data);
+         }).attr('d', arc);
+@@ -13241,6 +13280,17 @@
+       }
+     }
+ 
++    // Checke value is array and get value based on level height
++
++  }, {
++    key: '_checkValueIsArray',
++    value: function _checkValueIsArray(value, height) {
++      if (_lodash2.default.isArray(value)) {
++        return value[height - 1];
++      }
++      return value;
++    }
++
+     // Event handlers
+ 
+   }, {
+@@ -13305,71 +13355,17 @@
+   }, {
+     key: '_onClickNode',
+     value: function _onClickNode(d, el, e) {
+-      if (this.config.attributes && this.config.attributes.expandLevels == 'disable') {
+-        return;
+-      }
+-      /*if (d.depth < this.maxDepth && d.depth === this.params.drillDownLevel) {
++      if (d.depth < this.maxDepth && d.depth === this.params.drillDownLevel) {
+         // Expand
+-        this.config.set('drillDownLevel', this.params.drillDownLevel + 1)
++        this.config.set('drillDownLevel', this.params.drillDownLevel + 1);
+       } else if (d.depth < this.params.drillDownLevel) {
+         // Collapse
+-        this.config.set('drillDownLevel', this.params.drillDownLevel - 1)
+-      }
+-      this.config.set('drillDownLevel', this.params.drillDownLevel - 1)*/
+-      if (this.clearArcTootltip) {
+-        clearTimeout(this.clearArcTootltip);
++        this.config.set('drillDownLevel', this.params.drillDownLevel - 1);
+       }
+-      var levels = 2;
+-      //If clicked on 2nd level arc,collapse to 1st level
+-      if (d.depth == 2 || d.height == 2) levels = 1;
+-      this.config.attributes.updateChart({
+-        levels: levels
+-      });
+       el.classList.remove(this.selectorClass('active'));
+       _get(RadialDendrogramView.prototype.__proto__ || Object.getPrototypeOf(RadialDendrogramView.prototype), '_onEvent', this).call(this, d, el, e);
+     }
+   }, {
+-    key: '_onClickLink',
+-    value: function _onClickLink(d, el, e) {
+-      if (this.config.attributes && this.config.attributes.showLinkInfo && typeof this.config.attributes.showLinkInfo == 'function') {
+-        this.config.attributes.showLinkInfo(d, el, e, this);
+-      }
+-    }
+-  }, {
+-    key: '_onMousemoveLink',
+-    value: function _onMousemoveLink(d, el, e) {
+-      var _this11 = this;
+-
+-      if (this.config.attributes && this.config.attributes.showLinkTooltip) {
+-        var _d3Selection$mouse3 = d3Selection.mouse(this._container),
+-            _d3Selection$mouse4 = _slicedToArray(_d3Selection$mouse3, 2),
+-            left = _d3Selection$mouse4[0],
+-            top = _d3Selection$mouse4[1];
+-
+-        if (this.clearLinkTooltip) {
+-          clearTimeout(this.clearLinkTooltip);
+-        }
+-        this.clearLinkTooltip = setTimeout(function () {
+-          _Actionman2.default.fire('ShowComponent', _this11.config.get('tooltip'), { left: left, top: top }, d);
+-          var tooltipId = document.getElementById(_this11.config.get('tooltip'));
+-          if (left > _this11._container.offsetWidth / 2) {
+-            tooltipId.style.right = 0;
+-            tooltipId.style.left = 'auto';
+-          } else {
+-            tooltipId.style.right = 'auto';
+-          }
+-        }, 300);
+-      }
+-    }
+-  }, {
+-    key: '_onMouseoutLink',
+-    value: function _onMouseoutLink(d, el, e) {
+-      if (this.clearLinkTooltip) {
+-        clearTimeout(this.clearLinkTooltip);
+-      }
+-      _Actionman2.default.fire('HideComponent', this.config.get('tooltip'));
+-    }
+-  }, {
+     key: 'tagName',
+     get: function get() {
+       return 'g';
+@@ -13386,16 +13382,14 @@
+   }, {
+     key: 'events',
+     get: function get() {
+-      var _$extend;
+-
+-      return _lodash2.default.extend(_get(RadialDendrogramView.prototype.__proto__ || Object.getPrototypeOf(RadialDendrogramView.prototype), 'events', this), (_$extend = {
++      return _lodash2.default.extend(_get(RadialDendrogramView.prototype.__proto__ || Object.getPrototypeOf(RadialDendrogramView.prototype), 'events', this), {
+         'click node': '_onClickNode',
+         'click link': '_onEvent',
+         'dblclick node': '_onEvent',
+         'dblclick link': '_onEvent',
+         'mousemove node': '_onMousemove',
+         'mouseout node': '_onMouseout'
+-      }, _defineProperty(_$extend, 'click link', '_onClickLink'), _defineProperty(_$extend, 'mousemove link', '_onMousemoveLink'), _defineProperty(_$extend, 'mouseout link', '_onMouseoutLink'), _$extend));
++      });
+     }
+   }]);
+ 
+@@ -19112,27 +19106,27 @@
+ /* 219 */
+ /***/ (function(module, exports) {
+ 
+-var g;
+-
+-// This works in non-strict mode
+-g = (function() {
+-	return this;
+-})();
+-
+-try {
+-	// This works if eval is allowed (see CSP)
+-	g = g || Function("return this")() || (1,eval)("this");
+-} catch(e) {
+-	// This works if the window reference is available
+-	if(typeof window === "object")
+-		g = window;
+-}
+-
+-// g can still be undefined, but nothing to do about it...
+-// We return undefined, instead of nothing here, so it's
+-// easier to handle this case. if(!global) { ...}
+-
+-module.exports = g;
++var g;
++
++// This works in non-strict mode
++g = (function() {
++	return this;
++})();
++
++try {
++	// This works if eval is allowed (see CSP)
++	g = g || Function("return this")() || (1,eval)("this");
++} catch(e) {
++	// This works if the window reference is available
++	if(typeof window === "object")
++		g = window;
++}
++
++// g can still be undefined, but nothing to do about it...
++// We return undefined, instead of nothing here, so it's
++// easier to handle this case. if(!global) { ...}
++
++module.exports = g;
+ 
+ 
+ /***/ }),
