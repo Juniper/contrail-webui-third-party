@@ -1,0 +1,83 @@
+--- jdorn-jsoneditor.js	2017-05-11 16:54:02.000000000 +0530
++++ jdorn-jsoneditor.js	2017-07-26 16:57:13.000000000 +0530
+@@ -2618,8 +2618,10 @@
+     // Normal layout
+     else {
+       container = document.createElement('div');
+-      headerWidth = undefined, isCollection = false;
+-      var keyPath = this.editors[Object.keys(this.editors)[0]].path.split('.');
++      headerWidth = undefined, isCollection = false, keyPath = [];
++      if(Object.keys(this.editors).length > 0){
++          keyPath = this.editors[Object.keys(this.editors)[0]].path.split('.');
++      }
+       var count = 0, keyStack = [];
+       if(this.schema.title !== undefined){
+           var objCount = 0;
+@@ -3389,10 +3391,12 @@
+       currentObj = undefined;
+       arrayParentKey = undefined;
+       delFlag = false;
++      keyLabel = undefined;
+       childLevelObj = undefined;
+       keyHierarchy = [];
+       var childKeyDelete = true;
+       if(flag){
++         keyLabel = property;
+          var topObjLevel = property.join(';');
+          deletedPropertyStack.push(topObjLevel);
+          var lastlevel = property.splice(property.length - 1, 1);
+@@ -3576,7 +3580,7 @@
+         return result;
+     }
+   },
+-  deleteProperty :function(model, delPro, oldModel, delObjFlag, Node, next) {
++  deleteProperty :function(model, delPro, oldModel, delObjFlag, Node, next, headerKey) {
+       var self = this,currentNode = Node;
+       for (var i in model) {
+            if(next === undefined){
+@@ -3594,7 +3598,7 @@
+                   if(delObjFlag && i === delPro && currentNode === arrayParentKey){
+                        delete model[i];
+                   }else{
+-                   self.deleteProperty(model[i], delPro, oldModel, delObjFlag, currentNode, 'next');
++                   self.deleteProperty(model[i], delPro, oldModel, delObjFlag, currentNode, 'next', i);
+                   }
+               }else {
+                   if(model[i] !== undefined && model[i] !== null){
+@@ -3602,7 +3606,6 @@
+                       if((typeof model[i][0] === 'object' || typeof model[i][model[i].length - 1] === 'object') && (i == arrayParentKey)){
+                           if(delObjFlag && typeof model[i][delPro] === 'object' && keyHierarchy.length == 0){
+                               delete model[i][delPro];
+-                             // model[i] = model[i].filter(function(n){ return n != undefined });
+                            }else{
+                               for(var k = 0; k < model[i].length; k++){
+                                      for(var c = 0; c < keyHierarchy.length; c++){
+@@ -3618,12 +3621,24 @@
+                           }
+                        }else if(typeof model[i][0] !== 'object'){
+                           if(isNumber(delPro) && i === parentLevelObj){
+-                          delete  model[i][delPro];
+-                         // model[i] = model[i].filter(function(n){ return n != undefined });
++                             if(headerKey != undefined){
++                                var parentIndex = keyLabel.indexOf(parentLevelObj) - 1;
++                                if(keyLabel[parentIndex] == headerKey){
++                                    delete  model[i][delPro];
++                                }
++                             }else{
++                                 delete  model[i][delPro];
++                             }    
+                           }
+                       }else if(typeof model[i][0] === 'object' && isNumber(delPro) && i === parentLevelObj){
+-                          delete  model[i][delPro];
+-                          //model[i] = model[i].filter(function(n){ return n != undefined });
++                          if(headerKey != undefined){
++                              var parentIndex = keyLabel.indexOf(parentLevelObj) - 1;
++                              if(keyLabel[parentIndex] == headerKey){
++                                  delete  model[i][delPro];
++                              }
++                           }else{
++                               delete  model[i][delPro];
++                           }    
+                       }else if((typeof model[i][0] === 'object' && (isNumber(delPro) || !isNumber(delPro))) && (keyHierarchy.indexOf(parentLevelObj) != -1)){
+                           for(var m = 0; m < model[i].length; m++){
+                               if(keyHierarchy.indexOf(i) != -1){
