@@ -578,6 +578,7 @@
         <rename>joint-v0.9.3</rename>
         <patches>
             <patch strip="1">joint-v0.9.3.patch</patch>
+            <patch strip="1">joint-v0.9.3_2.patch</patch>
         </patches>
     </package>
     <package>
