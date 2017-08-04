@@ -1,0 +1,10 @@
+--- old/joint-v0.9.3/dist/joint.clean.js  2017-08-04 15:07:08.000000000 +0530
++++      new/joint-v0.9.3/dist/joint.clean.js	2017-08-04 15:10:49.000000000 +0530
+@@ -5072,6 +5072,7 @@
+             }, this);
+ 
+             this.asyncBatchAdded();
++            this.trigger('batch:rendered', opt);
+         }
+ 
+         if (done) {
