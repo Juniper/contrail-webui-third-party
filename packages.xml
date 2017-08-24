@@ -778,6 +778,7 @@
         <patches>
 	    <patch strip="0">contrail-charts_1.patch</patch>
 	    <patch strip="0">contrail-charts_2.patch</patch>
+	    <patch strip="0">contrail-charts_3.patch</patch>
         </patches>
         <md5>b68dea5f908f4bfa4935d94a2a46890f</md5>
     </package>

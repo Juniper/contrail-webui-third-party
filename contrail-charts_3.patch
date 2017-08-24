@@ -1,0 +1,370 @@
+--- contrail-charts/js/contrail-charts.js	2017-08-24 18:48:46.000000000 +0530
++++ contrail-charts/js/contrail-charts.js	2017-08-23 21:28:18.000000000 +0530
+@@ -12788,6 +12788,7 @@
+             _this3.links.push(leaf.path(leaves[i]));
+           }
+         }
++        //Loop through links array and mark them as bi-directional/uni-directional
+       });
+       // console.log('Links: ', this.links)
+     }
+@@ -12821,12 +12822,15 @@
+       var _this5 = this;
+ 
+       this.circles = [];
+-      var radiusScale = d3Scale.scaleLinear().domain([0, this.params.drillDownLevel]).range([0, this.params.innerRadius]).clamp(true);
++      var radiusScale = d3Scale.scaleLinear().domain([0, 1]).range([0, this.params.innerRadius]).clamp(true);
+       this.hierarchyRootNode.each(function (n) {
+         if (!n.parent || !n.children) {
+           return;
+         }
+-        n.y = radiusScale(n.depth);
++        n.y = radiusScale(1);
++        if (n.depth == 2 && _this5.params.drillDownLevel == 2) {
++          n.y -= 50;
++        }
+         if (_this5.circles.length === n.depth) {
+           _this5.circles[n.depth] = { r: n.y };
+         }
+@@ -12863,7 +12867,8 @@
+         // Shrink the angle range in order to create padding between nodes.
+         n.separationValue = 0;
+         if (n.depth < _this6.params.parentSeparationDepthThreshold) {
+-          n.separationValue = _this6.params.parentSeparationShrinkFactor * (maxAngle - minAngle) / 2;
++          // To keep consistent gap between the arcs.
++          n.separationValue = _this6.params.parentSeparationShrinkFactor * 20;
+         }
+         minAngle += n.separationValue;
+         maxAngle -= n.separationValue;
+@@ -12871,18 +12876,21 @@
+         n.angleScale = d3Scale.scaleLinear().domain(n.valueRange).range(n.angleRange);
+       });
+       // Now shrink the parent nodes by the amount of sepration added to children.
+-      this.hierarchyRootNode.each(function (n) {
++
++      // Commented the parent shrink code because when there are more children
++      // the start and end arcs of children are going beyond the parent arc angle range.
++      /*this.hierarchyRootNode.each((n) => {
+         if (!n.parent) {
+-          return;
++          return
+         }
+-        var separationValueOfChildren = 0;
+-        _lodash2.default.each(n.descendants(), function (child) {
+-          separationValueOfChildren += child.separationValue;
+-        });
+-        n.angleRange[0] += separationValueOfChildren;
+-        n.angleRange[1] -= separationValueOfChildren;
+-        n.angleScale = d3Scale.scaleLinear().domain(n.valueRange).range(n.angleRange);
+-      });
++        let separationValueOfChildren = 0
++        _.each(n.descendants(), (child) => {
++          separationValueOfChildren += child.separationValue
++        })
++        n.angleRange[0] += separationValueOfChildren
++        n.angleRange[1] -= separationValueOfChildren
++        n.angleScale = d3Scale.scaleLinear().domain(n.valueRange).range(n.angleRange)
++      })*/
+     }
+ 
+     /**
+@@ -13073,11 +13081,73 @@
+       this._prepareArcs();
+     }
+   }, {
++    key: '_getLinkPath',
++    value: function _getLinkPath(d, isDummyPath) {
++      var radialLine = d3Shape.radialLine().angle(function (d) {
++        return d[0] / 180 * Math.PI;
++      }).radius(function (d) {
++        return d[1];
++      }).curve(this.config.get('curve'));
++      var outerPoints = d.outerPoints;
++      var innerPoints = d.innerPoints;
++      if (outerPoints.length == 4 && innerPoints.length == 4) {
++        outerPoints[1] = outerPoints[3];
++        innerPoints[1] = innerPoints[3];
++      }
++      var out1 = { radians: outerPoints[0][0] / 180 * Math.PI, radius: outerPoints[0][1] };
++      var out2 = { radians: outerPoints[1][0] / 180 * Math.PI, radius: outerPoints[1][1] };
++      var in1 = { radians: innerPoints[0][0] / 180 * Math.PI, radius: innerPoints[0][1] };
++      var in2 = { radians: innerPoints[1][0] / 180 * Math.PI, radius: innerPoints[1][1] };
++
++      var ribbon = (typeof d3v4 != 'undefined' ? d3v4 : d3Chord).ribbon().radius(out1.radius);
++      var radians = [out1.radians, in1.radians, out2.radians, in2.radians];
++      radians.sort();
++      if (isDummyPath) {
++        var sourceAngle = radians[0] + Math.abs(radians[1] - radians[0]) / 2;
++        var targetAngle = radians[2] + Math.abs(radians[3] - radians[2]) / 2;
++        return ribbon({
++          source: { startAngle: sourceAngle, endAngle: sourceAngle },
++          target: { startAngle: targetAngle, endAngle: targetAngle }
++        });
++      } else {
++        var startWidth = Math.abs(radians[0] - radians[1]) * .35;
++        var endWidth = Math.abs(radians[2] - radians[3]) * .35;
++        return ribbon({
++          source: { startAngle: radians[0] + startWidth, endAngle: radians[1] - startWidth },
++          target: { startAngle: radians[2] + endWidth, endAngle: radians[3] - endWidth }
++        });
++      }
++    }
++  }, {
++    key: '_drawArrows',
++    value: function _drawArrows(arrowClass, offset) {
++      var svgLinkArrow = this.d3.selectAll('.' + arrowClass).data(this.ribbons);
++      var svgLinkArrowEnter = svgLinkArrow.enter().append('text').attr('class', function (d) {
++        return arrowClass;
++      });
++      svgLinkArrowEnter.append('textPath').attr('xlink:href', function (d) {
++        return '#' + d.id + '-arrow';
++      });
++      var svgLinkArrowEdit = svgLinkArrowEnter.merge(svgLinkArrow).attr('x', function (d) {
++        return '5';
++      }).attr('dy', function (d) {
++        return '5';
++      });
++      svgLinkArrowEdit.select('textPath').attr('startOffset', function (d) {
++        return offset;
++      }).text(function (d) {
++        return '\uF07E';
++      });
++      svgLinkArrow.exit().remove();
++    }
++  }, {
+     key: '_render',
+     value: function _render() {
+       var _this9 = this;
+ 
+       this.d3.attr('transform', 'translate(' + this.params.width / 2 + ', ' + this.params.height / 2 + ')');
++      d3.select('svg g').selectAll(".dummyArcs").remove();
++      d3.select('svg g').selectAll(".dummyLinks").remove();
+       // Circles
+       var svgCircles = this.d3.selectAll('.circle').data(this.circles);
+       svgCircles.enter().append('circle').attr('class', 'circle').attr('r', 0).merge(svgCircles).attr('r', function (d) {
+@@ -13103,14 +13173,11 @@
+       }
+       if (this.params.drawRibbons) {
+         // Ribbons
+-        var _radialLine = d3Shape.radialLine().angle(function (d) {
+-          return d[0] / 180 * Math.PI;
+-        }).radius(function (d) {
+-          return d[1];
+-        }).curve(this.config.get('curve'));
++
+         var _svgLinks = this.d3.selectAll('.ribbon').data(this.ribbons, function (d) {
+           return d.id;
+         });
++        var viewScope = this;
+         _svgLinks.enter().append('path').attr('class', function (d) {
+           return 'ribbon' + (d.active ? ' active' : '');
+         }).merge(_svgLinks) // .transition().ease(this.config.get('ease')).duration(this.params.duration)
+@@ -13138,72 +13205,24 @@
+           }*/
+           // d.outerPoints.splice(1,0,getMidPoint(d.outerPoints));
+           // d.innerPoints.splice(1,0,getMidPoint(d.innerPoints));
+-
+-          var outerPoints = d.outerPoints;
+-          var innerPoints = d.innerPoints;
+-
+-          if (outerPoints.length == 2 && innerPoints.length == 2) {
+-            var out1 = { radians: outerPoints[0][0] / 180 * Math.PI, radius: outerPoints[0][1] },
+-                out2 = { radians: outerPoints[1][0] / 180 * Math.PI, radius: outerPoints[1][1] };
+-            var in1 = { radians: innerPoints[0][0] / 180 * Math.PI, radius: innerPoints[0][1] },
+-                in2 = { radians: innerPoints[1][0] / 180 * Math.PI, radius: innerPoints[1][1] };
+-
+-            var ribbon = (typeof d3v4 != 'undefined' ? d3v4 : d3Chord).ribbon().radius(out1.radius);
+-            var radians = [out1.radians, in1.radians, out2.radians, in2.radians];
+-            radians.sort();
+-            //Adding 10% buffer
+-            var startWidth = Math.abs(radians[0] - radians[1]) * .35,
+-                endWidth = Math.abs(radians[2] - radians[3]) * .35;
+-            return ribbon({
+-              source: { startAngle: radians[0] + startWidth, endAngle: radians[1] - startWidth },
+-              target: { startAngle: radians[2] + endWidth, endAngle: radians[3] - endWidth }
+-            });
+-            return ribbon({
+-              source: { startAngle: out1.radians, endAngle: in1.radians },
+-              target: { startAngle: Math.min(out2.radians, in2.radians), endAngle: Math.max(out2.radians, in2.radians) }
+-            });
+-          }
+-
+-          if (outerPoints.length == 4 && innerPoints.length == 4) {
+-            outerPoints = _lodash2.default.map(outerPoints, _lodash2.default.clone);
+-            innerPoints = _lodash2.default.map(innerPoints, _lodash2.default.clone);
+-            var percentage = .25;
+-            outerPoints[0][0] = outerPoints[0][0] + Math.abs(outerPoints[0][0] - innerPoints[3][0]) * percentage;
+-            outerPoints[1][0] = outerPoints[1][0] + Math.abs(outerPoints[1][0] - innerPoints[2][0]) * percentage;
+-            outerPoints[2][0] = outerPoints[2][0] - Math.abs(outerPoints[2][0] - innerPoints[1][0]) * percentage;
+-            outerPoints[3][0] = outerPoints[3][0] - Math.abs(outerPoints[3][0] - innerPoints[0][0]) * percentage;
+-
+-            innerPoints[0][0] = innerPoints[0][0] + Math.abs(outerPoints[0][0] - innerPoints[3][0]) * percentage;
+-            innerPoints[1][0] = innerPoints[1][0] + Math.abs(outerPoints[1][0] - innerPoints[2][0]) * percentage;
+-            innerPoints[2][0] = innerPoints[2][0] - Math.abs(outerPoints[2][0] - innerPoints[1][0]) * percentage;
+-            innerPoints[3][0] = innerPoints[3][0] - Math.abs(outerPoints[3][0] - innerPoints[0][0]) * percentage;
+-          }
+-          //Need to try with simple sample for debugging 
+-          //Looks causing issues as it's using elliptical arc
+-          /*
+-          d.outerPoints = _.map(d.outerPoints,function(val,idx) {
+-            var diff = Math.abs(val[0],val[1])*.1;
+-            return [val[0]+diff,val[1]-diff];
+-          });
+-          d.innerPoints = _.map(d.innerPoints,function(val,idx) {
+-            var diff = Math.abs(val[0],val[1])*.1;
+-            return [val[0]+diff,val[1]-diff];
+-          });
+-          */
+-
+-          var outerPath = _radialLine(outerPoints);
+-          var innerPath = _radialLine(innerPoints);
+-          var endingStitchLargeArc = 0;
+-          if (Math.abs(innerPoints.slice(-1)[0][0] - outerPoints.slice(0, 1)[0][0]) > 180) {
+-            endingStitchLargeArc = 1;
++          return _this9._getLinkPath(d);
++        }).each(function (d, i) {
++          // Adding dummy paths to draw arrows
++          if (viewScope.params.showLinkDirection) {
++            var newPath = viewScope._getLinkPath(d, true);
++            d3.select('svg g').append("path").attr("class", "dummyLinks").attr("id", function () {
++              return d.id + '-arrow';
++            }).attr("d", newPath).style("fill", "none");
+           }
+-          var innerStitch = 'A' + outerPoints[0][1] + ' ' + outerPoints[0][1] + ' 0 0 0 ';
+-          var endingStitch = 'A' + outerPoints[0][1] + ' ' + outerPoints[0][1] + ' 0 ' + endingStitchLargeArc + ' 0 ' + _radialLine([outerPoints[0]]).substr(1);
+-
+-          return outerPath + innerStitch + innerPath.substr(1) + endingStitch;
+         });
+         _svgLinks.exit().remove();
+ 
++        // Draw arrows
++        if (this.params.showLinkDirection) {
++          this._drawArrows('link-arrow-start', '');
++          this._drawArrows('link-arrow-end', '50%');
++        }
++
+         // Arc labels
+         var arcLabelsAlongArcData = this.params.labelFlow === 'along-arc' ? this.arcs : [];
+         var arcLabelsPerpendicularData = this.params.labelFlow === 'perpendicular' ? this.arcs : [];
+@@ -13211,17 +13230,15 @@
+         var svgArcLabels = this.d3.selectAll('.arc-label.along-arc').data(arcLabelsAlongArcData);
+         var svgArcLabelsEnter = svgArcLabels.enter().append('text').attr('class', function (d) {
+           return 'arc-label along-arc arc-label-' + d.height;
+-        }).attr('x', this.params.arcLabelXOffset).attr('dy', function (d) {
+-          return _this9._checkValueIsArray(_this9.params.arcLabelYOffset, d.height);
++        }).attr('x', this.params.arcLabelXOffset).attr("dy", function (d, i) {
++          return (d.angleRange[0] + d.angleRange[1]) / 2 > 90 && (d.angleRange[0] + d.angleRange[1]) / 2 < 270 ? 18 : -11;
+         });
+         svgArcLabelsEnter.append('textPath').attr('xlink:href', function (d) {
+-          return '#' + d.data.namePath.join('-');
++          return '#' + d.data.namePath.join('-') + '-text';
+         }).attr('class', function (d) {
+           return d.data.arcType ? d.data.arcType : '';
+         });
+-        var svgArcLabelsEdit = svgArcLabelsEnter.merge(svgArcLabels).transition().ease(this.config.get('ease')).duration(this.params.labelDuration != null ? this.params.labelDuration : this.params.duration).attr('x', this.params.arcLabelXOffset).attr('dy', function (d) {
+-          return _this9._checkValueIsArray(_this9.params.arcLabelYOffset, d.height);
+-        });
++        var svgArcLabelsEdit = svgArcLabelsEnter.merge(svgArcLabels).transition().ease(this.config.get('ease')).duration(this.params.labelDuration != null ? this.params.labelDuration : this.params.duration);
+         svgArcLabelsEdit.select('textPath').attr('startOffset', function (d) {
+           return d.arcLength / 2;
+         }).text(function (d) {
+@@ -13269,13 +13286,48 @@
+         var svgArcs = this.d3.selectAll('.arc').data(this.arcs, function (d) {
+           return d.data.namePath.join('-');
+         });
++        d3.selectAll('.hiddenDonutArcs').remove();
+         svgArcs.enter().append('path').attr('id', function (d) {
+           return d.data.namePath.join('-');
+-        }).attr('d', arcEnter).merge(svgArcs).attr('class', function (d) {
++        })
++        // .attr('d', arcEnter)
++        .merge(svgArcs).attr('d', arc).attr('class', function (d) {
+           return 'arc arc-' + d.depth + (d.data.arcType ? ' ' + d.data.arcType : '') + (d.active ? ' active' : '');
+         }).transition().ease(this.config.get('ease')).duration(this.params.duration).style('fill', function (d) {
+           return _this9.config.getColor([], _this9.config.get('levels')[d.depth - 1], d.data);
+-        }).attr('d', arc);
++        }).each(function (d, i) {
++          //Search pattern for everything between the start and the first capital L
++          var firstArcSection = /(^.+?)L/;
++
++          if (d3.select(this).attr("d") == null) {
++            console.info("path is null");
++            return;
++          }
++          //Grab everything up to the first Line statement
++          var newArc = firstArcSection.exec(d3.select(this).attr("d"))[1];
++          //Replace all the comma's so that IE can handle it
++          newArc = newArc.replace(/,/g, " ");
++
++          //If the end angle lies beyond a quarter of a circle (90 degrees or pi/2) 
++          //flip the end and start position
++          if ((d.angleRange[0] + d.angleRange[1]) / 2 > 90 && (d.angleRange[0] + d.angleRange[1]) / 2 < 270) {
++            var startLoc = /M(.*?)A/,
++                //Everything between the first capital M and first capital A
++            middleLoc = /A(.*?)0 ([01]) 1/,
++                //Everything between the first capital A and 0 0 1
++            endLoc = /0 [01] 1 (.*?)$/; //Everything between the first 0 0 1 and the end of the string (denoted by $)
++            //Flip the direction of the arc by switching the start en end point (and sweep flag)
++            //of those elements that are below the horizontal line
++            var newStart = endLoc.exec(newArc)[1];
++            var newEnd = startLoc.exec(newArc)[1];
++            var largeArc = middleLoc.exec(newArc)[2];
++            var middleSec = middleLoc.exec(newArc)[1];
++
++            //Build up the new arc notation, set the sweep-flag to 0
++            newArc = "M" + newStart + "A" + middleSec + "0 " + largeArc + " 0 " + newEnd;
++          }
++          d3.select('svg g').append("path").attr("class", "dummyArcs").attr("id", d.data.namePath.join('-') + '-text').attr("d", newArc).style("fill", "none");
++        });
+         svgArcs.exit().transition().ease(this.config.get('ease')).duration(this.params.duration).attr('d', arcEnter).remove();
+       }
+     }
+@@ -19106,27 +19158,27 @@
+ /* 219 */
+ /***/ (function(module, exports) {
+ 
+-var g;
+-
+-// This works in non-strict mode
+-g = (function() {
+-	return this;
+-})();
+-
+-try {
+-	// This works if eval is allowed (see CSP)
+-	g = g || Function("return this")() || (1,eval)("this");
+-} catch(e) {
+-	// This works if the window reference is available
+-	if(typeof window === "object")
+-		g = window;
+-}
+-
+-// g can still be undefined, but nothing to do about it...
+-// We return undefined, instead of nothing here, so it's
+-// easier to handle this case. if(!global) { ...}
+-
+-module.exports = g;
++var g;
++
++// This works in non-strict mode
++g = (function() {
++	return this;
++})();
++
++try {
++	// This works if eval is allowed (see CSP)
++	g = g || Function("return this")() || (1,eval)("this");
++} catch(e) {
++	// This works if the window reference is available
++	if(typeof window === "object")
++		g = window;
++}
++
++// g can still be undefined, but nothing to do about it...
++// We return undefined, instead of nothing here, so it's
++// easier to handle this case. if(!global) { ...}
++
++module.exports = g;
+ 
+ 
+ /***/ }),
