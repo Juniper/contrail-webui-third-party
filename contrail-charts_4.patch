@@ -1,0 +1,293 @@
+--- contrail-charts/js/contrail-charts.js	2017-09-18 22:18:20.000000000 +0530
++++ contrail-charts/js/contrail-charts.js	2017-09-12 23:52:53.000000000 +0530
+@@ -12719,7 +12719,6 @@
+               if (!node) {
+                 node = {
+                   name: name,
+-                  labelAppend: currLeaf.labelAppend,
+                   arcType: currLeaf.type,
+                   namePath: namePath.slice(0),
+                   displayLabels: displayLabels.slice(0),
+@@ -12788,7 +12787,6 @@
+             _this3.links.push(leaf.path(leaves[i]));
+           }
+         }
+-        //Loop through links array and mark them as bi-directional/uni-directional
+       });
+       // console.log('Links: ', this.links)
+     }
+@@ -12827,9 +12825,20 @@
+         if (!n.parent || !n.children) {
+           return;
+         }
+-        n.y = radiusScale(1);
+-        if (n.depth == 2 && _this5.params.drillDownLevel == 2) {
+-          n.y -= 50;
++        //Calculating circle radius based on number of labels to be stacked
++        if (n.data.displayLabels.length) {
++          var labels = n.data.displayLabels;
++          var labelsCount = labels[labels.length - 1].length;
++          n.y = radiusScale(1) - 15 * (labelsCount - 1);
++          if (n.depth == 2 && _this5.params.drillDownLevel == 2) {
++            var UpperLevelLabelsCount = labels[labels.length - 2].length;
++            n.y -= 50 + (UpperLevelLabelsCount - 1) * 15;
++          }
++        } else {
++          n.y = radiusScale(1);
++          if (n.depth == 2 && _this5.params.drillDownLevel == 2) {
++            n.y -= 50;
++          }
+         }
+         if (_this5.circles.length === n.depth) {
+           _this5.circles[n.depth] = { r: n.y };
+@@ -13018,11 +13027,28 @@
+             return false;
+           }
+         });
++
++        //Mark link as bi-directional/uni-directional
++        var linkDirection = '';
++        if (_this7.config.attributes.isEndpointMatched) {
++          var viewScope = _this7;
++          var linkChildren = _lodash2.default.filter(src.data.dataChildren, function (child) {
++            return child.isClient;
++          });
++          var currentEnd = _lodash2.default.find(linkChildren, function (child) {
++            return viewScope.config.attributes.isEndpointMatched(src.data.currentNode.names, child, src.data);
++          });
++          var otherEnd = _lodash2.default.find(linkChildren, function (child) {
++            return viewScope.config.attributes.isEndpointMatched(src.data.otherNode.names, child, src.data);
++          });
++          linkDirection = currentEnd && !otherEnd ? 'forward' : !currentEnd && otherEnd ? 'reverse' : currentEnd && otherEnd ? 'bidirectional' : '';
++        }
+         _this7.ribbons.push({
+           outerPoints: outerPoints,
+           innerPoints: innerPoints,
+           id: src.data.linkId,
+           link: [src, dst],
++          direction: linkDirection,
+           linkCssClass: linkCssClass
+         });
+       });
+@@ -13054,14 +13080,7 @@
+         n.arcLength = 6 * (n.y - _this8._checkValueIsArray(_this8.params.arcLabelYOffset, n.height)) * (n.angleRange[1] - n.angleRange[0]) / 360;
+         var namePath = n.data.displayLabels && n.data.displayLabels.length > 0 ? n.data.displayLabels : n.data.namePath;
+         n.label = '' + namePath[namePath.length - 1];
+-        if (n.depth == 1 && n.data.labelAppend) {
+-          n.label += '-' + n.data.labelAppend;
+-        }
+-        var labelArcLengthDiff = void 0;
+-        n.labelFits = (labelArcLengthDiff = _this8.config.get('arcLabelLetterWidth') * n.label.length - n.arcLength) < 0;
+-        if (!n.labelFits) {
+-          n.labelLengthToTrim = (labelArcLengthDiff + 4 * _this8.config.get('arcLabelLetterWidth')) / _this8.config.get('arcLabelLetterWidth');
+-        }
++        n.labelFits = _this8.config.get('arcLabelLetterWidth') * n.label.length < n.arcLength;
+         if (_this8.config.get('labelFlow') === 'perpendicular') {
+           n.labelFits = n.arcLength > 9 && _this8.config.get('innerRadius') / _this8.config.get('drillDownLevel') - _this8._checkValueIsArray(_this8.params.arcLabelYOffset, n.height) > _this8.config.get('arcLabelLetterWidth') * n.label.length;
+         }
+@@ -13120,25 +13139,34 @@
+     }
+   }, {
+     key: '_drawArrows',
+-    value: function _drawArrows(arrowClass, offset) {
+-      var svgLinkArrow = this.d3.selectAll('.' + arrowClass).data(this.ribbons);
+-      var svgLinkArrowEnter = svgLinkArrow.enter().append('text').attr('class', function (d) {
+-        return arrowClass;
+-      });
+-      svgLinkArrowEnter.append('textPath').attr('xlink:href', function (d) {
+-        return '#' + d.id + '-arrow';
+-      });
+-      var svgLinkArrowEdit = svgLinkArrowEnter.merge(svgLinkArrow).attr('x', function (d) {
+-        return '5';
+-      }).attr('dy', function (d) {
+-        return '5';
+-      });
+-      svgLinkArrowEdit.select('textPath').attr('startOffset', function (d) {
+-        return offset;
+-      }).text(function (d) {
+-        return '\uF07E';
++    value: function _drawArrows() {
++      var viewScope = this;
++      _lodash2.default.each(['link-arrow-start', 'link-arrow-end'], function (arrowClass) {
++        var svgLinkArrow = viewScope.d3.selectAll('.' + arrowClass).data(viewScope.ribbons);
++        var svgLinkArrowEnter = svgLinkArrow.enter().append('text').attr('class', function (d) {
++          return arrowClass;
++        });
++        svgLinkArrowEnter.append('textPath').attr('xlink:href', function (d) {
++          return '#' + d.id + '-arrow';
++        });
++        var svgLinkArrowEdit = svgLinkArrowEnter.merge(svgLinkArrow).attr('dy', function (d) {
++          return '5';
++        });
++        svgLinkArrowEdit.select('textPath').attr('startOffset', function (d) {
++          return arrowClass == 'link-arrow-end' ? '51%' : '1%';
++        }).text(function (d) {
++          var arrowType = '';
++          if (d.direction == 'bidirectional') {
++            arrowType = '\uF07E';
++          } else if (d.direction == 'forward') {
++            arrowType = arrowClass == 'link-arrow-end' ? '\uF177' : '\uF178';
++          } else if (d.direction == 'reverse') {
++            arrowType = arrowClass == 'link-arrow-end' ? '\uF178' : '\uF177';
++          }
++          return arrowType;
++        });
++        svgLinkArrow.exit().remove();
+       });
+-      svgLinkArrow.exit().remove();
+     }
+   }, {
+     key: '_render',
+@@ -13148,6 +13176,12 @@
+       this.d3.attr('transform', 'translate(' + this.params.width / 2 + ', ' + this.params.height / 2 + ')');
+       d3.select('svg g').selectAll(".dummyArcs").remove();
+       d3.select('svg g').selectAll(".dummyLinks").remove();
++      d3.select('svg g').selectAll(".arc-label.along-arc").remove();
++      d3.selectAll('svg #patterns').remove();
++
++      //Append patterns
++      d3.select('svg').append('defs').attr('id', 'patterns').append('pattern').attr('id', 'pattern-stripe').attr('width', 4).attr('height', 4).attr('patternUnits', 'userSpaceOnUse').attr('patternTransform', 'rotate(90)').append('rect').attr('width', 1).attr('height', 4).style('fill', '#888');
++
+       // Circles
+       var svgCircles = this.d3.selectAll('.circle').data(this.circles);
+       svgCircles.enter().append('circle').attr('class', 'circle').attr('r', 0).merge(svgCircles).attr('r', function (d) {
+@@ -13219,8 +13253,7 @@
+ 
+         // Draw arrows
+         if (this.params.showLinkDirection) {
+-          this._drawArrows('link-arrow-start', '');
+-          this._drawArrows('link-arrow-end', '50%');
++          this._drawArrows();
+         }
+ 
+         // Arc labels
+@@ -13228,28 +13261,40 @@
+         var arcLabelsPerpendicularData = this.params.labelFlow === 'perpendicular' ? this.arcs : [];
+         // Along Arc
+         var svgArcLabels = this.d3.selectAll('.arc-label.along-arc').data(arcLabelsAlongArcData);
+-        var svgArcLabelsEnter = svgArcLabels.enter().append('text').attr('class', function (d) {
+-          return 'arc-label along-arc arc-label-' + d.height;
+-        }).attr('x', this.params.arcLabelXOffset).attr("dy", function (d, i) {
+-          return (d.angleRange[0] + d.angleRange[1]) / 2 > 90 && (d.angleRange[0] + d.angleRange[1]) / 2 < 270 ? 18 : -11;
+-        });
+-        svgArcLabelsEnter.append('textPath').attr('xlink:href', function (d) {
+-          return '#' + d.data.namePath.join('-') + '-text';
+-        }).attr('class', function (d) {
+-          return d.data.arcType ? d.data.arcType : '';
+-        });
+-        var svgArcLabelsEdit = svgArcLabelsEnter.merge(svgArcLabels).transition().ease(this.config.get('ease')).duration(this.params.labelDuration != null ? this.params.labelDuration : this.params.duration);
+-        svgArcLabelsEdit.select('textPath').attr('startOffset', function (d) {
+-          return d.arcLength / 2;
+-        }).text(function (d) {
+-          return _this9.config.get('showArcLabels') && d.labelFits ? d.label : d.label.slice(0, -d.labelLengthToTrim) + '...';
++        svgArcLabels.enter().each(function (d, i) {
++          var labels = d.data.displayLabels.length ? d.data.displayLabels : [d.data.namePath];
++          labels = labels[labels.length - 1];
++          var labelsCount = labels.length - 1;
++          _lodash2.default.each(labels, function (label, idx) {
++            if (viewScope.config.get('showArcLabels')) {
++              var labelFits = viewScope.config.get('arcLabelLetterWidth') * label.length - d.arcLength;
++              if (labelFits > 0) {
++                var labelLengthToTrim = (labelFits + 4 * viewScope.config.get('arcLabelLetterWidth')) / viewScope.config.get('arcLabelLetterWidth');
++                label = label.slice(0, -labelLengthToTrim) + '...';
++              }
++              var svgArcLabelsEnter = d3.select('svg g').append('text').attr('class', function () {
++                return 'arc-label along-arc arc-label-' + d.height;
++              }).attr('x', viewScope.params.arcLabelXOffset).attr("dy", function () {
++                return (d.angleRange[0] + d.angleRange[1]) / 2 > 90 && (d.angleRange[0] + d.angleRange[1]) / 2 < 270 ? 18 + (labelsCount - idx) * 15 : -11 - (labelsCount - idx) * 15;
++              });
++              svgArcLabelsEnter.append('textPath').attr('xlink:href', function () {
++                return '#' + d.data.namePath.join('-') + '-text';
++              }).attr('class', function () {
++                return d.data.arcType ? d.data.arcType : '';
++              }).attr('startOffset', function () {
++                return d.arcLength / 2;
++              }).text(function () {
++                return label;
++              });
++            }
++          });
+         });
+         svgArcLabels.exit().remove();
+         // Perpendicular
+-        svgArcLabels = this.d3.selectAll('.arc-label.perpendicular').data(arcLabelsPerpendicularData);
+-        svgArcLabelsEnter = svgArcLabels.enter().append('text').attr('class', function (d) {
++        var svgArcLabelsPerpendicular = this.d3.selectAll('.arc-label.perpendicular').data(arcLabelsPerpendicularData);
++        var svgArcLabelsEnter = svgArcLabelsPerpendicular.enter().append('text').attr('class', function (d) {
+           return 'arc-label perpendicular arc-label-' + d.height;
+-        }).merge(svgArcLabels).attr('transform', function (d) {
++        }).merge(svgArcLabelsPerpendicular).attr('transform', function (d) {
+           var alpha = (d.angleRange[1] + d.angleRange[0]) / 2 + 90;
+           if ((d.angleRange[1] + d.angleRange[0]) / 2 < 180) {
+             alpha -= 180;
+@@ -13262,7 +13307,7 @@
+         }).text(function (d) {
+           return _this9.params.showArcLabels && d.labelFits ? d.label : '';
+         });
+-        svgArcLabels.exit().remove();
++        svgArcLabelsPerpendicular.exit().remove();
+ 
+         // Arcs for parent nodes.
+         var arcEnter = d3Shape.arc().innerRadius(function (n) {
+@@ -13304,29 +13349,32 @@
+             return;
+           }
+           //Grab everything up to the first Line statement
+-          var newArc = firstArcSection.exec(d3.select(this).attr("d"))[1];
+-          //Replace all the comma's so that IE can handle it
+-          newArc = newArc.replace(/,/g, " ");
+-
+-          //If the end angle lies beyond a quarter of a circle (90 degrees or pi/2) 
+-          //flip the end and start position
+-          if ((d.angleRange[0] + d.angleRange[1]) / 2 > 90 && (d.angleRange[0] + d.angleRange[1]) / 2 < 270) {
+-            var startLoc = /M(.*?)A/,
+-                //Everything between the first capital M and first capital A
+-            middleLoc = /A(.*?)0 ([01]) 1/,
+-                //Everything between the first capital A and 0 0 1
+-            endLoc = /0 [01] 1 (.*?)$/; //Everything between the first 0 0 1 and the end of the string (denoted by $)
+-            //Flip the direction of the arc by switching the start en end point (and sweep flag)
+-            //of those elements that are below the horizontal line
+-            var newStart = endLoc.exec(newArc)[1];
+-            var newEnd = startLoc.exec(newArc)[1];
+-            var largeArc = middleLoc.exec(newArc)[2];
+-            var middleSec = middleLoc.exec(newArc)[1];
++          var newArc;
++           if(firstArcSection.exec(d3.select(this).attr("d")) != null) {
++            newArc = firstArcSection.exec(d3.select(this).attr("d"))[1];
++            //Replace all the comma's so that IE can handle it
++            newArc = newArc.replace(/,/g, " ");
++
++            //If the end angle lies beyond a quarter of a circle (90 degrees or pi/2) 
++            //flip the end and start position
++            if ((d.angleRange[0] + d.angleRange[1]) / 2 > 90 && (d.angleRange[0] + d.angleRange[1]) / 2 < 270) {
++                var startLoc = /M(.*?)A/,
++                    //Everything between the first capital M and first capital A
++                middleLoc = /A(.*?)0 ([01]) 1/,
++                    //Everything between the first capital A and 0 0 1
++                endLoc = /0 [01] 1 (.*?)$/; //Everything between the first 0 0 1 and the end of the string (denoted by $)
++                //Flip the direction of the arc by switching the start en end point (and sweep flag)
++                //of those elements that are below the horizontal line
++                var newStart = endLoc.exec(newArc)[1];
++                var newEnd = startLoc.exec(newArc)[1];
++                var largeArc = middleLoc.exec(newArc)[2];
++                var middleSec = middleLoc.exec(newArc)[1];
+ 
+-            //Build up the new arc notation, set the sweep-flag to 0
+-            newArc = "M" + newStart + "A" + middleSec + "0 " + largeArc + " 0 " + newEnd;
+-          }
+-          d3.select('svg g').append("path").attr("class", "dummyArcs").attr("id", d.data.namePath.join('-') + '-text').attr("d", newArc).style("fill", "none");
++                //Build up the new arc notation, set the sweep-flag to 0
++                newArc = "M" + newStart + "A" + middleSec + "0 " + largeArc + " 0 " + newEnd;
++            }
++            d3.select('svg g').append("path").attr("class", "dummyArcs").attr("id", d.data.namePath.join('-') + '-text').attr("d", newArc).style("fill", "none");
++           }
+         });
+         svgArcs.exit().transition().ease(this.config.get('ease')).duration(this.params.duration).attr('d', arcEnter).remove();
+       }
+@@ -19230,4 +19278,4 @@
+ /***/ })
+ /******/ ]);
+ });
+-//# sourceMappingURL=contrail-charts.js.map
+\ No newline at end of file
++//# sourceMappingURL=contrail-charts.js.map
