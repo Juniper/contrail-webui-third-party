@@ -725,7 +725,7 @@
         <name>node-sass</name>
         <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/common/npm-sources/node-sass-3.8.0.tar.gz</url>
         <format>npm</format>
-        <md5>2c4de27b5b9322395a7e249d5b11265c</md5>
+        <md5>aa7d6752ed3df559f6bb38e17d76019a</md5>
     </package>
     <package>
         <name>bootstrap-sass</name>
