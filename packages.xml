@@ -10,6 +10,30 @@
                     zipped file gets extracted and gets copied in current directory
                     If format as npm-cached, then the cache is not built in
                     /tmp/cache, but in node_modules in current directory directly
+
+                    Please Note:
+                        If the third-party npm module is platform dependent, then we
+                        need to create the package based on the platform and
+                        then put it in cache and prepend '$distro' before that tgz
+                        file.
+                        In the md5 section, add platform specific md5
+                        values, also add tag 'other' which specifies if any of
+                        the specified platform does not match, then url gets
+                        stripped off $distro keyword and gets downloaded and md5
+                        value gets checked. Ex:
+                            <package>
+                                <name>my-pkg</name>
+                                <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/common/npm-sources/$distro/my-pkg-3.8.0.tar.gz</url>
+                                <format>npm-cached</format>
+                                <md5>
+                                    <darwin>1111</darwin>
+                                    <ubuntu>2222</ubuntu>
+                                    <centos>3333</centos>
+                                    <redhat>4444</redhat>
+                                    <other>5555</other>
+                                </md5>
+                            </package>
+
           md5     : md5 checksum to compare, against the md5 checksum of the
                     downloaded file
           rename  : Rename the directory/downloaded file to this.
@@ -717,27 +741,51 @@
     </package>
     <package>
         <name>webworker-threads</name>
-        <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/common/npm-sources/webworker-threads-0.7.4.tar.gz</url>
-        <format>npm</format>
-        <md5>0fc35fa2c2e61978a8db3968afd98b4a</md5>
+        <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/common/npm-sources/$distro/webworker-threads-0.7.4.tar.gz</url>
+        <format>npm-cached</format>
+        <md5>
+            <centos>a98300592e691cd512f385c35935127e</centos>
+            <redhat>9473fef536e3647538520bdf732a7897</redhat>
+            <darwin>c312f65c514eff68f9bbd661beff823f</darwin>
+            <ubuntu>6d675af1d5817285990224526e161452</ubuntu>
+            <other>0fc35fa2c2e61978a8db3968afd98b4a</other>
+        </md5>
     </package>
     <package>
         <name>cassandra-driver</name>
-        <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/common/npm-sources/nodejs-driver-3.0.2.tar.gz</url>
-        <format>npm</format>
-        <md5>4495943888999c3c666debc8466f6243</md5>
+        <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/common/npm-sources/$distro/nodejs-driver-3.0.2.tar.gz</url>
+        <format>npm-cached</format>
+        <md5>
+            <centos>d99f55879f9efc8b081bacfe9e87f569</centos>
+            <redhat>59d93e854914aa7d2cc948b095ca3c9c</redhat>
+            <darwin>fbd13d1977407a76a6e3f7f4a160b475</darwin>
+            <ubuntu>c7e5b81b53450f26b6c5becd059fc94a</ubuntu>
+            <other>4495943888999c3c666debc8466f6243</other>
+        </md5>
     </package>
     <package>
         <name>node-sass</name>
-        <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/common/npm-sources/node-sass-3.8.0.tar.gz</url>
-        <format>npm</format>
-        <md5>aa7d6752ed3df559f6bb38e17d76019a</md5>
+        <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/common/npm-sources/$distro/node-sass-3.8.0.tar.gz</url>
+        <format>npm-cached</format>
+        <md5>
+            <centos>8c9cec94b692148b80d7641fce2071e4</centos>
+            <redhat>78a6ed356f69d05c37c0155338ce1b40</redhat>
+            <darwin>8d8fed0927241aefda7483b0fe647963</darwin>
+            <ubuntu>99564e23992f79a98c623b774be108fb</ubuntu>
+            <other>aa7d6752ed3df559f6bb38e17d76019a</other>
+        </md5>
     </package>
     <package>
         <name>bootstrap-sass</name>
-        <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/common/npm-sources/bootstrap-sass-3.3.6.tar.gz</url>
-        <format>npm</format>
-        <md5>146ba506a45c1a79872649eee142a1c4</md5>
+        <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/common/npm-sources/$distro/bootstrap-sass-3.3.6.tar.gz</url>
+        <format>npm-cached</format>
+        <md5>
+            <centos>bd92b828dd692e1ede16281570a9e489</centos>
+            <redhat>509284a8657d197bfcc435e63f62082e</redhat>
+            <darwin>9d6571a668dc72146955e298e96faad7</darwin>
+            <ubuntu>d2f4928b76df18d24c4b463f3ce99025</ubuntu>
+            <other>146ba506a45c1a79872649eee142a1c4</other>
+        </md5>
     </package>
     <package>
         <name>jdorn-jsoneditor-0.7.25</name>

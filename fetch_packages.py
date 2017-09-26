@@ -8,6 +8,7 @@ import re
 import shutil
 import subprocess
 import sys, getopt
+import platform
 from time import sleep
 
 _RETRIES = 5
@@ -17,6 +18,7 @@ _PACKAGE_CACHE='/tmp/cache/' + os.environ['USER'] + '/webui_third_party'
 _NODE_MODULES='./node_modules'
 _TMP_NODE_MODULES=_PACKAGE_CACHE + '/' + _NODE_MODULES
 _TAR_COMMAND = ['tar']
+_CACHED_PKG_DISTROS = ('Ubuntu', 'Red Hat', 'CentOS', 'darwin')
 
 from lxml import objectify
 
@@ -93,32 +95,90 @@ def ApplyPatches(pkg):
 #def VarSubst(cmdstr, filename):
 #    return re.sub(r'\${filename}', filename, cmdstr)
 
-def DownloadPackage(url, pkg, md5):
-    #Check if the package already exists
-    if os.path.isfile(pkg):
-        md5sum = FindMd5sum(pkg)
-        if md5sum == md5:
-            return
+def GetOSDistro():
+    distro = ''
+    if sys.platform == 'darwin':
+        return sys.platform
+    else:
+        try:
+            return platform.linux_distribution()[0]
+        except:
+            pass
+    return distro
+
+def DownloadPackage(url, ccfile, pkg):
+    md5 = pkg.md5
+    pkg.ccfile = ccfile
+    if url.find('$distro') != -1:
+        # Platform specific package download
+
+        distro = GetOSDistro()
+        if distro == '':
+            md5 = md5.other
+            # Remove the $distro from the url and try
+            url = url.replace('/$distro', '')
+            # Change the pkg format to npm download the dependencies
+            if pkg.format == 'npm-cached':
+                pkg.format = 'npm'
         else:
-            os.remove(pkg)
+            # check if we have the distro in our cache
+            found = False
+            for cached_pkg in _CACHED_PKG_DISTROS:
+                if cached_pkg in distro:
+                    distro = cached_pkg
+                    found = True
+                    break
+            if found == False:
+                # Remove the $distro from the url and try
+                url = url.replace('/$distro', '')
+                # Change the pkg format to npm download the dependencies
+                md5 = md5.other
+                if pkg.format == 'npm-cached':
+                    pkg.format = 'npm'
+            else:
+                distro = distro.lower().replace(" ", "")
+                url = url.replace('$distro', distro)
+                md5 = md5[distro]
+                pkg.distro = distro
+                # Change the ccfile, add distro before the package name
+                idx = ccfile.rfind("/")
+                pkgCachePath = ccfile[:idx] + "/" + distro
+                pkg.pkgCachePath = pkgCachePath
+                pkg.ccfile = pkgCachePath + "/" + ccfile[idx + 1:]
+                ccfile = pkg.ccfile.text
+                # Now create the directory
+                try:
+                    os.makedirs(pkgCachePath)
+                except OSError:
+                    pass
+        print url
+
+    #Check if the package already exists
+    if os.path.isfile(ccfile):
+        md5sum = FindMd5sum(ccfile)
+        if md5sum == md5:
+            return pkg
+        else:
+            os.remove(ccfile)
     
     retry_count = 0
     while True:
-        subprocess.call(['wget', '--no-check-certificate', '-O', pkg, url])
-        md5sum = FindMd5sum(pkg)
+        subprocess.call(['wget', '--no-check-certificate', '-O', ccfile, url])
+        md5sum = FindMd5sum(ccfile)
         if _OPT_VERBOSE:
             print "Calculated md5sum: %s" % md5sum
             print "Expected md5sum: %s" % md5
         if md5sum == md5:
-            return
+            return pkg
         elif retry_count <= _RETRIES:
-            os.remove(pkg)
+            os.remove(ccfile)
             retry_count += 1
             sleep(1)
             continue
         else:
             raise RuntimeError("MD5sum %s, expected(%s) dosen't match for the "
-                               "downloaded package %s" % (md5sum, md5, pkg))
+                               "downloaded package %s" % (md5sum, md5, ccfile))
+    return pkg
 
 def ProcessPackage(pkg):
     print "Processing %s ..." % (pkg['name'])
@@ -139,14 +199,15 @@ def ProcessPackage(pkg):
             else:
                 print 'mkdirs of ' + _NODE_MODULES + ' failed.. Exiting..'
                 return
-        ccfile = _NODE_MODULES + '/' + filename
-    DownloadPackage(url, ccfile, pkg.md5)
+        #ccfile = _NODE_MODULES + '/' + filename
+    pkg = DownloadPackage(url, ccfile, pkg)
 
     #
     # Determine the name of the directory created by the package.
     # unpack-directory means that we 'cd' to the given directory before
     # unpacking.
     #
+    ccfile = pkg.ccfile.text
     dest = None
     unpackdir = pkg.find('unpack-directory')
     if unpackdir:
@@ -192,7 +253,10 @@ def ProcessPackage(pkg):
     elif pkg.format == 'zip':
         cmd = ['unzip', '-o', ccfile]
     elif pkg.format == 'npm':
-        cmd = ['npm', 'install', ccfile, '--prefix', _PACKAGE_CACHE]
+        newDir = _PACKAGE_CACHE
+        if 'distro' in pkg:
+            newDir = newDir + pkg.distro
+        cmd = ['npm', 'install', ccfile, '--prefix', newDir]
         if installArguments:
             cmd.append(str(installArguments))
     elif pkg.format == 'file':
@@ -212,17 +276,17 @@ def ProcessPackage(pkg):
         if pkg.format == 'npm':
             try:
                 os.makedirs(_NODE_MODULES)
-                os.makedirs(_TMP_NODE_MODULES)
+                os.makedirs(newDir)
             except OSError as exc:
                 if exc.errno == errno.EEXIST:
                     pass
                 else:
-                    print 'mkdirs of ' + _NODE_MODULES + ' ' + _TMP_NODE_MODULES + ' failed.. Exiting..'
+                    print 'mkdirs of ' + _NODE_MODULES + ' ' + newDir + ' failed.. Exiting..'
                     return
 
-            npmCmd = ['cp', '-af', _TMP_NODE_MODULES + '/' + pkg['name'],
+            npmCmd = ['cp', '-af', newDir + "/" + _NODE_MODULES + '/' + pkg['name'],
                       './node_modules/']
-            if os.path.exists(_TMP_NODE_MODULES + '/' + pkg['name']):
+            if os.path.exists(newDir + '/' + pkg['name']):
                 cmd = npmCmd
             else:
 		try:
@@ -239,15 +303,6 @@ def ProcessPackage(pkg):
         ret = p.wait()
         if ret is not 0:
             sys.exit('Terminating: ProcessPackage with return code: %d' % ret);
-
-        if pkg.format == 'npm-cached':
-            try:
-                os.remove(ccfile);
-            except OSError as exc:
-                if exc.errno == errno.ENOENT:
-                    pass
-                else:
-                    print 'rmtree of ' + ccfile + ' failed with errno ' + str(exc.errno)
 
     if rename and dest:
         os.rename(dest, str(rename))
