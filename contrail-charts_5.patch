@@ -1,0 +1,28 @@
+--- contrail-charts/js/contrail-charts.js	2017-10-06 15:22:43.000000000 +0530
++++ contrail-charts/js/contrail-charts.js	2017-10-07 15:17:27.000000000 +0530
+@@ -13263,8 +13263,11 @@
+         var svgArcLabels = this.d3.selectAll('.arc-label.along-arc').data(arcLabelsAlongArcData);
+         svgArcLabels.enter().each(function (d, i) {
+           var labels = d.data.displayLabels.length ? d.data.displayLabels : [d.data.namePath];
+-          labels = labels[labels.length - 1];
++          labels = labels[labels.length - 1].slice(0);
+           var labelsCount = labels.length - 1;
++          if (d.data.arcType != 'external' && (d.angleRange[0] + d.angleRange[1])/2 > 90 && (d.angleRange[0] + d.angleRange[1])/2 < 270) {
++	      labels = labels.reverse();
++          }
+           _lodash2.default.each(labels, function (label, idx) {
+             if (viewScope.config.get('showArcLabels')) {
+               var labelFits = viewScope.config.get('arcLabelLetterWidth') * label.length - d.arcLength;
+--- contrail-charts/css/contrail-charts.css	2017-07-04 17:54:16.000000000 +0530
++++ contrail-charts/css/contrail-charts.css	2017-10-07 15:13:37.000000000 +0530
+@@ -4500,8 +4500,8 @@
+ .cc-component .interactive {
+   cursor: pointer; }
+
+-* {
+-  font-family: sans-serif; }
++/** {
++  font-family: sans-serif; }*/
+
+ button {
+   text-align: center;
