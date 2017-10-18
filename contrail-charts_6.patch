@@ -1,0 +1,31 @@
+--- contrail-charts/js/contrail-charts.js	2017-10-18 11:36:27.000000000 +0530
++++ contrail-charts/js/contrail-charts.js	2017-10-18 11:57:45.000000000 +0530
+@@ -13070,7 +13070,7 @@
+     key: '_prepareArcs',
+     value: function _prepareArcs() {
+       var _this8 = this;
+-
++      var arcs = this.arcs;
+       this.arcs = [];
+       this.hierarchyRootNode.each(function (n) {
+         if (!n.parent || !n.children) {
+@@ -13086,6 +13086,19 @@
+         }
+         _this8.arcs.push(n);
+       });
++      if (arcs) {
++	var selectedArc = _lodash2.default.filter(arcs, function (arc) {
++	  return arc.selected;
++	});
++	if (selectedArc && selectedArc.length > 0) {
++	  _lodash2.default.filter(this.arcs, function (arc) {
++	    if (arc.data.name == selectedArc[0].data.name) {
++	      arc.selected = true;
++	      arc.active = true;
++           }
++         });
++	}
++      }
+     }
+   }, {
+     key: '_prepareHierarchy',
