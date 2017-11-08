@@ -1,0 +1,24 @@
+--- contrail-charts/js/contrail-charts.js	2017-11-06 12:35:22.000000000 +0530
++++ contrail-charts/js/contrail-charts_new.js	2017-11-08 15:00:07.000000000 +0530
+@@ -13030,19 +13030,9 @@
+         //Mark link as bi-directional/uni-directional
+         var linkDirection = '';
+-        if (_this7.config.attributes.isEndpointMatched) {
+-          var viewScope = _this7;
+-          var linkChildren = _lodash2.default.filter(src.data.dataChildren, function (child) {
+-            return child.isClient;
+-          });
+-          var currentEnd = _lodash2.default.find(linkChildren, function (child) {
+-            return viewScope.config.attributes.isEndpointMatched(src.data.currentNode.names, child, src.data);
+-          });
+-          var otherEnd = _lodash2.default.find(linkChildren, function (child) {
+-            return viewScope.config.attributes.isEndpointMatched(src.data.otherNode.names, child, src.data);
+-          });
+-          linkDirection = currentEnd && !otherEnd ? 'forward' : !currentEnd && otherEnd ? 'reverse' : currentEnd && otherEnd ? 'bidirectional' : '';
+-        }
++	 if(_this7.config.attributes.getLinkDirection) {
++	   linkDirection = _this7.config.attributes.getLinkDirection(src, dst);
++	 }
+         _this7.ribbons.push({
+           outerPoints: outerPoints,
+           innerPoints: innerPoints,
