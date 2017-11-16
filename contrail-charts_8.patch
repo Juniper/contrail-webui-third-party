@@ -1,0 +1,45 @@
+--- contrail-charts/js/contrail-charts.js	2017-11-14 18:52:17.000000000 +0530
++++ contrail-charts/js/contrail-charts.js	2017-11-16 13:11:45.000000000 +0530
+@@ -13273,24 +13273,37 @@
+           }
+           _lodash2.default.each(labels, function (label, idx) {
+             if (viewScope.config.get('showArcLabels')) {
+-              var labelFits = viewScope.config.get('arcLabelLetterWidth') * label.length - d.arcLength;
++              var labelObj = {
++                label : label
++              };
++              if(_this9.config.attributes.formatDisplayLabel)
++                labelObj =  _this9.config.attributes.formatDisplayLabel(label);
++              var labelFits = viewScope.config.get('arcLabelLetterWidth') * labelObj.label.length - d.arcLength;
+               if (labelFits > 0) {
+                 var labelLengthToTrim = (labelFits + 4 * viewScope.config.get('arcLabelLetterWidth')) / viewScope.config.get('arcLabelLetterWidth');
+-                label = label.slice(0, -labelLengthToTrim) + '...';
++                labelObj.label = labelObj.label.slice(0, -labelLengthToTrim) + '...';
+               }
+               var svgArcLabelsEnter = d3.select('svg g').append('text').attr('class', function () {
+                 return 'arc-label along-arc arc-label-' + d.height;
+               }).attr('x', viewScope.params.arcLabelXOffset).attr("dy", function () {
+                 return (d.angleRange[0] + d.angleRange[1]) / 2 > 90 && (d.angleRange[0] + d.angleRange[1]) / 2 < 270 ? 18 + (labelsCount - idx) * 15 : -11 - (labelsCount - idx) * 15;
+               });
+-              svgArcLabelsEnter.append('textPath').attr('xlink:href', function () {
++              var labelTextpath = svgArcLabelsEnter.append('textPath').attr('xlink:href', function () {
+                 return '#' + d.data.namePath.join('-') + '-text';
+               }).attr('class', function () {
+                 return d.data.arcType ? d.data.arcType : '';
+               }).attr('startOffset', function () {
+                 return d.arcLength / 2;
+-              }).text(function () {
+-                return label;
++              });
++              if(labelObj.icon){
++                labelTextpath.append('tspan').attr('class', function() {
++                  return 'icon-style ' + labelObj.iconClass;
++                }).text(function () {
++                  return labelObj.icon;
++                });
++              }
++              labelTextpath.append('tspan').text(function () {
++                  return ' ' + labelObj.label;
+               });
+             }
+           });

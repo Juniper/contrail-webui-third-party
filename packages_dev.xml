@@ -137,9 +137,9 @@
   </package>
   <package>
     <name>karma-chrome-launcher</name>
-    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/common/npm-sources/karma-chrome-launcher-0.2.1.tar.gz</url>
+    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/common/npm-sources/karma-chrome-launcher-2.2.0.tar.gz</url>
     <format>npm-cached</format>
-    <md5>5dab30da34cac59d24e04271e8964317</md5>
+    <md5>25e95e6ad6a1f8963770ae5701c0d607</md5>
   </package>
   <package>
     <name>karma-html2js-preprocessor</name>
