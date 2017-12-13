@@ -1,0 +1,10 @@
+--- node_modules/karma-chrome-launcher/index.js	2017-06-23 23:08:35.000000000 +0530
++++ node_modules/karma-chrome-launcher/index.js	2017-12-13 13:59:58.000000000 +0530
+@@ -36,6 +36,7 @@
+       '--user-data-dir=' + userDataDir,
+       '--no-default-browser-check',
+       '--no-first-run',
++      '--no-sandbox',
+       '--disable-default-apps',
+       '--disable-popup-blocking',
+       '--disable-translate',
