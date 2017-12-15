@@ -71,6 +71,9 @@
     <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/common/npm-sources/grunt-node-qunit-2.0.2.tar.gz</url>
     <format>npm-cached</format>
     <md5>1555b0fb79032c8578b7486affd740ee</md5>
+    <patches>
+      <patch strip="0">grunt-node-qunit_2.0.2_1.patch</patch>
+    </patches>
   </package>
   <package>
     <name>grunt-blanket-qunit</name>
