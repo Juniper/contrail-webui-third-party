@@ -1,0 +1,21 @@
+--- node_modules/grunt-node-qunit/node_modules/qunit/lib/child.js	2017-12-04 15:52:25.000000000 -0800
++++ node_modules/grunt-node-qunit/node_modules/qunit/lib/child.js	2017-12-15 14:12:31.000000000 -0800
+@@ -2,6 +2,7 @@
+     path = require('path'),
+     _ = require('underscore'),
+     trace = require('tracejs').trace;
++    contrailApiTestUtils = require("../../../../../src/tests/contrailApiTestUtils");
+ 
+ // cycle.js: This file contains two functions, JSON.decycle and JSON.retrocycle,
+ // which make it possible to encode cyclical structures and dags in JSON, and to
+@@ -23,6 +24,10 @@
+     }
+ });
+ 
++if (contrailApiTestUtils.initTestConfig) {
++    contrailApiTestUtils.initTestConfig();
++}
++
+ QUnit.config.autorun = false;
+ QUnit.config.autostart = false;
+ 
