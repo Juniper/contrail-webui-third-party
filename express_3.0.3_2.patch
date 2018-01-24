@@ -1,0 +1,15 @@
+--- node_modules/express/node_modules/connect/lib/middleware/csrf.js	2018-01-24 09:00:32.000000000 -0800
++++ node_modules/express/node_modules/connect/lib/middleware/csrf.js	2018-01-24 09:04:33.000000000 -0800
+@@ -51,6 +51,12 @@
+     // determine value
+     var val = value(req);
+ 
++    var xAuthToken = req.headers['x-auth-token'];
++    if (null != xAuthToken) {
++        /* This request validity gets checked by validating x-auth-token value
++         */
++        return next();
++    }
+     // check
+     if (val != token) {
+         if (null != csrfInvalidEvent) {

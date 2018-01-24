@@ -348,6 +348,7 @@
         <md5>3b5cb61a9f2b9bbd0728ab0b411bb105</md5>
         <patches>
             <patch strip="0">express_3.0.3_1.patch</patch>
+            <patch strip="0">express_3.0.3_2.patch</patch>
         </patches>
     </package>
     <package>
