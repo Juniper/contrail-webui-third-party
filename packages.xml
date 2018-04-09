@@ -664,6 +664,12 @@
         <md5>e51886196545e955091da5449f1374b5</md5>
     </package>
     <package>
+        <name>jsdiff</name>
+        <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/npm-sources/jsdiff-3.5.0.tar.gz</url>
+        <format>npm-cached</format>
+        <md5>c27e559b3ad8f104078b614317fbd211</md5>
+    </package>
+    <package>
         <name>require</name>
         <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/require.min.js</url>
         <local-filename>require.js</local-filename>
