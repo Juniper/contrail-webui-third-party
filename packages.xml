@@ -382,12 +382,6 @@
         <md5>530bf9ef8379c9610170071f33555dbd</md5>
     </package>
     <package>
-        <name>debug</name>
-        <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/npm-sources/debug-0.7.0.tar.gz</url>
-        <format>npm-cached</format>
-        <md5>fb325bf02d5a64eeccd9addb4d75a97a</md5>
-    </package>
-    <package>
         <name>kue</name>
         <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/npm-sources/kue-0.5.0.tar.gz</url>
         <format>npm-cached</format>
