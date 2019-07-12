@@ -247,13 +247,12 @@ def ProcessPackage(pkg):
             os.makedirs(str(unpackdir))
         except OSError as exc:
             pass
-        
 
     cmd = None
     if pkg.format == 'tgz':
-        cmd = _TAR_COMMAND + ['-zxvf', ccfile]
+        cmd = _TAR_COMMAND + ['-zxf', ccfile]
     elif pkg.format == 'tbz':
-        cmd = _TAR_COMMAND + ['-jxvf', ccfile]
+        cmd = _TAR_COMMAND + ['-jxf', ccfile]
     elif pkg.format == 'zip':
         cmd = ['unzip', '-o', ccfile]
     elif pkg.format == 'npm':
@@ -266,7 +265,7 @@ def ProcessPackage(pkg):
     elif pkg.format == 'file':
         cmd = ['cp', '-af', ccfile, dest]
     elif pkg.format == 'npm-cached':
-        cmd = _TAR_COMMAND + ['-zxvf', ccfile, '-C', _NODE_MODULES]
+        cmd = _TAR_COMMAND + ['-zxf', ccfile, '-C', _NODE_MODULES]
     else:
         print 'Unexpected format: %s' % (pkg.format)
         return
