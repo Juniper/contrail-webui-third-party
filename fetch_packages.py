@@ -59,7 +59,7 @@ def getTarDestination(tgzfile, compress_flag):
     return fields[0]
 
 def getZipDestination(tgzfile):
-    cmd = subprocess.Popen(['unzip', '-t', tgzfile],
+    cmd = subprocess.Popen(['unzip', '-tq', tgzfile],
                            stdout=subprocess.PIPE)
     (output, _) = cmd.communicate()
     lines = output.split('\n')
@@ -254,7 +254,7 @@ def ProcessPackage(pkg):
     elif pkg.format == 'tbz':
         cmd = _TAR_COMMAND + ['-jxf', ccfile]
     elif pkg.format == 'zip':
-        cmd = ['unzip', '-o', ccfile]
+        cmd = ['unzip', '-oq', ccfile]
     elif pkg.format == 'npm':
         newDir = _PACKAGE_CACHE
         if 'distro' in pkg:
