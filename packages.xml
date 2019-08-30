@@ -289,10 +289,9 @@
     <package>
         <name>moment-2.14.1</name>
         <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/moment-2.14.1.tar.gz</url>
-        <local-filename>moment-2.14.1.tar.gz</local-filename>
-        <format>tgz</format>
+        <format>npm-cached</format>
+        <rename>moment</rename>
         <md5>cb156d513bc237a3ed644f67216a1c65</md5>
-        <rename>moment-v2.14.1</rename>
     </package>
     <package>
         <name>knockout-v3.0.0</name>
@@ -733,18 +732,6 @@
         <md5>0e61ff1c2c18a1a7f1265f549fd49fd1</md5>
     </package>
     <package>
-        <name>lodash-4.15.0</name>
-        <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/common/npm-sources/lodash-4.15.tar.gz</url>
-        <format>npm-cached</format>
-        <md5>25b7ab9477cbce4b4de1fc1d9f0292fa</md5>
-    </package>
-    <package>
-        <name>moment-2.10.3</name>
-        <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/npm-sources/moment-2.10.3.tar.gz</url>
-        <format>npm-cached</format>
-        <md5>465a2d6f2d5a692ddefcf258e18f1db1</md5>
-    </package>
-    <package>
         <name>helmet</name>
         <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/npm-sources/helmet-0.14.0.tar.gz</url>
         <format>npm-cached</format>
@@ -843,10 +830,9 @@
         <md5>b68dea5f908f4bfa4935d94a2a46890f</md5>
     </package>
     <package>
-        <name>lodash-4.17.2</name>
-        <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/common/npm-sources/lodash-4.17.2.tgz</url>
+        <name>lodash-4.17.12</name>
+        <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/common/npm-sources/lodash-4.17.12.tar.gz</url>
         <format>npm-cached</format>
-        <md5>a8b41fef414404d0d5d803cc80f70e2f</md5>
-        <rename>lodash-v4.17.2</rename>
+        <md5>8c9a93d0c3c78222de2a0215ce009590</md5>
     </package>
 </packages>
