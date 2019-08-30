@@ -1,0 +1,128 @@
+--- node_modules/connect-redis/lib/connect-redis.js	2015-09-18 10:46:55.000000000 -0700
++++ node_modules/connect-redis/lib/connect-redis.js	2019-08-30 20:07:39.000000000 -0700
+@@ -6,6 +6,7 @@
+ 
+ var debug = require('debug')('connect:redis');
+ var redis = require('redis');
++var eventEmitter = require('events').EventEmitter;
+ var default_port = 6379;
+ var default_host = '127.0.0.1';
+ var noop = function(){};
+@@ -15,6 +16,7 @@
+  */
+ 
+ var oneDay = 86400;
++var timerEvent = {};
+ 
+ function getTTL(store, sess) {
+   var maxAge = sess.cookie.maxAge;
+@@ -108,6 +110,9 @@
+     }
+ 
+     this.ttl = options.ttl;
++    this.eventEmitter = (null == options.eventEmitter)
++      ? null : options.eventEmitter;
++
+     this.disableTTL = options.disableTTL;
+ 
+     if (options.unref) this.client.unref();
+@@ -170,6 +175,27 @@
+       return fn(null, result);
+     });
+   };
++  /**
++   * Send event sessionDeleted after maxAge time expires
++   * Note that this event is triggered when maxAge becomes 0, so it may happen
++   * redis has got crashed or got flushed out, so session will get removed from
++   * redis DB. So APP when getting this event, MUST check if the session exists
++   * or not in DB.
++   * @param {eventEmitter} eventEmitter Object passed from client
++   * @param {sid} sessionID created
++   * @param {maxAge} maxAge after which this event should be generated
++   */
++
++  setEventEmitter = function (redisClient, eventEmitter, sid, ttlInSecs) {
++    var timer = setTimeout(function () {
++      eventEmitter.emit('sessionDeleted', sid);
++      if (null != redisClient) {
++        console.log("Deleting session id " + sid + " from redis");
++        redisClient.del(sid);
++      }
++    }, ttlInSecs * 1000);
++    timerEvent[sid] = timer;
++  }
+ 
+   /**
+    * Commit the given `sess` object associated with the given `sid`.
+@@ -183,6 +209,7 @@
+   RedisStore.prototype.set = function (sid, sess, fn) {
+     var store = this;
+     var psid = store.prefix + sid;
++    var eEmitter = store.eventEmitter;
+     if (!fn) fn = noop;
+ 
+     try {
+@@ -205,6 +232,20 @@
+     var ttl = getTTL(store, sess);
+ 
+     debug('SETEX "%s" ttl:%s %s', sid, ttl, jsess);
++
++    /* NOTE: when request comes from web client, for each url, it sets same
++     * session ID, so even for loading icon, frame gif file, it sets same
++     * session id in redis, so we need to set timeout only one time, if the
++     * session id is not already stored in redis
++     */
++    store.client.get(sid, function (err, data) {
++      if (null == data) {
++        if (eEmitter) {
++          setEventEmitter(store.client, eEmitter, sid, ttl);
++        }
++      }
++    });
++
+     store.client.setex(psid, ttl, jsess, function (er) {
+       if (er) return fn(er);
+       debug('SETEX complete');
+
+--- node_modules/connect-redis/node_modules/redis/index.js	2014-08-11 10:34:18.000000000 -0700
++++ node_modules/connect-redis/node_modules/redis/index.js	2019-08-30 20:07:42.000000000 -0700
+@@ -6,6 +6,7 @@
+     to_array = require("./lib/to_array"),
+     events = require("events"),
+     crypto = require("crypto"),
++    configUtils = require(process.mainModule.exports['corePath'] + '/src/serverroot/common/config.utils'),
+     parsers = [], commands,
+     connection_id = 0,
+     default_port = 6379,
+@@ -1247,11 +1248,23 @@
+     }
+ }
+ 
++var setMissingPassword = function (options) {
++    var config = configUtils.getConfig();
++
++    if (undefined !== config.redis_password) {
++        if (undefined === options) {
++            options = {};
++        }
++        options['auth_pass'] = config.redis_password;
++    }
++}
++
+ var createClient_unix = function(path, options){
+     var cnxOptions = {
+         path: path
+     };
+     var net_client = net.createConnection(cnxOptions);
++    setMissingPassword(options);
+     var redis_client = new RedisClient(net_client, options || {});
+ 
+     redis_client.connectionOption = cnxOptions;
+@@ -1267,6 +1280,7 @@
+         'family' : (options && options.family === 'IPv6') ? 6 : 4
+     };
+     var net_client = net.createConnection(cnxOptions);
++    setMissingPassword(options);
+     var redis_client = new RedisClient(net_client, options || {});
+ 
+     redis_client.connectionOption = cnxOptions;
