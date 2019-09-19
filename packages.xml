@@ -287,11 +287,10 @@
         </patches>
     </package>
     <package>
-        <name>moment-2.14.1</name>
-        <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/moment-2.14.1.tar.gz</url>
+        <name>moment</name>
+        <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/moment-2.19.3.tar.gz</url>
         <format>npm-cached</format>
-        <rename>moment</rename>
-        <md5>cb156d513bc237a3ed644f67216a1c65</md5>
+        <md5>1c0a25c63809b72f158557f6ae9f75dd</md5>
     </package>
     <package>
         <name>knockout-v3.0.0</name>
