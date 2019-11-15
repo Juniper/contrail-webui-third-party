@@ -17,7 +17,7 @@ _OPT_DRY_RUN = None
 _PACKAGE_CACHE='/tmp/cache/' + os.environ['USER'] + '/webui_third_party'
 _NODE_MODULES='./node_modules'
 _TMP_NODE_MODULES=_PACKAGE_CACHE + '/' + _NODE_MODULES
-_TAR_COMMAND = ['tar']
+_TAR_COMMAND = ['tar --no-same-owner']
 _CACHED_PKG_DISTROS = ('Ubuntu', 'Red Hat', 'CentOS', 'darwin')
 
 from lxml import objectify
@@ -37,7 +37,7 @@ def setTarCommand():
     if isTarGnuVersion():
         print 'GNU tar found. we will skip the no-unknown-keyword warning'
         global _TAR_COMMAND
-        _TAR_COMMAND = ['tar', '--warning=no-unknown-keyword']
+        _TAR_COMMAND = ['tar', '--no-same-owner', '--warning=no-unknown-keyword']
     else:
         print 'No GNU tar. will use default tar utility'
 
