@@ -301,10 +301,10 @@
         <rename>knockout-v3.0.0</rename>
     </package>
     <package>
-        <name>handlebars-v4.4.3</name>
-        <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/handlebars-v4.4.3.tar.gz</url>
+        <name>handlebars-v4.5.3</name>
+        <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/controller/handlebars-v4.5.3.tar.gz</url>
         <format>npm-cached</format>
-        <md5>e5d8ae6b29d76b21cec020067bbab034</md5>
+        <md5>3a57cb52ddfc5930fd50217f5799898f</md5>
     </package>
     <package>
         <name>SlickGridEnhancementPager</name>
