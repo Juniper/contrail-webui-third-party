@@ -31,10 +31,18 @@
   </package>
   <package>
     <name>phantomjs</name>
+<<<<<<< HEAD   (40f1b2 Upgrade Handlebars to 4.5.3)
     <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/common/phantomjs-1.9.18.tar.gz</url>
+=======
+    <url>https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/common/phantomjs-1.9.19.tgz</url>
+>>>>>>> CHANGE (bc30b1 CEM-21250 Changed the Phantomjs version to resolve the error)
     <format>npm</format>
     <install-arguments>--phantomjs_cdnurl=https://github.com/Juniper/contrail-third-party-cache/raw/master/contrail-webui/common/phantomjs-bin</install-arguments>
+<<<<<<< HEAD   (40f1b2 Upgrade Handlebars to 4.5.3)
     <md5>898f5c9feb3797b78d555b433bacaa13</md5>
+=======
+    <md5>d0715ffef1331c1a6fd324668041a22a</md5>
+>>>>>>> CHANGE (bc30b1 CEM-21250 Changed the Phantomjs version to resolve the error)
   </package>
   <package>
     <name>karma-phantomjs-launcher</name>
